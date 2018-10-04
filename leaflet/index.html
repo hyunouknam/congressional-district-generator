@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Home</title>
-	<link href="css/normalize.css" type="text/css" rel=stylesheet>
-	<link href="css/skeleton.css" type="text/css" rel=stylesheet>
+	<title>Redistricting Simulator</title>
+
+    <!-- BOOTSTRAP 4 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	
 	<link href="css/leaflet.css" type="text/css" rel=stylesheet>
 	<link href="css/index.css" type="text/css" rel=stylesheet>
@@ -48,33 +49,68 @@
             C512,66.599,505.401,60,497,60z"/>
             <path style="fill:#11AD94;" d="M512,75v60c0,24.899-20.099,45-45,45h-30V60h60C505.401,60,512,66.599,512,75z"/>
         </svg>
-        <h2>Chargers: Map thing</h2>
+        <h2>Redistricting Simulator</h2>
     </div>
-    <nav>
-        <a class="button">About/FAQ</a>
-        <a class="button">Login</a>
-        <a class="button">Create Account</a>
+    <nav class="nav">
+        <a class="nav-link border rounded m-1" href="#">About/FAQ</a>
+        <a class="nav-link border rounded m-1" href="#">Login</a>
     </nav>
     </header>
 
     <main>
-        <div id="map"></div>
-        <div class="box" id="infobar">
-            <h3>Connecticut:</h3>
-            <ul>
-                <li>Population: 37</li>
-                <li>Voter turnout: 3</li>
-                <li>Anchovy consumption: 12</li>
-            </ul>
+        <div class="rounded" id="map"></div>
+        <div class="border rounded p-3" id="infobar">
+                <h4>INFO: District 17</h4>
+                <ul>
+                    <li>Population: 37</li>
+                    <li>Voter turnout: 3</li>
+                    <li>Anchovy consumption: 12</li>
+                </ul>
         </div>
-        <div class="box" id="js-params">
-            <p>Here we'll have sliders n shit</p>
+        <div class="border rounded p-3" id="js-params">
+            <h4>Simulation Parameters</h4>
+                <div class="weight-box box">
+                    <div>
+                        Fairness
+                    </div>
+                    <div class="slider" style="width: 5em">
+                        <div class="slider-handle btn bg-secondary rounded-circle">
+                        </div>
+                        <div class="slider-bar border" style="height:0px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="weight-box box">
+                    <div>
+                        Compactness
+                    </div>
+                    <div class="slider" style="width: 5em">
+                        <div class="slider-handle btn bg-secondary rounded-circle">
+                        </div>
+                        <div class="slider-bar border" style="height:0px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="weight-box box">
+                    <div>
+                        Anchovy Consumption
+                    </div>
+                    <div class="slider" style="width: 5em">
+                        <div class="slider-handle btn bg-secondary rounded-circle">
+                        </div>
+                        <div class="slider-bar border" style="height:0px;">
+                        </div>
+                    </div>
+                </div>
         </div>
-        <div class="box" id="js-simulations">
-            <p>This box will house the ghosts of simulations past, present, and future</p>
-            <ul>
-                <li>Current Districting</li>
-            </ul>
+        <div class="border rounded p-3" id="js-simulations">
+                <h3></h3>
+                <ul class="list-group">
+                    <h4>Connecticut</h4>
+                    <h6>Select Districting:</h6>
+                    <li class="list-group-item">Current Districting</li>
+                    <li class="list-group-item">Simulation 1 <span class="badge badge-secondary">in progress</span></li>
+                </ul>
         </div>
     </main>
 
