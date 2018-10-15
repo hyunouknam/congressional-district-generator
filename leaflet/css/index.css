@@ -1,5 +1,9 @@
 html, body {
     height: 100%; width:100%;
+}
+
+/* these should probably only apply to the main app page */
+body.force-fullsize {
     min-width: 800px;
     min-height: 600px;;
 }
@@ -39,35 +43,49 @@ header .icon {
 
 
 
+/* By default, main is just a centered box for text content*/
 main {
     grid-area: main;
+    align-self:stretch; /* take up all vertical space */
+    justify-self:center; /* center in grid */
     overflow: hidden;
 
-    align-self:stretch;
+    padding: 2em;
+
+    /* default, for documents */ 
+    max-width: 50em;
+}
+
+/* for documents, use styles that would be reasonable for a vertical page */
+main.main-document {
+    
+}
+
+/* For the main map page, use a specific grid to show all the panes*/
+main.main-app {
     display: grid;
     grid-template-columns: 4fr 2fr ;
     grid-template-rows: 2fr 2fr min-content;
     grid-template-areas: "map info"
                          "map simulations"
                          "params params";
-    padding: 4em;
     grid-gap: 1em;
 }
 
-main > #map {
+main.main-app > #map {
     grid-area: map;
 }
 
-main > #infobar {
+main.main-app > #infobar {
     grid-area: info;
     
 }
 
-main > #js-params {
+main.main-app > #js-params {
     grid-area: params;
 }
 
-main > #js-simulations {
+main.main-app > #js-simulations {
     grid-area: simulations;
 }
 
