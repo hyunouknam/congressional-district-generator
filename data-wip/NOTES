@@ -1,0 +1,9 @@
+NJ data gotten from harvard election data
+
+https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/16222&studyListingIndex=3_87ac5f2243bd60f5be9fe1ed2c46
+
+
+most of it is shapefiles
+
+passing the shapefiles into mapshaper.org yields nj_final.json
+It's a geoJSON file, with all the election data attached to it
