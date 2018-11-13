@@ -2,8 +2,36 @@ NJ data gotten from harvard election data
 
 https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/16222&studyListingIndex=3_87ac5f2243bd60f5be9fe1ed2c46
 
-
 most of it is shapefiles
 
 passing the shapefiles into mapshaper.org yields nj_final.json
 It's a geoJSON file, with all the election data attached to it
+
+
+
+nj_process_data.py is python3 script (requires pandas)
+creates nj_clean.json
+
+takes/renames the following fields from the Harvard NJ dataset
+
+"GEOID10": "uid", #Unique identifier
+
+"NAME10": "precinct_name",
+"TOWN_NAME": "town_name",
+"COUNTY_NAM": "county_name",
+
+"INTPTLAT10": "lat",
+"INTPTLON10": "lon",
+"geometry": "geometry",
+
+"POP100": "population",
+"VAP": "voting_population",
+"VOTES": "total_votes",
+"AV": "fraction_votes_democrat",
+
+Output is json file like 
+
+{ uid : { precinct_name, ...props },
+  uid : { ...props},
+  ...
+}
