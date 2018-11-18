@@ -61,7 +61,7 @@ PROP_MAP = {
     "POP100": "population",
     "VAP": "voting_population",
     "VOTES": "total_votes",
-    "AV": "fraction_votes_democrat",
+    "AV": "fraction_votes_dem",
 }
 
 
