@@ -7,12 +7,19 @@ from json import encoder
 # let's only use 6 decimals of precision, as the gives us 10cm accuracy
 encoder.FLOAT_REPR = lambda x: format(x, '.6f')
 
-
+"""
 INFILE = "./NJ/nj_final.json"
 FULL_CSV_OUT = "./nj_full.csv"
 PRUNED_JSON_OUT = "./nj_clean.json"
 
 CLEAN_GEOJSON_OUT = "./nj_clean.geo.json"
+"""
+
+INFILE = "./CT/ct_final.json"
+FULL_CSV_OUT = "./ct_full.csv"
+PRUNED_JSON_OUT = "./ct_clean.json"
+
+CLEAN_GEOJSON_OUT = "./ct_clean.geo.json"
 
 """
 Data column notes:
@@ -51,6 +58,7 @@ useful properties:
 
 #index by GEOID10
 #List of columns we want to rename and keep for our final data
+"""
 PROP_MAP = {
     "GEOID10": "uid",
     "NAME10": "precinct_name",
@@ -66,7 +74,22 @@ PROP_MAP = {
     "VOTES": "total_votes",
     "AV": "fraction_votes_dem",
 }
+"""
+PROP_MAP = {
+    "GEOID10": "uid",
+    "NAME10": "precinct_name",
+    "TOWN": "town_name",
+    "COUNTY_NUM": "county_name",
 
+    "INTPTLAT10": "lat",
+    "INTPTLON10": "lon",
+    "geometry": "geometry",
+
+    "POP100": "population",
+    "VAP": "voting_population",
+    "TOTAL": "total_votes",
+    "DEM_PCT": "fraction_votes_dem",
+}
 
 #We only need 6 digits of precision on our floats, this will save space
 #recursively go through json obj, rounad all floats
