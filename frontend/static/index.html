@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+	<title>Redistricting Simulator</title>
+
+    <!-- BOOTSTRAP 4 -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+	
+	<link href="css/index.css" type="text/css" rel=stylesheet>
+
+
+    <link href="css/leaflet.css" type="text/css" rel=stylesheet>
+    <!--
+        <script src="js/jquery.js"></script>
+        <script src="js/leaflet.js"></script>
+    -->
+
+</head>
+<body class="force-fullsize">
+    <header>
+        <div class="flexhbox">
+<object class="icon" type="image/svg+xml" data="assets/chargers.svg">
+  Logo broken
+</object>
+        <h2>Redistricting Simulator</h2>
+    </div>
+    <nav class="nav">
+        <a class="nav-link disabled border rounded m-1" href="#">Home</a>
+        <a class="nav-link border rounded m-1" href="faq.html">About/FAQ</a>
+        <a class="nav-link border rounded m-1" href="login.html">Login</a>
+        <app-current-user class="border rounded m-1 nav-link"></app-current-user>
+    </nav>
+    </header>
+
+    <main class="main-app">
+        <app-leaflet class="border rounded" id="map"></app-leaflet>
+        <app-leaflet-info class="border rounded p-3" id="infobar">
+        </app-leaflet-info>
+        <app-sim-params class="border rounded p-3" id="js-params">
+        </app-sim-params>
+        <app-sim-list class="border rounded p-3" id="js-simulations">
+        </app-sim-list>
+    </main>
+
+    <!--
+        <script src="js/states.js"></script>
+        <script src="js/map.js"></script>
+    -->
+    
+    <script src="app.bundle.js"></script>
+</body>
+</html>

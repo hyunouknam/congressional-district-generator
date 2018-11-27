@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        .body-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+        .box {
+          border: 1px dotted black;
+          margin: 1px;
+        }
+      </style>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    </head>
+    <body>
+        Hi!
+        <div class="body-grid">
+          <app-sim-list class="box">Loading...</app-sim-list>
+          <app-current-user class="box"></app-current-user>
+          <app-sim-params class="box"></app-sim-params>
+        </div>
+        <div>
+        </div>
+        <script type="text/javascript" src="app.bundle.js"></script>
+    </body>
+</html>
+

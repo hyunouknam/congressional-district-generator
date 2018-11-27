@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from pprint import pprint
 import json
@@ -10,6 +11,8 @@ encoder.FLOAT_REPR = lambda x: format(x, '.6f')
 INFILE = "./NJ/nj_final.json"
 FULL_CSV_OUT = "./nj_full.csv"
 PRUNED_JSON_OUT = "./nj_clean.json"
+
+CLEAN_GEOJSON_OUT = "./nj_clean.geo.json"
 
 """
 Data column notes:
@@ -118,7 +121,50 @@ with open(INFILE) as f:
     df_pruned.index.rename(renamer(df_pruned.index.name), inplace=True)
 
 
-    #df.to_csv(FULL_CSV_OUT)
-    #df_pruned.to_csv(PRUNED_CSV_OUT, sep='|')
-    df_pruned.to_json(PRUNED_JSON_OUT, orient="index")
+
+
+    # ========= OUTPUT AS FLAT FORMAT
+    # { "PRECINCT_ID" : { "prop1": "val", "prop2": "val", "geometry": [[1,1],[1,0]...] } }
+            #df.to_csv(FULL_CSV_OUT)
+            #df_pruned.to_csv(PRUNED_CSV_OUT, sep='|')
+    #df_pruned.to_json(PRUNED_JSON_OUT, orient="index")
+
+    # ======== OUTPUT AS GEOJSON
+    def rowToGeoJSON(row): #row is of type Series
+        geomStr = json.dumps(row['geometry']);
+
+        #get all properties out of dataframe (ignore geometry), also id
+        props = row.drop('geometry').to_dict()
+        props['id'] = row.name
+
+        # numbers get encoded as numpy datatypes which cant be serialized, so we convert them
+        # to basic python types
+        for key,val in props.items():
+            if(isinstance(val, np.number)):
+                props[key] = val.item() #convert numpy number to python number
+
+        propsStr = json.dumps(props)
+
+        featureStr = '{"type":"Feature","geometry":'+geomStr+',"properties":'+propsStr+'}'
+        return featureStr
+    
+
+    def writeGeoJson():
+
+        with open(CLEAN_GEOJSON_OUT, 'w') as outf:
+            outf.write('{"type":"FeatureCollection", "features": [\n')
+
+            firstRow=True
+            for index, row in df_pruned.iterrows():
+                if not firstRow:
+                    outf.write(",");
+                outf.write("\n");
+                outJson = rowToGeoJSON(row)
+                outf.write(outJson)
+                firstRow = False;
+            
+            outf.write("\n");
+            outf.write("]}");
+
+    writeGeoJson()
 
