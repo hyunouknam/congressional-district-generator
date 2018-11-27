@@ -2,14 +2,22 @@ package Simulation;
 
 import Areas.Map;
 import Areas.PrecinctForMap;
+import Users.UserAccount;
 import java.util.Stack;
 
-public class Simulation {
-   private UserAccount user;
-   private SimulationParams simParams;
-   private Map startingMap;
-   private Stack<Move> moves;
-   private Map currentMap; //startMap+all moves so far
+public abstract class Simulation {
+   protected UserAccount user;
+   protected SimulationParams params;
+   protected Map startingMap;
+   protected Stack<Move> moves;
+   protected Map currentMap; //startMap+all moves so far
+   protected float currentGoodness;
+   
+   public Simulation(UserAccount u, SimulationParams s){
+       //initializes Algorithm? or calls initializeAlgotithm?
+       params=s;
+       user=u;
+   }
    
    public float getProgress(){
        //return value between 0 and 1
@@ -20,39 +28,34 @@ public class Simulation {
        return false;
    }
    
-   public void initializeAlgorithm(){
-       
-   }
+   public abstract void initializeAlgorithm();
    
    public void pause(){
        
    }
    
    public void terminate(){
-       
+       //setisdone to yes
+       //remove from simworker's queue
    }
    
    public boolean isDone(){
        return getProgress()==1;
    }
    
-   public void doStep(){
-       //
-   }
+   public abstract void doStep();
    
-   public void pickMove(){
-       
-   }
+   public abstract void pickMove();
    
-   public void updateDistricts(PrecinctForMap a, PrecinctForMap b){
-       
-   }
+   public abstract void updateDistricts(PrecinctForMap a, PrecinctForMap b);
    
    public void postUpdate(){
        
    }
    
-   public void queueForWork(Simulation s){
-       
+   public abstract boolean isAcceptable();
+   
+   public void queueForWork(){
+       SimulationWorker.addToRunQueue(this);
    }
 }

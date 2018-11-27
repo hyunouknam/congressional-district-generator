@@ -1,16 +1,28 @@
 package Areas;
 
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class DistrictForMap{
-    int id;
-    MasterDistrict instanceFor;
-    Map map;
+    private int id;
+    private MasterDistrict instanceFor;
+    private Map map;
+    private Set<PrecinctForMap> precincts;
+    
+    public DistrictForMap(){
+        instanceFor=null; //null district, for unassigned precincts
+        precincts=new HashSet<>();        
+    }
+    
+    public DistrictForMap(MasterDistrict md){
+        instanceFor=md;
+        precincts=new HashSet<>();
+    }
     
     
     public Set<PrecinctForMap> getPrecincts(){
-        return null;
+        return precincts;
     }
     
     public Set<PrecinctForMap> getBorderPrecincts(){
@@ -24,5 +36,8 @@ public class DistrictForMap{
     
     public Map getMap(){
         return map;
+    }
+    public void setMap(Map m){
+        map=m;
     }
 }
