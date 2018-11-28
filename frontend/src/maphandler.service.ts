@@ -55,6 +55,7 @@ export type PrecinctProperties = {
 const nj_view = {coords: [40.19, -74.70], zoom: 8};
 
 const NJ_DATA_URL = "assets/nj_data.json"
+const CT_DATA_URL = "assets/ct_data.json"
 
 @Injectable({
   providedIn: 'root',
@@ -103,27 +104,8 @@ export class MapHandlerService {
       this.map.fitBounds(f.getBounds());
   }
 
-
-
-  public initMapOnElement(elem: HTMLElement) {
-    //half-assed singleton
-    // TODO FIX THIS
-    if(this.map != null) { throw new Error("map already defined in maphandler, should be singleton"); }
-
-    console.log(elem);
-    this.map = leaflet.map(elem).setView([40.19, -74.70], 8);
-
-    leaflet.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-        id: 'mapbox.light',
-        attribution:  'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>' + 
-                      'contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,' +
-                      'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        accessToken: 'pk.eyJ1IjoicGF1bG5hbTEyMyIsImEiOiJjam1ndzE2bzgzNTJkM3FsazdzOTRtMjMwIn0.Bt5nrR5H2-MeoZkVMhMRJg'
-    } as any).addTo(this.map);
-
-
-    this.fetch_NJ_JSON().then( (data: any) => {
+  private fetch(x: Promise<any>) {
+    x.then( (data: any) => {
 
       let features: Array<{properties:PrecinctProperties}> = data.features;
 
@@ -160,16 +142,48 @@ export class MapHandlerService {
         console.log(feat.properties.id, feat);
       });
       */
-      (window as any).njdata = data;
+      //(window as any).njdata = data;
 
 
     });
   }
 
 
+  public initMapOnElement(elem: HTMLElement) {
+    //half-assed singleton
+    // TODO FIX THIS
+    if(this.map != null) { throw new Error("map already defined in maphandler, should be singleton"); }
+
+    console.log(elem);
+    this.map = leaflet.map(elem).setView([40.19, -74.70], 8);
+
+    leaflet.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        id: 'mapbox.light',
+        attribution:  'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>' + 
+                      'contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,' +
+                      'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        accessToken: 'pk.eyJ1IjoicGF1bG5hbTEyMyIsImEiOiJjam1ndzE2bzgzNTJkM3FsazdzOTRtMjMwIn0.Bt5nrR5H2-MeoZkVMhMRJg'
+    } as any).addTo(this.map);
+    
+
+    
+    let x = this.fetch_NJ_JSON();
+    this.fetch(x);
+
+    let y = this.fetch_CT_JSON();
+    this.fetch(y);
+    
+  }
+
+
 
   public fetch_NJ_JSON(): Promise<any> {
     return this.http.get<any>(NJ_DATA_URL).toPromise();
+  }
+
+  public fetch_CT_JSON(): Promise<any> {
+    return this.http.get<any>(CT_DATA_URL).toPromise();
   }
 
   // assuming f has to be a precinct featuregroup
