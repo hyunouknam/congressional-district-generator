@@ -7,6 +7,7 @@ public class PrecinctForMap{
     private int id;
     private MasterPrecinct master;
     private Map map;
+    public boolean isAssigned=false;
     
     public PrecinctForMap(MasterPrecinct mp){
         master=mp;
@@ -21,7 +22,7 @@ public class PrecinctForMap{
         //find if its on border of its districtformap
         return false;
     }
-    public Set<MasterPrecinct> getNeighborPrecincts(){
+    public Set<PrecinctForMap> getNeighborPrecincts(){
         //same as master precincts neighbors? or just neighbors within its districtformap?
      return null;
     }

@@ -40,4 +40,8 @@ public class DistrictForMap{
     public void setMap(Map m){
         map=m;
     }
+    
+    public void calculateBorderPrecints(){
+        //any precincts on the border of the district
+    }
 }

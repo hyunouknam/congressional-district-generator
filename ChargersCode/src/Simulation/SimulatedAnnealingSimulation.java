@@ -1,5 +1,6 @@
 package Simulation;
 
+import Areas.Map;
 import Areas.PrecinctForMap;
 import Users.UserAccount;
 
@@ -8,24 +9,18 @@ public class SimulatedAnnealingSimulation extends Simulation{
     private float nextGoodness;
     
     public SimulatedAnnealingSimulation(UserAccount u, SimulationParams s){
-       //initializes Algorithm? or calls initializeAlgotithm?
        super(u,s);
+       //startingMap is current districting, pull from DB
+       startingMap=getStartingMap();
+       currentMap=startingMap;
     }
     
-    private void getStartingDistricting(){
+    private Map getStartingMap(){
         //start is current districting? From 2016 election?
+        //EntityManager.findCurrentMap(State s);`
+        //set currentgoodness to the goodness of the map
+        return null;
     }
-    
-    @Override
-    public boolean isAcceptable(){
-        return false;
-    }
-    
-    @Override
-    public void initializeAlgorithm(){
-        //startingMap is current districting, pull from DB
-        
-    }  
     
     @Override
     public void doStep(){

@@ -11,10 +11,9 @@ public abstract class Simulation {
    protected Map startingMap;
    protected Stack<Move> moves;
    protected Map currentMap; //startMap+all moves so far
-   protected float currentGoodness;
+   protected float currentGoodness; //goodness of the current map
    
    public Simulation(UserAccount u, SimulationParams s){
-       //initializes Algorithm? or calls initializeAlgotithm?
        params=s;
        user=u;
    }
@@ -23,12 +22,6 @@ public abstract class Simulation {
        //return value between 0 and 1
        return 0;
    }
-   
-   public boolean isAlgorithmInitialized(){
-       return false;
-   }
-   
-   public abstract void initializeAlgorithm();
    
    public void pause(){
        
@@ -43,7 +36,7 @@ public abstract class Simulation {
        return getProgress()==1;
    }
    
-   public abstract void doStep();
+   public abstract void doStep()throws CloneNotSupportedException;
    
    public abstract void pickMove();
    
@@ -53,9 +46,11 @@ public abstract class Simulation {
        
    }
    
-   public abstract boolean isAcceptable();
-   
    public void queueForWork(){
        SimulationWorker.addToRunQueue(this);
+   }
+   
+   public float getGoodness(){
+       return currentGoodness;
    }
 }

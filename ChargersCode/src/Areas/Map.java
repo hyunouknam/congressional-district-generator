@@ -12,6 +12,7 @@ public class Map{
     private HashMap<MasterDistrict, DistrictForMap> districts;
     private DistrictForMap nullDistrict;
     private HashMap<PrecinctForMap, DistrictForMap> precinctDistrictMapping;
+    private float currentGoodness;
     
     public Map(MasterState state){
         //should id be static or changed by DB?
@@ -29,7 +30,11 @@ public class Map{
     }
     
     public HashMap<MasterPrecinct, PrecinctForMap> getAllPrecincts(){
-        return precincts; //or return just the precinct for maps?
+        return precincts; //or return just the precinctformaps?
+    }
+    
+    public HashMap<MasterDistrict, DistrictForMap> getAllDistricts(){
+        return districts;
     }
     
     public PrecinctForMap getPrecinct(MasterPrecinct precinct){
@@ -52,15 +57,35 @@ public class Map{
     
     public void apply(Move m){
         //add move to collection of moves?
+        //change goodness
+        //adjust precinct to district mapping
     }
     
-    public Map cloneApply() throws CloneNotSupportedException{
+    public Map cloneApply(Move m) throws CloneNotSupportedException{
         Map newMap=(Map)super.clone();
         //do task on clone
+        //change goodness
+        //adjust precinct to district mapping
         return newMap;
     }
     
     public MasterState getState(){
         return master;
+    }
+    
+    public DistrictForMap getNullDisrict(){
+        return nullDistrict;
+    }
+    
+    public boolean isAcceptable(){
+        //satisfies all reqs
+            //population=total pop of assigned precincts/# of districts
+            //contiguous
+            //compact
+        return false;
+    }
+    
+    public float getGoodness(){
+        return currentGoodness;
     }
 }
