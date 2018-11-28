@@ -65,6 +65,11 @@ export class MapHandlerService {
   private map: leaflet.Map;
   private precintGeoJson: leaflet.GeoJSON;
 
+/*
+  private state: leaflet.LayerGroup;
+  private district: leaflet.LayerGroup = leaflet.layerGroup();
+  private precinct: leaflet.LayerGroup = leaflet.layerGroup();
+*/
 
   public currentFeature = new EventEmitter<leaflet.FeatureGroup | null>();
 
@@ -133,7 +138,10 @@ export class MapHandlerService {
         }
       })
 
+      //this.precintGeoJson.addTo(this.precinct);
       this.precintGeoJson.addTo(this.map);
+      
+      
 
 
       //====== DEBUGGING
@@ -157,6 +165,8 @@ export class MapHandlerService {
     console.log(elem);
     this.map = leaflet.map(elem).setView([40.19, -74.70], 8);
 
+
+
     leaflet.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         id: 'mapbox.light',
         attribution:  'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>' + 
@@ -173,7 +183,19 @@ export class MapHandlerService {
 
     let y = this.fetch_CT_JSON();
     this.fetch(y);
-    
+/*
+    this.map.on('zoomend', function() {
+      if (this.map.getZoom() > 8) {
+        this.map.addLayer(this.precinct);
+      }
+      else
+      {
+        this.map.removeLayer(this.precinct);
+      }   
+    });
+
+    this.precinct.addTo(this.map);
+    */
   }
 
 
