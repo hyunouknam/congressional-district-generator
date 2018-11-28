@@ -9,4 +9,8 @@ public class SimulationParams {
     private MasterState forState;
     private Set<PrecinctForMap> excludedPrecincts;
     
+    public MasterState getState(){
+        return forState;
+    }
+    
 }

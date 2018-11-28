@@ -4,9 +4,13 @@ package Areas;
 import java.util.Set;
 
 public class PrecinctForMap{
-    int id;
-    MasterPrecinct master;
-    Map map;
+    private int id;
+    private MasterPrecinct master;
+    private Map map;
+    
+    public PrecinctForMap(MasterPrecinct mp){
+        master=mp;
+    }
     
     public MasterDistrict getParentDistrict(){
         //return district it's in (DistictForMap) or return district master is in (MasterDistrict)?
@@ -24,5 +28,8 @@ public class PrecinctForMap{
     
     public Map getMap(){
         return map;
+    }
+    public void setMap(Map m){
+        map=m;
     }
 }

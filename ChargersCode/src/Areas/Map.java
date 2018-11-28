@@ -6,12 +6,27 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class Map{
-    int id;
-    MasterState master;
-    HashMap<MasterPrecinct, PrecinctForMap> precincts;
-    HashMap<MasterDistrict, DistrictForMap> districts;
-    DistrictForMap nullDistrict;
-    HashMap<PrecinctForMap, DistrictForMap> precinctDistrictMapping;
+    private int id;
+    private MasterState master;
+    private HashMap<MasterPrecinct, PrecinctForMap> precincts;
+    private HashMap<MasterDistrict, DistrictForMap> districts;
+    private DistrictForMap nullDistrict;
+    private HashMap<PrecinctForMap, DistrictForMap> precinctDistrictMapping;
+    
+    public Map(MasterState state){
+        //should id be static or changed by DB?
+        master=state;
+        nullDistrict=new DistrictForMap(); //holds unused precincts
+        for(MasterPrecinct mp: master.getPrecincts()){
+            PrecinctForMap pm=new PrecinctForMap(mp);
+            precincts.put(mp, pm);
+            nullDistrict.getPrecincts().add(pm);
+        }
+        for(MasterDistrict md: master.getDistricts()){
+            DistrictForMap dm=new DistrictForMap(md);
+            districts.put(md, dm);
+        }
+    }
     
     public HashMap<MasterPrecinct, PrecinctForMap> getAllPrecincts(){
         return precincts; //or return just the precinct for maps?

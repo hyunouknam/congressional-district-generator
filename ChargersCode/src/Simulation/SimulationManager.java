@@ -1,5 +1,6 @@
 package Simulation;
 
+import Users.UserAccount;
 import java.util.Set;
 
 public abstract class SimulationManager {
