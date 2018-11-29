@@ -12,6 +12,7 @@ public abstract class Simulation {
    protected Stack<Move> moves;
    protected Map currentMap; //startMap+all moves so far
    protected float currentGoodness; //goodness of the current map
+   protected float progress=0;
    
    public Simulation(UserAccount u, SimulationParams s){
        params=s;
@@ -20,8 +21,10 @@ public abstract class Simulation {
    
    public float getProgress(){
        //return value between 0 and 1
-       return 0;
+       return progress;
    }
+   
+   public abstract void updateProgress(float p);
    
    public void pause(){
        
@@ -38,7 +41,7 @@ public abstract class Simulation {
    
    public abstract void doStep()throws CloneNotSupportedException;
    
-   public abstract void pickMove();
+   public abstract void pickMove() throws CloneNotSupportedException;
    
    public abstract void updateDistricts(PrecinctForMap a, PrecinctForMap b);
    
@@ -53,4 +56,5 @@ public abstract class Simulation {
    public float getGoodness(){
        return currentGoodness;
    }
+   
 }

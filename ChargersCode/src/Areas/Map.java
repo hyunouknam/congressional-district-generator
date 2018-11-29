@@ -79,7 +79,7 @@ public class Map{
     
     public boolean isAcceptable(){
         //satisfies all reqs
-            //population=total pop of assigned precincts/# of districts
+            //population<=total pop of assigned precincts/# of districts
             //contiguous
             //compact
         return false;

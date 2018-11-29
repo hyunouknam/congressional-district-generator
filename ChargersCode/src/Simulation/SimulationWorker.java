@@ -12,7 +12,13 @@ public class SimulationWorker extends Thread{
     public static void runNextSimulation(){
         Simulation sim=queue.get(0);
         while (!sim.isDone()){
-            sim.doStep();
+            try{
+                sim.doStep();
+            }
+            catch(Exception CloneNotSupportedException){
+                System.err.println("clone couldn't occur");
+            }
+            
         }
         queue.remove(sim);
     }

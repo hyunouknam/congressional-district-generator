@@ -31,6 +31,10 @@ public class SimulatedAnnealingSimulation extends Simulation{
     public void pickMove(){
         
     }
+    @Override
+    public void updateProgress(float p){
+     
+    }
     
     @Override
     public void updateDistricts(PrecinctForMap a, PrecinctForMap b){
