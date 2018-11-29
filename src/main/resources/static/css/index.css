@@ -1,0 +1,154 @@
+html, body {
+    height: 100%; width:100%;
+}
+
+/* these should probably only apply to the main app page */
+body.force-fullsize {
+    min-width: 800px;
+    min-height: 600px;;
+}
+
+body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "header header"
+                         "main  main";
+    
+    align-items: center;
+
+    overflow:auto;
+}
+
+header {
+    grid-area: header;
+
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: space-between;
+    
+    
+    padding: 1em;
+    border-bottom: 1px solid lightgray;
+}
+
+header h2 {
+    margin: 0;
+}
+
+header .icon {
+    max-height: 100%;
+    height: 2em;
+    margin:0.5em;
+}
+
+
+
+/* By default, main is just a centered box for text content*/
+main {
+    grid-area: main;
+    align-self:stretch; /* take up all vertical space */
+    justify-self:center; /* center in grid */
+
+    /* overflow: hidden; */ /* Having this enabled sizes main to the screen */
+
+    padding: 2em;
+
+    /* default, for documents */ 
+    max-width: 50em;
+}
+
+/* for documents, use styles that would be reasonable for a vertical page */
+main.main-document {
+    
+}
+
+/* For the main map page, use a specific grid to show all the panes*/
+main.main-app {
+    display: grid;
+    grid-template-columns: 4fr 2fr ;
+    grid-template-rows: 2fr 2fr min-content;
+    grid-template-areas: "map info"
+                         "map simulations"
+                         "params params";
+    grid-gap: 1em;
+}
+
+main.main-app > #map {
+    grid-area: map;
+}
+
+main.main-app > #infobar {
+    grid-area: info;
+    
+}
+
+main.main-app > #js-params {
+    grid-area: params;
+}
+
+main.main-app > #js-simulations {
+    grid-area: simulations;
+}
+
+/* ==== Slider memes ===== */
+
+.weight-box {
+    width: 20em;
+    overflow:hidden;
+
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-gap: 0.5em;
+
+    align-items: center;
+}
+
+.slider {
+    flex: none;
+
+    position: relative;
+    display: flex;
+
+    align-items: center;
+    height: 2em;
+    margin: 0.5em;
+}
+
+.slider-handle {
+    flex: 0 0 auto;
+    position: absolute;
+    
+    margin:0;
+    padding: 0;
+    width: 1em;
+    height: 1em;
+    
+    z-index: 1;
+    left: calc(0.1 * (100% - 2em));
+}
+
+.slider-bar {
+    flex: 1 1 auto;
+
+}
+
+/* ========= Helpers *=========*/
+
+.box {
+    border: 1px solid lightgray;
+    border-radius: 0.5em;
+    margin: 0.5em;
+    padding: 0.5em;
+}
+
+.rotate {
+    transform: rotateZ(90);
+}
+
+.flexhbox {
+    display:flex;
+    flex-direction:row;
+    align-items: center;
+}
