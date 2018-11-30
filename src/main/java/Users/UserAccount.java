@@ -48,4 +48,14 @@ public class UserAccount {
     public void setMaps(Map[] maps){
         this.maps=maps;
     }
+
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return this.username;
+	}
+
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return this.password;
+	}
 }

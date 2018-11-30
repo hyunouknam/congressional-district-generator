@@ -40,8 +40,9 @@ public class MasterState{
     public Set<MasterPrecinct> findByStateId(int stateId) {
     	return precinctRepository.findByStateId(stateId);
     }
-    
-    public String getName(){
+
+
+	public String getName(){
         return name;
     }
     
