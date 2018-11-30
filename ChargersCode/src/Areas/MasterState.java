@@ -2,7 +2,18 @@ package Areas;
 
 import java.util.Set;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import Data.PrecinctRepository;
+import Data.StateRepository;
+
+@Entity
 public class MasterState{
+
+    @Id
     private int id;
     private final String name;
     private final String consText;
@@ -11,13 +22,18 @@ public class MasterState{
     private final Map currentMap;
     private Set<MasterDistrict> districts;
     private Set<MasterPrecinct> precincts;
+
+    @Autowired
+    private PrecinctRepository precinctRepository;
     
-    public MasterState(String name, String consText, boolean popIsEst, int numOfDistricts, Map map){
+    public MasterState(String name, String consText, boolean popIsEst, int numOfDistricts){
         this.name=name;
         this.consText=consText;
         this.popIsEst=popIsEst;
         this.numOfDistricts=numOfDistricts;
-        currentMap=map;
+
+        precinctRepository.findAll().forEach(precincts::add);
+        currentMap = new Map(this);
     }
     
     public String getName(){

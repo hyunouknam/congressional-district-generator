@@ -1,6 +1,12 @@
 package Areas;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class MasterDistrict{
+
+    @Id
     private int id;
     private final String name;
     

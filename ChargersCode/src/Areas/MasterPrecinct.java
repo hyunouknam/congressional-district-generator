@@ -1,10 +1,15 @@
 package Areas;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 import Data.GeoRegion;
 import Data.DemographicInfo;
 
+@Entity
 public class MasterPrecinct{
+
+    @Id
     private int id;
     private final String name;
     private final GeoRegion geoData;
