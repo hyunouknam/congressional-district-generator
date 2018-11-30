@@ -18,12 +18,12 @@ import { LeafletComponent } from './components/leaflet.component';
 import { LeafletInfoComponent } from './components/leaflet-info.component';
 
 // Services
-import { UsersService } from './users.service';
 import { MapHandlerService } from './maphandler.service';
+import { ServerCommService } from './servercomm.service';
 
 @NgModule({
     imports: [BrowserModule, NgbModule, Ng5SliderModule, FormsModule, HttpClientModule],
-    providers: [ UsersService, MapHandlerService ],
+    providers: [ MapHandlerService, ServerCommService ],
     declarations: [
         SimListComponent, SimEntryComponent, CurrentUserComponent,
         SimParamsComponent, LeafletComponent, LeafletInfoComponent

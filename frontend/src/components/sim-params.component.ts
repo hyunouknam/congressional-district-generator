@@ -4,6 +4,8 @@ import { SimParams, FunctionWeights } from '../models/params';
 
 import { Options as SliderOptions } from 'ng5-slider';
 
+import { ServerCommService } from '../servercomm.service';
+
 @Component({
   selector: 'app-sim-params',
   template: `
@@ -165,12 +167,13 @@ export class SimParamsComponent {
 
   
 
-  constructor() {
+  constructor(private servercomm: ServerCommService ) {
     this.params = new SimParams("CT");
   }
 
   submit() {
     console.log(this.params.serialize());
+    this.servercomm.reqStartSimulation(this.params)
   }
 
 

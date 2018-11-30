@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
-import { UsersService } from '../users.service';
+import { ServerCommService } from '../servercomm.service';
+
+import { User, Simulation } from '../models/user';
+
+
 
 @Component({
   selector: 'app-sim-list',
@@ -7,31 +11,28 @@ import { UsersService } from '../users.service';
 <div>
     <ul class="list-group">
     <h4>Saved Simulations</h4>
-    <app-sim-entry *ngFor="let entry of entries" 
-        class="list-group-item" [sim]="entry" (click)="removeEntry(entry)"></app-sim-entry>
+    <app-sim-entry *ngFor="let sim of (user? user.simulations : [])" 
+        class="list-group-item" [sim]="sim" (destroy)="removeEntry($event)"></app-sim-entry>
     </ul>
-    <button class="btn mt-2"(click)="newEntry()">AddOne</button>
 </div>
 `
 })
 export class SimListComponent {
-
-  name = 'Angular';
-  entries = ["1","2","3"];
+  // states: loading, loaded 
+  user : User | null;
 
   nextEntry = 4; // TODO: just for testing
 
-  constructor(private users: UsersService){
-
+  constructor(private servercomm: ServerCommService){
+      this.servercomm.getCurrentUserPromise().then(u => (this.user = u || null));
   }
 
-  newEntry(): void {
-    this.entries.push(""+ this.nextEntry);
-    this.nextEntry++;
-  }
+  removeEntry(sim: Simulation): void {
+    if(this.user) {
+      let i = this.user.simulations.indexOf(sim);
+      if(i >= 0) { this.user.simulations.splice(i, 1);}
+    }
 
-  removeEntry(entry: string): void {
-    let i = this.entries.indexOf(entry);
-    if(i >= 0) { this.entries.splice(i, 1);}
+    this.servercomm.reqDeleteSimulation(sim);
   }
 }
