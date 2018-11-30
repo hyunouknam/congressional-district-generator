@@ -5,7 +5,8 @@ import Areas.Map;
 import Areas.PrecinctForMap;
 import Users.UserAccount;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeMap;
 import javafx.util.Pair;
 
@@ -21,6 +22,11 @@ public class RegionGrowingSimulation extends Simulation{
        numOfPrecincts=startingMap.getAllPrecincts().values().size();
     }
     
+    /*
+    Description:
+        Gets the list of precincts for the state for which the algorithm is running.
+        Picks random precincts to be chosen as the seeds, one for each district.
+    */
     public void getSeedPrecincts(){
         Object[] precincts=startingMap.getAllPrecincts().values().toArray(); //needed to make it an array in order to get random ones
         Collection <DistrictForMap> districts=startingMap.getAllDistricts().values();
@@ -34,6 +40,11 @@ public class RegionGrowingSimulation extends Simulation{
         }
     }
         
+    /*
+    Description:
+        Checks if there are still precincts to be assigned.
+        Runs pickMove(), a call to updateGUI() and updates the progress of the simulation
+    */
     @Override
     public void doStep() throws CloneNotSupportedException{
         //dostep will go through a new round adding precincts to districts
@@ -45,38 +56,39 @@ public class RegionGrowingSimulation extends Simulation{
         }
     }
                  
-
+    /*
+    Description:
+        Chooses the neihboring precinct that results in the best goodness once added, for each district
+    */
     @Override
-    public void pickMove() throws CloneNotSupportedException{
-        //chooses the neighbor with the best resulting goodness
-            //for each district
-                //getBorderPrecincts()
-                //getNeighborPrecincts()
-                //cloneApply() isAcceptable() getGoodness()
-                //choose an acceptable neighbor with the best resulting goodness (pickMove())
-        HashMap<Float, Pair<Map, Move>> goodnesses=new HashMap<>();
+    public void pickMove() throws CloneNotSupportedException{        
+        Set<MoveTriple> goodnesses=new HashSet<>();
         for(DistrictForMap d: currentMap.getAllDistricts().values()){
             for(PrecinctForMap p: d.getBorderPrecincts()){
-                for(PrecinctForMap pm: p.getNeighborPrecincts()){
+                for(PrecinctForMap pm: p.getNeighborPrecincts()){ //neighbors of precincts on the border of the district
                     if(!p.isAssigned){
                         Move move=new Move(p, currentMap.getNullDisrict(), d);
                         Map m=currentMap.cloneApply(move);
                         if(m.isAcceptable()){
-                            goodnesses.put(m.getGoodness(), new Pair<>(m, move));
+                            goodnesses.add(new MoveTriple(m.getGoodness(), m, move));
                         }
                     }
                 }
             }
         }
         //sort map by goddnesses and add precinct that results in the best goodness
-        TreeMap<Float, Pair<Map, Move>> sortedGoodness=new TreeMap<>(goodnesses);
-        for (java.util.Map.Entry<Float, Pair<Map, Move>> pair : sortedGoodness.entrySet()){
-            currentMap=pair.getValue().getKey();
-            moves.add(pair.getValue().getValue());
-            break;
+        MoveTriple bestTriple=null;
+        for (MoveTriple t: goodnesses){
+            bestTriple= t.compareTo(bestTriple)>0 ? t:bestTriple;
+            currentMap=bestTriple.map;
+            moves.add(bestTriple.move);
         }       
     }
     
+    /*
+    Description:
+        Updates the simulations progress, which is based on the #
+    */
     @Override
     public void updateProgress(float p){
         //progress=# of moves # of precincts in state -> one move per precinct
