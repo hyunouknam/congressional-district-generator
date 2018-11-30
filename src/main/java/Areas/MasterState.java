@@ -36,7 +36,18 @@ public class MasterState{
         currentMap = new Map(this);
     }
     
-    public String getName(){
+
+    public MasterState(int id, String name, String consText, boolean popIsEst, int numOfDistricts) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.consText = consText;
+		this.popIsEst = popIsEst;
+		this.numOfDistricts = numOfDistricts;
+	}
+
+
+	public String getName(){
         return name;
     }
     
