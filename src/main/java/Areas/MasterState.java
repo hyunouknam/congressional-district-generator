@@ -31,9 +31,14 @@ public class MasterState{
         this.consText=consText;
         this.popIsEst=popIsEst;
         this.numOfDistricts=numOfDistricts;
+        
 
-        precinctRepository.findAll().forEach(precincts::add);
+        precinctRepository.findByStateId(this.id).forEach(precincts::add);
         currentMap = new Map(this);
+    }
+    
+    public Set<MasterPrecinct> findByStateId(int stateId) {
+    	return precinctRepository.findByStateId(stateId);
     }
     
     public String getName(){
