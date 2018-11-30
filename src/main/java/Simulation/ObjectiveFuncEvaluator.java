@@ -3,24 +3,23 @@ package Simulation;
 import Areas.Map;
 
 public class ObjectiveFuncEvaluator {
-    public int calcCompactness(Map m){
+    public static float calcCompactness(Map m){
         return 1;
     }
-    public int calcPopulationEquality(Map m){
+    public static float calcPopulationEquality(Map m){        
         return 0;
     }
-    public int calcPartisanFairness(Map m){
+    public static float calcPartisanFairness(Map m){
         return 0;
     }
-    public int calcRacialFairness(Map m){
+    public static float calcRacialFairness(Map m){
         return 0;
     }
-    public int calcContiguity(Map m){
+    public static float calcContiguity(Map m){
         return 0;
-    }
+    }    
     
-    
-    public float evaluateObjective(FunctionWeights w, Map m){
-        return 0;
+    public static float evaluateObjective(FunctionWeights w, Map m){
+       return w.w_compactness*calcCompactness(m)+w.w_partisan_fairness*calcPartisanFairness(m)+w.w_population_equality*calcPopulationEquality(m);
     }
 }

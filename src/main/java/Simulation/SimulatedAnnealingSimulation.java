@@ -32,12 +32,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
         
     }
     @Override
-    public void updateProgress(float p){
+    public void updateProgress(){
      
-    }
-    
-    @Override
-    public void updateDistricts(PrecinctForMap a, PrecinctForMap b){
-        
     }
 }

@@ -8,16 +8,44 @@ public class UserAccount {
     private Map[] maps;
     private String username;
     private String password;
+    private boolean signedIn=false;
     
-    public void register(){
-        
+    public UserAccount(){
+        role=UserRole.TEMP;
     }
     
-    public void login(){
-        
+    public UserAccount(String user, String pass){
+        role=UserRole.REGISTERED;
+        username=user;
+        password=pass;
+    }
+    
+    public void register(String user, String pass){
+        role=UserRole.REGISTERED;
+        username=user;
+        password=pass;
+        //EntityManager.addUser(this);
+    }
+    
+    public boolean login(){
+        if(UserManager.checkUserPassword(username, password)){
+            signedIn=true;
+        }
+        return signedIn;        
     }
     
     public void logout(){
-        
+        signedIn=false;
+    }
+    
+    public void getMaps(){
+        //maps=EntityManger.getMapsForUser(username);        
+    }
+    
+    public void setPreferences(String[] pref){
+        preferences=pref;
+    }
+    public void setMaps(Map[] maps){
+        this.maps=maps;
     }
 }

@@ -20,4 +20,12 @@ public class Move {
         return precinct.getMap().getState();
     }
     
+    public PrecinctForMap getPrecinct(){
+        return precinct;
+    }
+    
+    public DistrictForMap getNewDistrict(){
+        return dNew;
+    }
+    
 }

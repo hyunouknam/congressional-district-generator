@@ -6,19 +6,14 @@ public class UserManager {
         return temp;
     }
     
-    public  UserAccount createRegisteredUser(){
-        //get data from GUI and create nw user
-        UserAccount newUser=new UserAccount(/*Takes params*/);
-        return newUser;
-    }
-    
-    public UserAccount getRegisteredUser(){
-        //pull user from DB
+    public static UserAccount getRegisteredUser(String uname){
+        //EntityManager.findUser(uname);
         return null;
     }
     
-    public UserAccount checkUserPassword(String username, String password){
+    public static boolean checkUserPassword(String uname, String password){
         //compare uname and passwrod to entries in database
-        return null; //or user account
+        //EntityManager.userExists(uname, password);
+        return false;
     }
 }

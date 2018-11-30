@@ -1,7 +1,6 @@
 package Simulation;
 
 import Areas.Map;
-import Areas.PrecinctForMap;
 import Users.UserAccount;
 import java.util.Stack;
 
@@ -13,27 +12,19 @@ public abstract class Simulation {
    protected Map currentMap; //startMap+all moves so far
    protected float currentGoodness; //goodness of the current map
    protected float progress=0;
+   boolean isPaused=false;
    
    public Simulation(UserAccount u, SimulationParams s){
        params=s;
        user=u;
+       moves=new Stack<>();
    }
    
    public float getProgress(){
-       //return value between 0 and 1
        return progress;
    }
    
-   public abstract void updateProgress(float p);
-   
-   public void pause(){
-       
-   }
-   
-   public void terminate(){
-       //setisdone to yes
-       //remove from simworker's queue
-   }
+   public abstract void updateProgress();
    
    public boolean isDone(){
        return getProgress()==1;
@@ -43,18 +34,19 @@ public abstract class Simulation {
    
    public abstract void pickMove() throws CloneNotSupportedException;
    
-   public abstract void updateDistricts(PrecinctForMap a, PrecinctForMap b);
-   
    public void postUpdate(){
-       
+       //send progress
    }
    
    public void queueForWork(){
        SimulationWorker.addToRunQueue(this);
    }
    
-   public float getGoodness(){
-       return currentGoodness;
+   public void removeFromQueue(){
+       SimulationWorker.removeFromRunQueue(this);
    }
    
+   public float getGoodness(){
+       return currentMap.getGoodness();
+   }
 }

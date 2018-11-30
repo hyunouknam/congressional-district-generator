@@ -1,13 +1,13 @@
 package Areas;
 
-
+import Simulation.FunctionWeights;
 import Simulation.Move;
+import Simulation.ObjectiveFuncEvaluator;
 import java.util.HashMap;
-import java.util.Set;
 
 public class Map{
     private int id;
-    private MasterState master;
+    private final MasterState master;
     private HashMap<MasterPrecinct, PrecinctForMap> precincts;
     private HashMap<MasterDistrict, DistrictForMap> districts;
     private DistrictForMap nullDistrict;
@@ -17,7 +17,7 @@ public class Map{
     public Map(MasterState state){
         //should id be static or changed by DB?
         master=state;
-        nullDistrict=new DistrictForMap(); //holds unused precincts
+        nullDistrict=new DistrictForMap();
         for(MasterPrecinct mp: master.getPrecincts()){
             PrecinctForMap pm=new PrecinctForMap(mp);
             precincts.put(mp, pm);
@@ -45,27 +45,15 @@ public class Map{
         return districts.get(district);
     }
     
-    public void assignPrecinct(DistrictForMap d, PrecinctForMap p){
-        //add precinctformap to districtformap's collection
+    public void apply(FunctionWeights weights, Move m){
+        calculateGoodness(weights);
+        precinctDistrictMapping.put(m.getPrecinct(), m.getNewDistrict()); //modifies precint to district mapping        
     }
     
-    public Set<PrecinctForMap> getAllBorderPrecincts(){
-        Set<PrecinctForMap> borders=null;
-        //add all value in borders for each district OR add values in borders for state
-        return borders;
-    }
-    
-    public void apply(Move m){
-        //add move to collection of moves?
-        //change goodness
-        //adjust precinct to district mapping
-    }
-    
-    public Map cloneApply(Move m) throws CloneNotSupportedException{
+    public Map cloneApply(FunctionWeights weights, Move m) throws CloneNotSupportedException{
         Map newMap=(Map)super.clone();
-        //do task on clone
-        //change goodness
-        //adjust precinct to district mapping
+        newMap.calculateGoodness(weights);
+        newMap.getPrecinctDistrictMapping().put(m.getPrecinct(), m.getNewDistrict());
         return newMap;
     }
     
@@ -77,15 +65,19 @@ public class Map{
         return nullDistrict;
     }
     
-    public boolean isAcceptable(){
-        //satisfies all reqs
-            //population<=total pop of assigned precincts/# of districts
-            //contiguous
-            //compact
-        return false;
-    }
-    
     public float getGoodness(){
         return currentGoodness;
+    }
+    
+    public void calculateGoodness(FunctionWeights weights){
+        ObjectiveFuncEvaluator.evaluateObjective(weights,this);
+    }
+    
+    public MasterState getMaster(){
+        return master;
+    }
+    
+    public HashMap<PrecinctForMap, DistrictForMap> getPrecinctDistrictMapping(){
+        return precinctDistrictMapping;
     }
 }
