@@ -6,17 +6,17 @@ import java.util.Set;
 
 public class DistrictForMap{
     private int id;
-    private MasterDistrict instanceFor;
+    private final MasterDistrict master;
     private Map map;
     private Set<PrecinctForMap> precincts;
     
     public DistrictForMap(){
-        instanceFor=null; //null district, for unassigned precincts
+        master=null; //null district, for unassigned precincts
         precincts=new HashSet<>();        
     }
     
     public DistrictForMap(MasterDistrict md){
-        instanceFor=md;
+        master=md;
         precincts=new HashSet<>();
     }
     
@@ -26,12 +26,22 @@ public class DistrictForMap{
     }
     
     public Set<PrecinctForMap> getBorderPrecincts(){
+        //get the precincts that are on te border of the district
         return null;
     }
     
-    public Set<DistrictForMap> getNeighborDistricts(){
-        //will include the districts belonging to the precincts that neighbor a precinct on the border of this districtformap
-        return null;
+    /*
+    Description:
+        //Returns the districts holding the precincts that neighbor a precinct on the border of this districtformap
+    */
+    public Set<DistrictForMap> getNeighborDistricts(){        
+        Set<DistrictForMap> neighbors=new HashSet<>();
+        for(PrecinctForMap border: getBorderPrecincts()){
+            for(PrecinctForMap neighbor: border.getNeighborPrecincts()){
+                neighbors.add(neighbor.getParentDistrict());
+            }
+        }
+        return neighbors;
     }
     
     public Map getMap(){
@@ -41,7 +51,15 @@ public class DistrictForMap{
         map=m;
     }
     
-    public void calculateBorderPrecints(){
-        //any precincts on the border of the district
+    public int getID(){
+        return id;
+    }
+    
+    public void setID(int i){
+        id=i;
+    }
+    
+    public MasterDistrict getMaster(){
+        return master;
     }
 }

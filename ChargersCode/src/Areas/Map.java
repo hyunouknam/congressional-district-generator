@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class Map{
     private int id;
-    private MasterState master;
+    private final MasterState master;
     private HashMap<MasterPrecinct, PrecinctForMap> precincts;
     private HashMap<MasterDistrict, DistrictForMap> districts;
     private DistrictForMap nullDistrict;
@@ -17,7 +17,7 @@ public class Map{
     public Map(MasterState state){
         //should id be static or changed by DB?
         master=state;
-        nullDistrict=new DistrictForMap(); //holds unused precincts
+        nullDistrict=new DistrictForMap();
         for(MasterPrecinct mp: master.getPrecincts()){
             PrecinctForMap pm=new PrecinctForMap(mp);
             precincts.put(mp, pm);
@@ -47,11 +47,12 @@ public class Map{
     
     public void assignPrecinct(DistrictForMap d, PrecinctForMap p){
         //add precinctformap to districtformap's collection
+        //why this and moves?
     }
     
     public Set<PrecinctForMap> getAllBorderPrecincts(){
         Set<PrecinctForMap> borders=null;
-        //add all value in borders for each district OR add values in borders for state
+        //borders of the state?
         return borders;
     }
     
@@ -87,5 +88,14 @@ public class Map{
     
     public float getGoodness(){
         return currentGoodness;
+    }
+    
+    public void calculateGoodness(){
+        //done after each move
+        
+    }
+    
+    public MasterState getMaster(){
+        return master;
     }
 }

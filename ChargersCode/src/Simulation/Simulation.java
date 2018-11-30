@@ -17,6 +17,7 @@ public abstract class Simulation {
    public Simulation(UserAccount u, SimulationParams s){
        params=s;
        user=u;
+       moves=new Stack<>();
    }
    
    public float getProgress(){
@@ -56,5 +57,4 @@ public abstract class Simulation {
    public float getGoodness(){
        return currentGoodness;
    }
-   
 }

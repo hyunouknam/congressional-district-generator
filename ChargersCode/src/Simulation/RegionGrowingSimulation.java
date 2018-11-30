@@ -7,8 +7,6 @@ import Users.UserAccount;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeMap;
-import javafx.util.Pair;
 
 public class RegionGrowingSimulation extends Simulation{ 
     /*
@@ -50,7 +48,7 @@ public class RegionGrowingSimulation extends Simulation{
         //dostep will go through a new round adding precincts to districts
         if(currentMap.getNullDisrict().getPrecincts().size()>0){
             pickMove();
-            //updateGUI();
+            //postUpdate(JSON);
             //set progress--based on number of moves? number of remaining districts unassigned? ...?
             
         }
@@ -58,7 +56,7 @@ public class RegionGrowingSimulation extends Simulation{
                  
     /*
     Description:
-        Chooses the neihboring precinct that results in the best goodness once added, for each district
+        Chooses the neighboring precinct that results in the best goodness once added, for each district
     */
     @Override
     public void pickMove() throws CloneNotSupportedException{        

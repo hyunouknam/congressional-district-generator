@@ -17,8 +17,7 @@ public class SimulationWorker extends Thread{
             }
             catch(Exception CloneNotSupportedException){
                 System.err.println("clone couldn't occur");
-            }
-            
+            }            
         }
         queue.remove(sim);
     }

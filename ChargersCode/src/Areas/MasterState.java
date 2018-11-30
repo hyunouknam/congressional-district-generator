@@ -4,18 +4,40 @@ import java.util.Set;
 
 public class MasterState{
     private int id;
-    private String name;
-    private String consText;
-    private boolean popIsEst;
-    private int numOfDistricts;
-    private Map currentMap;
+    private final String name;
+    private final String consText;
+    private final boolean popIsEst;
+    private final int numOfDistricts;
+    private final Map currentMap;
     private Set<MasterDistrict> districts;
     private Set<MasterPrecinct> precincts;
     
+    public MasterState(String name, String consText, boolean popIsEst, int numOfDistricts, Map map){
+        this.name=name;
+        this.consText=consText;
+        this.popIsEst=popIsEst;
+        this.numOfDistricts=numOfDistricts;
+        currentMap=map;
+    }
+    
+    public String getName(){
+        return name;
+    }
+    
+    public String getConsText(){
+        return consText;
+    }
+    
+    public boolean isPopEst(){
+        return popIsEst;
+    }
+    
+    public int getNumDistricts(){
+        return numOfDistricts;
+    }
+    
     public Map getCurrentMap(){
-        //pull data from database
-        //create map object
-        return null;
+        return currentMap;
     }
     
     public Set<MasterDistrict> getDistricts(){
@@ -24,5 +46,13 @@ public class MasterState{
     
     public Set<MasterPrecinct> getPrecincts(){
         return precincts;
+    }
+    
+    public int getID(){
+        return id;
+    }
+    
+    public void setID(int i){
+        id=i;
     }
 }
