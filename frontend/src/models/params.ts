@@ -41,7 +41,7 @@ export class SimParams {
 
     if(this.algorithm == "REGION_GROWING") {
       assert(this.regionGrowingMovesToCheck != null, "movesToCheck is null");
-      assert(this.regionGrowingMovesToCheck > 0 , "movesToCheck must be >0");
+      assert( (this.regionGrowingMovesToCheck!) > 0 , "movesToCheck must be >0");
 
     } else { // Simulated annealing
       assert(this.annealingTime != null, "annealingTime is null");
