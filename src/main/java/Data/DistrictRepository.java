@@ -1,9 +1,8 @@
 package Data;
 
 import org.springframework.data.repository.CrudRepository;
+import Areas.MasterDistrict;
 
-import Areas.MasterState;
-
-public interface DistrictRepository extends CrudRepository<MasterState, Integer>{
+public interface DistrictRepository extends CrudRepository<MasterDistrict, Integer>{
 //
 }
