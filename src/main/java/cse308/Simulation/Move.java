@@ -1,8 +1,8 @@
-package Simulation;
+package cse308.Simulation;
 
-import Areas.MasterState;
-import Areas.PrecinctForMap;
-import Areas.DistrictForMap;
+import cse308.Areas.DistrictForMap;
+import cse308.Areas.MasterState;
+import cse308.Areas.PrecinctForMap;
 
 public class Move {
     PrecinctForMap precinct;

@@ -1,10 +1,10 @@
-package Areas;
+package cse308.Areas;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import Data.GeoRegion;
-import Data.DemographicInfo;
+import cse308.Data.DemographicInfo;
+import cse308.Data.GeoRegion;
 
 @Entity
 public class MasterPrecinct{

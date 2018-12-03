@@ -1,4 +1,4 @@
-package Users;
+package cse308.Users;
 
 public class UserManager {
     public UserAccount getTemporaryUser(){
@@ -15,5 +15,9 @@ public class UserManager {
         //compare uname and passwrod to entries in database
         //EntityManager.userExists(uname, password);
         return false;
+    }
+    
+    public static boolean checkUserExists(String name) {
+		return false;
     }
 }

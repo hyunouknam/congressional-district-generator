@@ -1,4 +1,4 @@
-package Data;
+package cse308.Data;
 
 public class Coords {
     private final float lat;

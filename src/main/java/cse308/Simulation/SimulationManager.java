@@ -1,7 +1,8 @@
-package Simulation;
+package cse308.Simulation;
 
-import Areas.MasterState;
-import Users.UserAccount;
+import cse308.Areas.MasterState;
+import cse308.Users.UserAccount;
+
 import java.util.Set;
 
 public abstract class SimulationManager {

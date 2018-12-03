@@ -1,6 +1,6 @@
-package Simulation;
+package cse308.Simulation;
 
-import Areas.Map;
+import cse308.Areas.Map;
 
 public class MoveTriple implements Comparable<MoveTriple>{
     float goodness;

@@ -1,7 +1,8 @@
-package Simulation;
+package cse308.Simulation;
 
-import Areas.Map;
-import Users.UserAccount;
+import cse308.Areas.Map;
+import cse308.Users.UserAccount;
+
 import java.util.Stack;
 
 public abstract class Simulation {

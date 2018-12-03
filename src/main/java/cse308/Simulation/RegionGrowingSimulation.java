@@ -1,9 +1,10 @@
-package Simulation;
+package cse308.Simulation;
 
-import Areas.DistrictForMap;
-import Areas.Map;
-import Areas.PrecinctForMap;
-import Users.UserAccount;
+import cse308.Areas.DistrictForMap;
+import cse308.Areas.Map;
+import cse308.Areas.PrecinctForMap;
+import cse308.Users.UserAccount;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package Areas;
+package cse308.Areas;
 
 
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package Simulation;
+package cse308.Simulation;
 
 public class FunctionWeights {
     final float w_compactness;

@@ -1,8 +1,8 @@
-package Simulation;
+package cse308.Simulation;
 
-import Areas.Map;
-import Areas.PrecinctForMap;
-import Users.UserAccount;
+import cse308.Areas.Map;
+import cse308.Areas.PrecinctForMap;
+import cse308.Users.UserAccount;
 
 public class SimulatedAnnealingSimulation extends Simulation{
     private float temperature;

@@ -1,4 +1,4 @@
-package Areas;
+package cse308.Areas;
 
 import java.util.Set;
 
@@ -7,8 +7,8 @@ import javax.persistence.Id;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import Data.PrecinctRepository;
-import Data.StateRepository;
+import cse308.Data.PrecinctRepository;
+import cse308.Data.StateRepository;
 
 @Entity
 public class MasterState{

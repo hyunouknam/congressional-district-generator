@@ -1,4 +1,4 @@
-package Users;
+package cse308.Users;
 
 public enum UserRole {
     TEMP,

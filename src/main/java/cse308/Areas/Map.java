@@ -1,9 +1,10 @@
-package Areas;
+package cse308.Areas;
 
-import Simulation.FunctionWeights;
-import Simulation.Move;
-import Simulation.ObjectiveFuncEvaluator;
 import java.util.HashMap;
+
+import cse308.Simulation.FunctionWeights;
+import cse308.Simulation.Move;
+import cse308.Simulation.ObjectiveFuncEvaluator;
 
 public class Map{
     private int id;

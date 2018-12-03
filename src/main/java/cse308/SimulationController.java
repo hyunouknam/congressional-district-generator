@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import Simulation.FunctionWeights;
-import Simulation.SimulationManager;
-import Simulation.SimulationParams;
-import Users.UserAccount;
+import cse308.Simulation.FunctionWeights;
+import cse308.Simulation.SimulationManager;
+import cse308.Simulation.SimulationParams;
+import cse308.Users.UserAccount;
 
 @RestController
 public class SimulationController {

@@ -1,4 +1,4 @@
-package Areas;
+package cse308.Areas;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -24,5 +24,15 @@ public class MasterDistrict{
     
     public String getName(){
         return name;
+    }
+    
+    public String jsonFormat() {
+    	String s = "{";
+    	s = s + "\"id\":";
+    	s = s + "\"" + id + "\"";
+    	s = s + ", \"name\":";
+    	s = s + "\"" + name + "\"";
+    	s = s + "}";
+    	return s;
     }
 }

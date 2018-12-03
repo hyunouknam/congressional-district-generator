@@ -1,8 +1,9 @@
-package Simulation;
+package cse308.Simulation;
 
-import Areas.MasterState;
-import Areas.PrecinctForMap;
 import java.util.Set;
+
+import cse308.Areas.MasterState;
+import cse308.Areas.PrecinctForMap;
 
 public class SimulationParams {
     final FunctionWeights functionWeights;
