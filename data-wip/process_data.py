@@ -7,6 +7,15 @@ import re
 import shapely
 import json
 
+from ct_towns_to_districts import towns_to_districts
+
+#adds AUTOGEN_CT_DISTRICT column to table using TOWN column
+def ct_add_districts(df):
+    df_raw['AUTOGEN_CT_DISTRICT'] = df_raw.TOWN.apply(
+            lambda x : towns_to_districts.get(x,None))
+
+    return df
+
 # ============ COMMON PROPERTY NAMES
 # These are the properties we want to have across all states that we support
 #
@@ -44,6 +53,7 @@ ALL_CONFIGS = {
 "CT": {
     "infile": './CT/ct_final.shp',
     "outfile": './ct_out.csv',
+    'process_raw': ct_add_districts, #is run at prepoc time
     "properties_map": {
         "GEOID10": "uid",
 
@@ -51,7 +61,9 @@ ALL_CONFIGS = {
         "TOWN": "town_name",
         "COUNTY_NUM": "county_name", #not actually a name
 
-        "US_HOUSE": "district",
+        # dataset didn't actually have districts, so we add them
+        # in the ct_add_districts
+        "AUTOGEN_CT_DISTRICT": "district",
 
         "POP100": "population",
         "VAP": "voting_pop",
@@ -96,6 +108,10 @@ df_raw = df_raw[~ undef_dists]
 
 
 # ============= discard extra columns, rename  =================
+
+def noop(x): return x
+preproc_func = CURR_CONFIG.get("process_raw", noop)
+df_raw = preproc_func(df_raw)
 
 prop_map = CURR_CONFIG["properties_map"]
 df = df_raw.reindex(columns=prop_map.keys())
