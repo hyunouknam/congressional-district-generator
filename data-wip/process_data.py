@@ -31,6 +31,7 @@ def ct_add_districts(df):
 
 ALL_CONFIGS = {
 "NJ": {
+    "state": "NJ",
     "infile": './NJ/shapefiles/nj_final.shp',
     "outfile": './nj_out.csv',
     "properties_map": {
@@ -48,9 +49,11 @@ ALL_CONFIGS = {
         "AV": "dem_vote_fraction",
 
         "geometry": "geometry",
+        "state": "state",
         },
     },
 "CT": {
+    "state": "CT",
     "infile": './CT/ct_final.shp',
     "outfile": './ct_out.csv',
     'process_raw': ct_add_districts, #is run at prepoc time
@@ -72,6 +75,7 @@ ALL_CONFIGS = {
         "DEM_PCT": "fraction_votes_dem",
 
         "geometry": "geometry",
+        "state": "state",
         },
     },
 }
@@ -80,7 +84,7 @@ ALL_CONFIGS = {
 
 # ================== CHANGE THIS TO CHANGE WHICH IT GENERATES
 # TODO, maybe just loop through all of em
-CURR_CONFIG = ALL_CONFIGS["CT"]
+CURR_CONFIG = ALL_CONFIGS["NJ"]
 
 
 
@@ -97,6 +101,8 @@ df_raw = gp.read_file(CURR_CONFIG['infile'])
 # clips to only use polygons in supplied coords (for faster testing)
 #df_raw = df_raw.cx[-74.5:-74.2, 39.4:39.8]
 #df_raw = df_raw.cx[-74.4:-74.3, 39.5:39.63]
+
+df_raw['state'] = CURR_CONFIG['state']
 
 # =============== get rid of weird empty districts =============
 # There's a handful of districts with no population, no voting district id
