@@ -1,11 +1,17 @@
 import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
 
-import { User, Simulation } from "./models/user"
+import { User, UserSerializedJSON, Simulation } from "./models/user"
 import { SimParams } from "./models/params";
 
 import { resolveAfter } from './utils';
 
 
+const api_urls = {
+    fetchUserData: '/api/getUserData',
+    startSimulation: '/api/startSimulation',
+    deleteSimulation: '/api/startSimulation/<id>',
+}
 
 
 
@@ -57,9 +63,9 @@ export class ServerCommService {
   public getCurrentUser() { return this.currentUser; }
 
 
-  constructor() {
-    //this.currentUser = this.servercomm.reqFetchUserData()       // Real query
-    this.userPromise = resolveAfter(pickRandom(TEST_JSONS), 500)  // TODO DEBUG: stub
+  constructor(private http: HttpClient) {
+    this.userPromise = this.reqFetchUserData()       // Real query
+    //this.userPromise = resolveAfter(pickRandom(TEST_JSONS), 500)  // TODO DEBUG: stub
         .then(json => User.createParse(json));
 
     //Do the catch after we assign.
@@ -72,11 +78,10 @@ export class ServerCommService {
 
 
   //TODO: maybe should return a User promise instead?
-  public reqFetchUserData(): Promise<string> {
+  public reqFetchUserData(): Promise<UserSerializedJSON> {
     //GET /api/getUserData
+    return this.http.get<UserSerializedJSON>(api_urls.fetchUserData).toPromise();
 
-    // DEBUG: STUBBED
-    return Promise.reject("REQUEST NOT IMPLEMENTED");
   }
 
 

@@ -1,7 +1,6 @@
 import { UIDable, UIDRepository } from '../utils';
 
 
-
 export type SimulationData = string;
 
 //keep track of all simulataions
@@ -36,21 +35,17 @@ export class Simulation implements UIDable {
     return "Simulation#" + this.id;
   }
 
-
-
 }
 
 
-export class User implements UIDable {
 
 
-  static repo: UIDRepository<User> = new UIDRepository();
 
-  //TODO ! BUG WARNING: what happens if we error out in the middle of the thing? transactional?
-  static createParse(data: string): User {
-    //parse serialized user json into user obj
+// ==========================================================
+//                  USER STUFF
 
-    let testObj: {
+
+export type UserSerializedJSON = {
       username: string;
       id: string;
       savedData: Array< {
@@ -58,11 +53,19 @@ export class User implements UIDable {
           id: string;
           data: string|null;
                         } >
-    };
+}
 
-    testObj = JSON.parse(data);
+export class User implements UIDable {
+
+
+  static repo: UIDRepository<User> = new UIDRepository();
+
+  //TODO ! BUG WARNING: what happens if we error out in the middle of the thing? transactional?
+  static createParse(data: UserSerializedJSON): User {
+    //parse serialized user json into user obj
+
     console.log("==========");
-    console.log(testObj);
+    console.log(data);
 
     //TODO: TYPECHECKS?
     //function assert(b: boolean) { if (!b) throw new SyntaxError(); }
@@ -70,8 +73,8 @@ export class User implements UIDable {
     //assert(testObj.id == "string");
     //assert(testObj.savedData) == "");
 
-    let sims = testObj.savedData.map(s => Simulation.createParse(s));
-    let user = new User(testObj.id, testObj.username, sims);
+    let sims = data.savedData.map(s => Simulation.createParse(s));
+    let user = new User(data.id, data.username, sims);
 
     return user; 
   }
