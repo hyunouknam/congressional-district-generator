@@ -13,6 +13,10 @@ public class SimulationParams {
     private SimulationManager simManager;
     
     public SimulationParams(FunctionWeights weights, String state, String algorithm){
+    	assert weights 		!= null: "Sim params must not be null";
+    	assert state 		!= null: "Sim params must not be null";
+    	assert algorithm 	!= null: "Sim params must not be null";
+
     	SimulationManager simManager = SimulationManager.getInstance();
     	
     	functionWeights=weights;

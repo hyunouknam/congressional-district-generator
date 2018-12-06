@@ -15,20 +15,24 @@ import cse308.Users.UserAccount;
 @RestController
 public class SimulationController {
 
-	@RequestMapping(value = "/api/start", method = RequestMethod.POST, consumes = "application/json")
+	@RequestMapping(value = "/api/startSimulation", method = RequestMethod.POST, consumes = "application/json")
 	public void addNewWorker(@RequestBody Map<String, Object> simParams) throws Exception {
 
 		Map<String, Object> b = (Map<String, Object>) simParams.get("functionWeights");
 
-		FunctionWeights functionWeights = new FunctionWeights((float) b.get("wCompactness"),
-				(float) b.get("wPopulationEquality"), (float) b.get("wPartisanFairness"));
+		FunctionWeights functionWeights = new FunctionWeights(
+				(float)(double) b.get("wCompactness"),
+				(float)(double) b.get("wPopulationEquality"),
+				(float)(double) b.get("wPartisanFairness"));
 
-		SimulationParams simulationParams = new SimulationParams(functionWeights, (String) simParams.get("state"),
-				(String) simParams.get("algortihm"));
+		SimulationParams simulationParams = new SimulationParams(
+					functionWeights,
+					(String) simParams.get("state"),
+					(String) simParams.get("algorithm"));
 		
 		UserAccount userAccount = new UserAccount();
 		
-		SimulationManager.createSim(userAccount,  simulationParams);
+		SimulationManager.getInstance().createSim(userAccount,  simulationParams);
 	}
 
 }
