@@ -4,7 +4,6 @@ import cse308.Areas.DistrictForMap;
 import cse308.Areas.Map;
 import cse308.Areas.PrecinctForMap;
 import cse308.Users.UserAccount;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +11,7 @@ import java.util.Set;
 public class RegionGrowingSimulation extends Simulation{
     int numOfPrecincts;
     
-    public RegionGrowingSimulation(UserAccount u, SimulationParams s){
+    public RegionGrowingSimulation(UserAccount u,SimulationParams s){
        super(u,s);
        startingMap=new Map(params.forState); //create new blank map
        currentMap=startingMap;    //for regiongrowing, blankmap=startingmap=currentmap
@@ -26,13 +25,12 @@ public class RegionGrowingSimulation extends Simulation{
         Picks random precincts to be chosen as the seeds, one for each district.
     */
     public void getSeedPrecincts(){
-        Object[] precincts=startingMap.getAllPrecincts().toArray(); //needed to make it an array in order to get random ones
+        Object[] precincts=startingMap.getAllPrecincts().toArray();
         Collection <DistrictForMap> districts=startingMap.getAllDistricts();
         for(DistrictForMap d: districts){
-            PrecinctForMap p=(PrecinctForMap)precincts[Integer.parseInt(""+precincts.length*Math.random())];
+            PrecinctForMap p=(PrecinctForMap)precincts[precincts.length*(int)Math.random()];
             p.isAssigned=true;
             Move move=new Move(p, startingMap.getNullDisrict(), d);
-            d.getPrecincts().add(p);
             moves.add(move);
             currentMap.apply(this.params.functionWeights, move);
         }
@@ -44,7 +42,7 @@ public class RegionGrowingSimulation extends Simulation{
         Runs pickMove(), a call to updateGUI() and updates the progress of the simulation
     */
     @Override
-    public void doStep() {
+    public void doStep(){
         if(currentMap.getNullDisrict().getPrecincts().size()>0){
             pickMove();            
             updateProgress();
@@ -57,9 +55,9 @@ public class RegionGrowingSimulation extends Simulation{
         Chooses the neighboring precinct that results in the best goodness once added, for each district
     */
     @Override
-    public void pickMove() {
+    public void pickMove(){        
         Set<MoveTriple> goodnesses=new HashSet<>();
-        for(DistrictForMap d: currentMap.getAllDistricts()) {
+        for(DistrictForMap d: currentMap.getAllDistricts()){
             for(PrecinctForMap p: d.getBorderPrecincts()){ //updates each time
                 for(PrecinctForMap pm: p.getNeighborPrecincts()){ //neighbors of precincts on the border of the district
                     if(!p.isAssigned){

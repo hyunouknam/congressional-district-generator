@@ -2,7 +2,6 @@ package cse308.Simulation;
 
 import cse308.Areas.MasterState;
 import cse308.Users.UserAccount;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,8 +30,8 @@ public class SimulationManager {
     public static SimulationWorker getSimWorker(){
         if(simWorker==null){
             simWorker=new SimulationWorker();
+            simWorker.run();
         }
-        simWorker.run();
         return simWorker;
     }
     

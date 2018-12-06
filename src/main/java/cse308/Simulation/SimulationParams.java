@@ -1,21 +1,17 @@
 package cse308.Simulation;
 
-import java.util.Set;
-
 import cse308.Areas.MasterState;
-import cse308.Areas.PrecinctForMap;
 
 public class SimulationParams {
     final FunctionWeights functionWeights;
     final MasterState forState;
     final String algorithm;
 //    Set<PrecinctForMap> excludedPrecincts;
-    private SimulationManager simManager;
     
     public SimulationParams(FunctionWeights weights, String state, String algorithm){
-    	assert weights 		!= null: "Sim params must not be null";
-    	assert state 		!= null: "Sim params must not be null";
-    	assert algorithm 	!= null: "Sim params must not be null";
+    	assert weights 		!= null: "Sim weights must not be null";
+    	assert state 		!= null: "Sim state must not be null";
+    	assert algorithm 	!= null: "Sim algorithm must not be null";
 
     	SimulationManager simManager = SimulationManager.getInstance();
     	
@@ -38,8 +34,6 @@ public class SimulationParams {
     
 //    public void addExcusion(PrecinctForMap p){
 //        excludedPrecincts.add(p);
-//    }
-    
-    
+//    } 
     
 }

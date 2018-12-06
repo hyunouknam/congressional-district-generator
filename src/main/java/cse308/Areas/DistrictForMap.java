@@ -15,21 +15,13 @@ public class DistrictForMap{
     private int id;
     private final MasterDistrict master;
     private Map map;
-    private Set<PrecinctForMap> precincts;
     
     public DistrictForMap(){
-        master=null; //null district, for unassigned precincts
-        precincts=new HashSet<>();        
+        master=null; //null district, for unassigned precincts      
     }
     
     public DistrictForMap(MasterDistrict md){
         master=md;
-        precincts=new HashSet<>();
-    }
-    
-    
-    public Set<PrecinctForMap> getPrecincts(){
-        return precincts;
     }
     
     public Set<PrecinctForMap> getBorderPrecincts(){
@@ -68,6 +60,16 @@ public class DistrictForMap{
     
     public MasterDistrict getMaster(){
         return master;
+    }
+    
+    public Set<PrecinctForMap> getPrecincts(){
+        Set <PrecinctForMap> precincts=new HashSet<>();
+        for(PrecinctForMap p: map.getPrecinctDistrictMapping().keySet()){
+            if (map.getPrecinctDistrictMapping().get(p)==this){
+                precincts.add(p);
+            }
+        }
+        return precincts;
     }
     
     public Geometry getDistrictBoundary() {
