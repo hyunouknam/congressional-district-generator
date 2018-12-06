@@ -1,6 +1,8 @@
 package cse308.Areas;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +16,7 @@ import cse308.Simulation.Move;
 import cse308.Simulation.ObjectiveFuncEvaluator;
 
 //@Entity
-public class Map{
+public class Map implements Cloneable{
 //	@Id
 //	@GeneratedValue(strategy=GenerationType.AUTO)
     private int id;
@@ -22,70 +24,68 @@ public class Map{
 //	@ManyToOne
 //	@JoinColumn(name="state_id")
     private final MasterState master;
+
+    // Mapping objects, not managed by Spring Hibernate
     private HashMap<MasterPrecinct, PrecinctForMap> precincts;
     private HashMap<MasterDistrict, DistrictForMap> districts;
     private DistrictForMap nullDistrict;
     private HashMap<PrecinctForMap, DistrictForMap> precinctDistrictMapping;
-    private double currentGoodness;
-    
-//    public Map(MasterState state){
-//        //should id be static or changed by DB?
-//        master=state;
-//        nullDistrict=new DistrictForMap();
-//        for(MasterPrecinct mp: master.getPrecincts()){
-//            PrecinctForMap pm=new PrecinctForMap(mp);
-//            precincts.put(mp, pm);
-//            nullDistrict.getPrecincts().add(pm);
-//        }
-//        for(MasterDistrict md: master.getDistricts()){
-//            DistrictForMap dm=new DistrictForMap(md);
-//            districts.put(md, dm);
-//        }
-//    }
-    
-    public Map(MasterState state) {
-		// TODO Auto-generated constructor stub
-    	master=state;
-	}
 
-	public HashMap<MasterPrecinct, PrecinctForMap> getAllPrecincts(){
-        return precincts; //or return just the precinctformaps?
+    private double currentGoodness;
+
+
+    public Map(MasterState state){
+        master = state;
+
+        //prepare precincts, associate with master precincts
+        precincts = new HashMap<>();
+        for(MasterPrecinct mp: master.getPrecincts()){
+            PrecinctForMap p = new PrecinctForMap(mp);
+            precincts.put(mp, p);
+        }
+
+        //prepare districts
+        districts = new HashMap<>();
+        nullDistrict=new DistrictForMap();
+        for(MasterDistrict md: master.getDistricts()){
+            DistrictForMap d = new DistrictForMap(md);
+            districts.put(md, d);
+        }
+
+        // Initialize, all precincts start in null district
+        this.precinctDistrictMapping = new HashMap<>();
+        for(PrecinctForMap p: getAllPrecincts()) {
+            precinctDistrictMapping.put(p, this.nullDistrict);
+        }
     }
-    
-    public HashMap<MasterDistrict, DistrictForMap> getAllDistricts(){
-        return districts;
-    }
-    
-    public PrecinctForMap getPrecinct(MasterPrecinct precinct){
-        return precincts.get(precinct); 
-    }
-    
-    public DistrictForMap getDistrict(MasterDistrict district){
-        return districts.get(district);
-    }
-    
+
+	// ======= GETTERS
+
+    public MasterState getState(){ return master; }
+	public Collection<PrecinctForMap> getAllPrecincts(){ return precincts.values(); }
+    public Collection<DistrictForMap> getAllDistricts(){ return districts.values(); }
+    public DistrictForMap getNullDisrict(){ return nullDistrict; }
+
+    public HashMap<PrecinctForMap, DistrictForMap> getPrecinctDistrictMapping(){ return precinctDistrictMapping; }
+
+    public double getGoodness(){ return currentGoodness; }
+
+    public PrecinctForMap getPrecinct(MasterPrecinct precinct){ return precincts.get(precinct); }
+    public DistrictForMap getDistrict(MasterDistrict district){ return districts.get(district); }
+
+
+    // ========== Rest of it
+
     public void apply(FunctionWeights weights, Move m){
         calculateGoodness(weights);
         precinctDistrictMapping.put(m.getPrecinct(), m.getNewDistrict()); //modifies precint to district mapping        
     }
     
-    public Map cloneApply(FunctionWeights weights, Move m) throws CloneNotSupportedException{
-        Map newMap=(Map)super.clone();
+    public Map cloneApply(FunctionWeights weights, Move m) {
+        Map newMap = clone();
         newMap.calculateGoodness(weights);
         newMap.getPrecinctDistrictMapping().put(m.getPrecinct(), m.getNewDistrict());
         return newMap;
-    }
-    
-    public MasterState getState(){
-        return master;
-    }
-    
-    public DistrictForMap getNullDisrict(){
-        return nullDistrict;
-    }
-    
-    public double getGoodness(){
-        return currentGoodness;
     }
     
     public double calculateGoodness(FunctionWeights weights){
@@ -93,11 +93,26 @@ public class Map{
         return currentGoodness;
     }
     
-    public MasterState getMaster(){
-        return master;
-    }
-    
-    public HashMap<PrecinctForMap, DistrictForMap> getPrecinctDistrictMapping(){
-        return precinctDistrictMapping;
+
+
+    @Override
+    public Map clone() {
+        Map copy = new Map(master);
+
+        //Make sure all precincts are assigned to their corresponding districts
+        for(PrecinctForMap p: getAllPrecincts()){
+            //get corresponding precinct in copy
+            MasterPrecinct mp = p.getMaster();
+            PrecinctForMap p_copy = copy.getPrecinct(mp);
+
+            //get corresponding parent district in copy
+            MasterDistrict md = p.getParentDistrict().getMaster();
+            DistrictForMap d_copy = copy.getDistrict(md);
+
+            //assign copy's version of p to copy's version of d
+            copy.precinctDistrictMapping.put(p_copy, d_copy);
+        }
+
+        return copy;
     }
 }

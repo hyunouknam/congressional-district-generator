@@ -21,12 +21,7 @@ public class SimulationWorker extends Thread{
             ((RegionGrowingSimulation)sim).getSeedPrecincts();
         }
         while (!sim.isDone() && !sim.isPaused){
-            try{
-                sim.doStep();                
-            }
-            catch(CloneNotSupportedException exception){
-                System.err.println("Clone of simulation's map couldn't be made");
-            }            
+            sim.doStep();
         }
         if(sim.isDone() && sim.getClass().equals(SimulatedAnnealingSimulation.class)){
             Map bestMap=((SimulatedAnnealingSimulation)sim).bestMap;

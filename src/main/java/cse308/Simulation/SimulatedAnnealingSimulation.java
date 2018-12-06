@@ -59,7 +59,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
         Tries to increase goodness <rounds> times at the given temperature
     */
     @Override
-    public void doStep()throws CloneNotSupportedException{
+    public void doStep(){
         for (int i=0;i<rounds;i++){
             pickMove();
         }
@@ -76,8 +76,8 @@ public class SimulatedAnnealingSimulation extends Simulation{
         Moves the precinct from precinct A to precinct B if it's likely to improve the goodness.
     */
     @Override
-    public void pickMove() throws CloneNotSupportedException{
-        Object[] districts=currentMap.getAllDistricts().values().toArray();
+    public void pickMove() {
+        Object[] districts=currentMap.getAllDistricts().toArray();
         DistrictForMap randomDistrict=(DistrictForMap)districts[districts.length*(int)Math.random()]; //gets random district
         Object[] precincts=randomDistrict.getBorderPrecincts().toArray();
         PrecinctForMap randomPrecinct=(PrecinctForMap)precincts[precincts.length*(int)Math.random()]; //gets random border precinct

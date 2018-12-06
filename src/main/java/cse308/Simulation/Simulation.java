@@ -11,6 +11,7 @@ public abstract class Simulation {
 	protected int id;
 	protected UserAccount user;
 	protected SimulationParams params;
+
 	protected Map startingMap;
 	protected Stack<Move> moves;
 	protected Map currentMap; // startMap+all moves so far
@@ -39,9 +40,9 @@ public abstract class Simulation {
 		return getProgress() == 1;
 	}
 
-	public abstract void doStep() throws CloneNotSupportedException;
+	public abstract void doStep();
 
-	public abstract void pickMove() throws CloneNotSupportedException;
+	public abstract void pickMove();
 
 	public void postUpdate() {
 		// send progress to client

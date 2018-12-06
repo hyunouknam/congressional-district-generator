@@ -26,8 +26,8 @@ public class RegionGrowingSimulation extends Simulation{
         Picks random precincts to be chosen as the seeds, one for each district.
     */
     public void getSeedPrecincts(){
-        Object[] precincts=startingMap.getAllPrecincts().values().toArray(); //needed to make it an array in order to get random ones
-        Collection <DistrictForMap> districts=startingMap.getAllDistricts().values();
+        Object[] precincts=startingMap.getAllPrecincts().toArray(); //needed to make it an array in order to get random ones
+        Collection <DistrictForMap> districts=startingMap.getAllDistricts();
         for(DistrictForMap d: districts){
             PrecinctForMap p=(PrecinctForMap)precincts[Integer.parseInt(""+precincts.length*Math.random())];
             p.isAssigned=true;
@@ -44,7 +44,7 @@ public class RegionGrowingSimulation extends Simulation{
         Runs pickMove(), a call to updateGUI() and updates the progress of the simulation
     */
     @Override
-    public void doStep() throws CloneNotSupportedException{
+    public void doStep() {
         if(currentMap.getNullDisrict().getPrecincts().size()>0){
             pickMove();            
             updateProgress();
@@ -57,9 +57,9 @@ public class RegionGrowingSimulation extends Simulation{
         Chooses the neighboring precinct that results in the best goodness once added, for each district
     */
     @Override
-    public void pickMove() throws CloneNotSupportedException{        
+    public void pickMove() {
         Set<MoveTriple> goodnesses=new HashSet<>();
-        for(DistrictForMap d: currentMap.getAllDistricts().values()){
+        for(DistrictForMap d: currentMap.getAllDistricts()) {
             for(PrecinctForMap p: d.getBorderPrecincts()){ //updates each time
                 for(PrecinctForMap pm: p.getNeighborPrecincts()){ //neighbors of precincts on the border of the district
                     if(!p.isAssigned){
