@@ -19,7 +19,7 @@ public class MasterState{
     private int id;
     private final String name;
     private final String consText;
-    private final boolean popIsEst;
+//    private final boolean popIsEst;
     private final int numOfDistricts;
     private final Map currentMap;
     private Set<MasterDistrict> districts;
@@ -31,7 +31,7 @@ public class MasterState{
     public MasterState(String name, String consText, boolean popIsEst, int numOfDistricts){
         this.name=name;
         this.consText=consText;
-        this.popIsEst=popIsEst;
+//        this.popIsEst=popIsEst;
         this.numOfDistricts=numOfDistricts;
         
 
@@ -54,9 +54,9 @@ public class MasterState{
         return consText;
     }
     
-    public boolean isPopEst(){
-        return popIsEst;
-    }
+//    public boolean isPopEst(){
+//        return popIsEst;
+//    }
     
     public int getNumDistricts(){
         return numOfDistricts;
