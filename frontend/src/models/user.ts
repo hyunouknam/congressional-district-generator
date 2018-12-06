@@ -46,12 +46,13 @@ export class Simulation implements UIDable {
 
 
 export type UserSerializedJSON = {
-      username: string;
       id: string;
-      savedData: Array< {
+      user: string;
+      simulations: Array< {
           name: string;
           id: string;
-          data: string|null;
+          params: any;
+          //etc
                         } >
 }
 
@@ -73,8 +74,8 @@ export class User implements UIDable {
     //assert(testObj.id == "string");
     //assert(testObj.savedData) == "");
 
-    let sims = data.savedData.map(s => Simulation.createParse(s));
-    let user = new User(data.id, data.username, sims);
+    let sims = data.simulations.map(s => Simulation.createParse(s));
+    let user = new User(data.id, data.user, sims);
 
     return user; 
   }

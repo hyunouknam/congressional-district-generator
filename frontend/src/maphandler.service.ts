@@ -118,7 +118,7 @@ export class MapHandlerService {
       let obs = new Observable<any>((observer: Observer<any>) => {
         handler = (e:any) => observer.next(e);
       }).pipe(take(10)).subscribe((e:any) => {
-        console.log(e);
+        //console.log(e);
       });
 
       this.precintGeoJson = leaflet.geoJSON(data, {
