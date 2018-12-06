@@ -26,7 +26,7 @@ public class Map{
     private HashMap<MasterDistrict, DistrictForMap> districts;
     private DistrictForMap nullDistrict;
     private HashMap<PrecinctForMap, DistrictForMap> precinctDistrictMapping;
-    private float currentGoodness;
+    private double currentGoodness;
     
 //    public Map(MasterState state){
 //        //should id be static or changed by DB?
@@ -84,12 +84,13 @@ public class Map{
         return nullDistrict;
     }
     
-    public float getGoodness(){
+    public double getGoodness(){
         return currentGoodness;
     }
     
-    public void calculateGoodness(FunctionWeights weights){
-        ObjectiveFuncEvaluator.evaluateObjective(weights,this);
+    public double calculateGoodness(FunctionWeights weights){
+        currentGoodness=ObjectiveFuncEvaluator.evaluateObjective(weights,this);
+        return currentGoodness;
     }
     
     public MasterState getMaster(){

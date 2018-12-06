@@ -14,7 +14,7 @@ public abstract class Simulation {
 	protected Map startingMap;
 	protected Stack<Move> moves;
 	protected Map currentMap; // startMap+all moves so far
-	protected float currentGoodness; // goodness of the current map
+	protected double currentGoodness; // goodness of the current map
 	protected float progress = 0;
 	boolean isPaused = false;
 
@@ -44,7 +44,7 @@ public abstract class Simulation {
 	public abstract void pickMove() throws CloneNotSupportedException;
 
 	public void postUpdate() {
-		// send progress
+		// send progress to client
 	}
 
 	public void queueForWork() {
@@ -55,8 +55,9 @@ public abstract class Simulation {
             SimulationManager.getSimWorker().removeFromRunQueue(this);
 	}
 
-	public float getGoodness() {
-		return currentMap.getGoodness();
+	public double getGoodness() {
+            currentGoodness=currentMap.getGoodness();
+            return currentGoodness;
 	}
 
 	public String getJSON() {

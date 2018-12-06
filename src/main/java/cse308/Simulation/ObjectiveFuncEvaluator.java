@@ -3,19 +3,19 @@ package cse308.Simulation;
 import cse308.Areas.Map;
 
 public class ObjectiveFuncEvaluator {
-    public static float calcCompactness(Map m){
+    public static double calcCompactness(Map m){
         return 1;
     }
-    public static float calcPopulationEquality(Map m){        
+    public static double calcPopulationEquality(Map m){        
         return 0;
     }
-    public static float calcPartisanFairness(Map m){
+    public static double calcPartisanFairness(Map m){
         return 0;
     }
-    public static float calcRacialFairness(Map m){
+    public static double calcRacialFairness(Map m){
         return 0;
     }
-    public static float calcContiguity(Map m){
+    public static double calcContiguity(Map m){
         return 0;
     }    
     

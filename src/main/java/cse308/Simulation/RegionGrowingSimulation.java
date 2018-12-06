@@ -65,7 +65,7 @@ public class RegionGrowingSimulation extends Simulation{
                     if(!p.isAssigned){
                         Move move=new Move(p, currentMap.getNullDisrict(), d);
                         Map m=currentMap.cloneApply(this.params.functionWeights, move);
-                        goodnesses.add(new MoveTriple(m.getGoodness(), m, move));
+                        goodnesses.add(new MoveTriple(m.calculateGoodness(params.functionWeights), m, move));
                     }
                 }
             }

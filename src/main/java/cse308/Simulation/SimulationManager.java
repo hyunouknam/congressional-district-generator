@@ -9,8 +9,7 @@ import java.util.Set;
 public class SimulationManager {
     private static SimulationManager simManager = null;
     private static SimulationWorker simWorker=null;
-    static Set<MasterState> states;    
-    private static Set<Simulation> simulations;
+    static Set<MasterState> states;
     
     public SimulationManager() {
     	MasterState nj = new MasterState("NJ", "Constitution", true, 13);

@@ -9,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -33,8 +32,8 @@ public class SimulatedAnnealingSimulation extends Simulation{
             reader=Json.createReader(new FileReader(properties));
         }catch (FileNotFoundException error){
             System.err.println("Properties file could not be found, using default values.");
-            temperature=1.0f;
-            alpha=0.9f;
+            temperature=1.0;
+            alpha=0.9;
             rounds=100;
             return;
         }       
@@ -50,8 +49,8 @@ public class SimulatedAnnealingSimulation extends Simulation{
     */
     private Map getStartingMap(){
         //start is current districting? From 2016 election?
-        //EntityManager.findCurrentMap(State s);`         
-        currentGoodness=getGoodness();
+        //currentMap=EntityManager.findCurrentMap(State s);      
+        currentGoodness=currentMap.calculateGoodness(params.functionWeights);
         return null;
     }
     
@@ -94,7 +93,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
         DistrictForMap newDistrict=(DistrictForMap)newDistricts[newDistricts.length*(int)Math.random()]; //chooses random border district for move
         Move m=new Move(randomPrecinct, randomDistrict, newDistrict);
         Map nextMap=currentMap.cloneApply(this.params.functionWeights,m);
-        float nextGoodness=nextMap.getGoodness();
+        double nextGoodness=nextMap.calculateGoodness(params.functionWeights);;
         if(nextGoodness>currentGoodness){
             currentMap=nextMap;
             currentGoodness=nextGoodness;
@@ -130,7 +129,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
         //progress will be updated after each temp change: so divided into temp/alpha's
     }
     
-    public double calcAcceptanceProb(float current, float next, double temp){
+    public double calcAcceptanceProb(double current, double next, double temp){
         return Math.E*(next-current)/temp;
     }
 }
