@@ -2,12 +2,25 @@ package cse308.Areas;
 
 import java.util.HashMap;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import cse308.Simulation.FunctionWeights;
 import cse308.Simulation.Move;
 import cse308.Simulation.ObjectiveFuncEvaluator;
 
+//@Entity
 public class Map{
+//	@Id
+//	@GeneratedValue(strategy=GenerationType.AUTO)
     private int id;
+	
+//	@ManyToOne
+//	@JoinColumn(name="state_id")
     private final MasterState master;
     private HashMap<MasterPrecinct, PrecinctForMap> precincts;
     private HashMap<MasterDistrict, DistrictForMap> districts;
