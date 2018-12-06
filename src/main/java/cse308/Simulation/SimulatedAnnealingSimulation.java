@@ -1,38 +1,117 @@
 package cse308.Simulation;
 
+import cse308.Areas.DistrictForMap;
 import cse308.Areas.Map;
 import cse308.Areas.PrecinctForMap;
 import cse308.Users.UserAccount;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SimulatedAnnealingSimulation extends Simulation{
     private float temperature;
-    private float nextGoodness;
+    private float alpha;
+    private int rounds;
+    protected Map bestMap;
+    private boolean repeat=false;
     
     public SimulatedAnnealingSimulation(UserAccount u, SimulationParams s){
        super(u,s);
-       //startingMap is current districting, pull from DB
        startingMap=getStartingMap();
        currentMap=startingMap;
+       bestMap=currentMap;
+       //temperature=read from properties file; (1.0f)
+       //alpha=read from properties file; (between 0.8 and 0.99)
+       //rounds=read from propeties file; (between 100 and 1000)
     }
     
+    /*
+    Description:
+        Gets the current districting from the database (latest election)
+    */
     private Map getStartingMap(){
         //start is current districting? From 2016 election?
-        //EntityManager.findCurrentMap(State s);`
-        //set currentgoodness to the goodness of the map
+        //EntityManager.findCurrentMap(State s);`         
+        currentGoodness=getGoodness();
         return null;
     }
     
+    /*
+    Description:
+        Tries to increase goodness <rounds> times at the given temperature
+    */
     @Override
-    public void doStep(){
-        
+    public void doStep()throws CloneNotSupportedException{
+        for (int i=0;i<rounds;i++){
+            pickMove();
+        }
+        if(currentGoodness>bestMap.getGoodness()){
+            bestMap=currentMap;
+        }
+        temperature*=alpha;
     }
 
+    /*
+    Description:
+        Chooses a random district (A) and gets a random precinct on its border.
+        Chooses a random district (B) that borders the previously chosen district.
+        Moves the precinct from precinct A to precinct B if it's likely to improve the goodness.
+    */
     @Override
-    public void pickMove(){
-        
+    public void pickMove() throws CloneNotSupportedException{
+        Object[] districts=currentMap.getAllDistricts().values().toArray();
+        DistrictForMap randomDistrict=(DistrictForMap)districts[districts.length*(int)Math.random()]; //gets random district
+        Object[] precincts=randomDistrict.getBorderPrecincts().toArray();
+        PrecinctForMap randomPrecinct=(PrecinctForMap)precincts[precincts.length*(int)Math.random()]; //gets random border precinct
+        Set<DistrictForMap> neighborDistricts=new HashSet<>();
+        HashMap<PrecinctForMap, DistrictForMap> precinctDistrictMapping=currentMap.getPrecinctDistrictMapping();
+        for(PrecinctForMap p: randomPrecinct.getNeighborPrecincts()){
+            DistrictForMap district=precinctDistrictMapping.get(p);
+            if(!district.equals(randomDistrict)){
+                neighborDistricts.add(district); //adds each district bordering the previosuly chosen district
+            }
+        }
+        Object[] newDistricts=neighborDistricts.toArray();
+        DistrictForMap newDistrict=(DistrictForMap)newDistricts[newDistricts.length*(int)Math.random()]; //chooses random border district for move
+        Move m=new Move(randomPrecinct, randomDistrict, newDistrict);
+        Map nextMap=currentMap.cloneApply(this.params.functionWeights,m);
+        float nextGoodness=nextMap.getGoodness();
+        if(nextGoodness>currentGoodness){
+            currentMap=nextMap;
+            currentGoodness=nextGoodness;
+        }
+        else{
+            if(currentGoodness==nextGoodness){
+                repeat=true;
+                return;
+            }
+            if(calcAcceptanceProb(currentGoodness, nextGoodness, temperature)>Math.random()){
+                currentMap=nextMap;
+                currentGoodness=nextGoodness;
+            }
+        }
+        moves.add(m);
     }
+    
+    /*
+    Description:
+        Updates the simulations progress, which is based on alpha 
+        alpha*run/ 1 -> 1/alpha runs
+    */
     @Override
     public void updateProgress(){
-     
+        //progress would be 1 if temp reaches min or goodness has stayed constant
+        if(repeat){
+            progress=1;
+        }
+        else{
+            progress+=alpha;
+        }            
+        //number of runs=Temp/alpha*[100-1000]
+        //progress will be updated after each temp change: so divided into temp/alpha's
+    }
+    
+    public float calcAcceptanceProb(float current, float next, float temp){
+        return (float)Math.E*(next-current)/temp;
     }
 }

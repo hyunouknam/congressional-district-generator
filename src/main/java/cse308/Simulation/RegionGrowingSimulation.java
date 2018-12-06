@@ -76,6 +76,7 @@ public class RegionGrowingSimulation extends Simulation{
             bestTriple= t.compareTo(bestTriple)>0 ? t:bestTriple;
         }
         currentMap=bestTriple.map;
+        currentGoodness=currentMap.getGoodness();
         moves.add(bestTriple.move);
     }
     
