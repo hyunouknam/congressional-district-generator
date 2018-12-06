@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { User, UserSerializedJSON, Simulation } from "./models/user"
+import { User, UserSerializedJSON, Simulation, SimulationSerializedJSON} from "./models/user"
 import { SimParams } from "./models/params";
 
 import { resolveAfter } from './utils';
@@ -90,9 +90,13 @@ export class ServerCommService {
     //body: params.serialize()
     //response: serialized simulation, do Simulation.createParse(JSON);
     
-    // get user 
-    console.log("Doing startSimulation:" +  JSON.stringify(SimParams, null, "  "));
-    return Promise.reject("REQUEST NOT IMPLEMENTED");
+    console.log("Doing startSimulation:" +  JSON.stringify(params, null, "  "));
+    
+    //get response
+    let req = this.http.post<SimulationSerializedJSON>(api_urls.startSimulation, params).toPromise();
+    
+    //parse response
+    return req.then(json => Simulation.createParse(json));
   }
 
 
