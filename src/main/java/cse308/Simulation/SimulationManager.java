@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SimulationManager {
-	private static SimulationManager simManager = null; 
-	//can hold all master states? 
+    private static SimulationManager simManager = null;
+    private static SimulationWorker simWorker=null;
     static Set<MasterState> states;    
     private static Set<Simulation> simulations;
     
@@ -25,9 +25,17 @@ public class SimulationManager {
     { 
         if (simManager == null) 
             simManager = new SimulationManager(); 
-  
+        getSimWorker();
         return simManager; 
     } 
+    
+    public static SimulationWorker getSimWorker(){
+        if(simWorker==null){
+            simWorker=new SimulationWorker();
+        }
+        simWorker.run();
+        return simWorker;
+    }
     
     /*
     Description:
@@ -41,7 +49,7 @@ public class SimulationManager {
         else{
             newSim=new SimulatedAnnealingSimulation(user, params);
         }
-        SimulationWorker.addToRunQueue(newSim);
+        simWorker.addToRunQueue(newSim);
         return newSim;
     }
     

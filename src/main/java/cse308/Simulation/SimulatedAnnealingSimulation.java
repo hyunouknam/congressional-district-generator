@@ -4,25 +4,44 @@ import cse308.Areas.DistrictForMap;
 import cse308.Areas.Map;
 import cse308.Areas.PrecinctForMap;
 import cse308.Users.UserAccount;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 public class SimulatedAnnealingSimulation extends Simulation{
-    private float temperature;
-    private float alpha;
-    private int rounds;
+    private double temperature;
+    private final double alpha;
+    private final int rounds;
     protected Map bestMap;
     private boolean repeat=false;
     
     public SimulatedAnnealingSimulation(UserAccount u, SimulationParams s){
-       super(u,s);
-       startingMap=getStartingMap();
-       currentMap=startingMap;
-       bestMap=currentMap;
-       //temperature=read from properties file; (1.0f)
-       //alpha=read from properties file; (between 0.8 and 0.99)
-       //rounds=read from propeties file; (between 100 and 1000)
+        super(u,s);
+        startingMap=getStartingMap();
+        currentMap=startingMap;
+        bestMap=currentMap;
+        File properties=new File(".."+File.separator+".."+File.separator+".."+File.separator+"resources"+File.separator+"constants.properties");
+        JsonReader reader;
+        try{
+            reader=Json.createReader(new FileReader(properties));
+        }catch (FileNotFoundException error){
+            System.err.println("Properties file could not be found, using default values.");
+            temperature=1.0f;
+            alpha=0.9f;
+            rounds=100;
+            return;
+        }       
+        JsonObject json=reader.readObject();
+        temperature=json.getJsonNumber("temperature").doubleValue();
+        alpha=json.getJsonNumber("alpha").doubleValue();
+        rounds=json.getJsonNumber("rounds").intValue();
     }
     
     /*
@@ -111,7 +130,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
         //progress will be updated after each temp change: so divided into temp/alpha's
     }
     
-    public float calcAcceptanceProb(float current, float next, float temp){
-        return (float)Math.E*(next-current)/temp;
+    public double calcAcceptanceProb(float current, float next, double temp){
+        return Math.E*(next-current)/temp;
     }
 }

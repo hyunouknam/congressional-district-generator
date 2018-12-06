@@ -4,17 +4,17 @@ import cse308.Areas.Map;
 import java.util.ArrayList;
 
 public class SimulationWorker extends Thread{
-    private static ArrayList<Simulation> queue=new ArrayList<>();
+    private ArrayList<Simulation> queue=new ArrayList<>();
     
-    public static void addToRunQueue(Simulation sim){
+    public void addToRunQueue(Simulation sim){
         queue.add(sim);
     }
     
-    public static void removeFromRunQueue(Simulation sim){
+    public void removeFromRunQueue(Simulation sim){
         queue.remove(sim);
     }
     
-    public static void runNextSimulation(){
+    public void runNextSimulation(){
         Simulation sim=queue.get(0);
         Map result;
         if(sim.progress==0 && sim.getClass().equals(RegionGrowingSimulation.class)){
@@ -56,5 +56,12 @@ public class SimulationWorker extends Thread{
     public void terminate(){
         queue.get(0).isPaused=true;
         queue.remove(0);        
+    }
+    
+    @Override
+    public void run(){
+        if(!queue.isEmpty()){
+            runNextSimulation();
+        }
     }
 }

@@ -48,11 +48,11 @@ public abstract class Simulation {
 	}
 
 	public void queueForWork() {
-		SimulationWorker.addToRunQueue(this);
+            SimulationManager.getSimWorker().addToRunQueue(this);
 	}
 
 	public void removeFromQueue() {
-		SimulationWorker.removeFromRunQueue(this);
+            SimulationManager.getSimWorker().removeFromRunQueue(this);
 	}
 
 	public float getGoodness() {
