@@ -1,12 +1,12 @@
 package cse308.Areas;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+//import javax.persistence.Entity;
+//import javax.persistence.Id;
 
-@Entity
+//@Entity
 public class MasterDistrict{
 
-    @Id
+//    @Id
     private int id;
     private final String name;
     

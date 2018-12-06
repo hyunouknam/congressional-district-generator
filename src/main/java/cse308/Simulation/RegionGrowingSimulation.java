@@ -11,11 +11,13 @@ import java.util.Set;
 
 public class RegionGrowingSimulation extends Simulation{
     int numOfPrecincts;
+    
     public RegionGrowingSimulation(UserAccount u, SimulationParams s){
        super(u,s);
        startingMap=new Map(params.forState); //create new blank map
        currentMap=startingMap;    //for regiongrowing, blankmap=startingmap=currentmap
-       numOfPrecincts=startingMap.getAllPrecincts().values().size();
+//       numOfPrecincts=startingMap.getAllPrecincts().values().size();
+       numOfPrecincts = 6339;
     }
     
     /*

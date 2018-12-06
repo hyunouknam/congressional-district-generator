@@ -7,10 +7,12 @@ import javax.persistence.Id;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import cse308.Data.PrecinctRepository;
-import cse308.Data.StateRepository;
+//import cse308.Data.PrecinctRepository;
 
-@Entity
+//import cse308.Data.PrecinctRepository;
+//import cse308.Data.StateRepository;
+
+//@Entity
 public class MasterState{
 
     @Id
@@ -23,8 +25,8 @@ public class MasterState{
     private Set<MasterDistrict> districts;
     private Set<MasterPrecinct> precincts;
 
-    @Autowired
-    private PrecinctRepository precinctRepository;
+//    @Autowired
+//    private PrecinctRepository precinctRepository;
     
     public MasterState(String name, String consText, boolean popIsEst, int numOfDistricts){
         this.name=name;
@@ -33,12 +35,14 @@ public class MasterState{
         this.numOfDistricts=numOfDistricts;
         
 
-        precinctRepository.findByStateId(this.id).forEach(precincts::add);
+//        precinctRepository.findByStateId(this.id).forEach(precincts::add);
+//        currentMap = new Map(this);
         currentMap = new Map(this);
     }
     
     public Set<MasterPrecinct> findByStateId(int stateId) {
-    	return precinctRepository.findByStateId(stateId);
+//    	return precinctRepository.findByStateId(stateId);
+    	return null;
     }
 
 

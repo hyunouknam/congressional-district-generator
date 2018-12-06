@@ -7,7 +7,7 @@ import javax.persistence.Id;
 
 import cse308.Areas.Map;
 
-@Entity
+//@Entity
 public class UserAccount {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

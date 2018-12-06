@@ -11,19 +11,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import cse308.Data.UserAccountRepository;
+//import cse308.Data.UserAccountRepository;
 import cse308.Users.UserAccount;
 
 @Controller
 public class LoginController {
 	
-	@Autowired
-	private UserAccountRepository userAccountRepository;
+//	@Autowired
+//	private UserAccountRepository userAccountRepository;
 	
 	@RequestMapping(value="/api/login", method=RequestMethod.POST, produces="application/json")
 	public String property(HttpServletRequest request) {
 	    String username = request.getParameter("username");
 	    String password = request.getParameter("password");
+	    
+	    if(username.equals("abc@sbu.edu")) {
+	    	if(password.equals("123")) {
+	    		request.getSession().setAttribute("user", "abc@sbu.edu");
+	    	}
+	    }
 	    
     	return "redirect:/";
 	}
@@ -37,7 +43,7 @@ public class LoginController {
 	    
 	    UserAccount user = new UserAccount(username, password);
 	    
-	    userAccountRepository.save(user);
+//	    userAccountRepository.save(user);
 	    
 	    System.out.println(user.toString());
 	    String s = "{";

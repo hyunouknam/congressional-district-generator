@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import cse308.Data.DemographicInfo;
 import cse308.Data.GeoRegion;
 
-@Entity
+//@Entity
 public class MasterPrecinct{
 
     @Id

@@ -15,22 +15,27 @@ public class Map{
     private HashMap<PrecinctForMap, DistrictForMap> precinctDistrictMapping;
     private float currentGoodness;
     
-    public Map(MasterState state){
-        //should id be static or changed by DB?
-        master=state;
-        nullDistrict=new DistrictForMap();
-        for(MasterPrecinct mp: master.getPrecincts()){
-            PrecinctForMap pm=new PrecinctForMap(mp);
-            precincts.put(mp, pm);
-            nullDistrict.getPrecincts().add(pm);
-        }
-        for(MasterDistrict md: master.getDistricts()){
-            DistrictForMap dm=new DistrictForMap(md);
-            districts.put(md, dm);
-        }
-    }
+//    public Map(MasterState state){
+//        //should id be static or changed by DB?
+//        master=state;
+//        nullDistrict=new DistrictForMap();
+//        for(MasterPrecinct mp: master.getPrecincts()){
+//            PrecinctForMap pm=new PrecinctForMap(mp);
+//            precincts.put(mp, pm);
+//            nullDistrict.getPrecincts().add(pm);
+//        }
+//        for(MasterDistrict md: master.getDistricts()){
+//            DistrictForMap dm=new DistrictForMap(md);
+//            districts.put(md, dm);
+//        }
+//    }
     
-    public HashMap<MasterPrecinct, PrecinctForMap> getAllPrecincts(){
+    public Map(MasterState state) {
+		// TODO Auto-generated constructor stub
+    	master=state;
+	}
+
+	public HashMap<MasterPrecinct, PrecinctForMap> getAllPrecincts(){
         return precincts; //or return just the precinctformaps?
     }
     
