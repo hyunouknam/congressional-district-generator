@@ -35,7 +35,7 @@ public class UserAccount {
     @OneToMany
     @JoinColumn(name="map_id")
     private List<Simulation> sims;
-    private String username;
+    private String email;
     private String password;
 //    private boolean signedIn=false;
     
@@ -45,7 +45,7 @@ public class UserAccount {
     
     public UserAccount(String user, String pass){
         role=UserRole.REGISTERED;
-        username=user;
+        email=user;
         password=pass;
         preferences = new ArrayList<>();
         sims = new ArrayList<>();
@@ -84,12 +84,12 @@ public class UserAccount {
 		this.sims = sims;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getPassword() {
@@ -110,7 +110,7 @@ public class UserAccount {
 
 	public void register(String user, String pass){
 //        role=UserRole.REGISTERED;
-        username=user;
+        email=user;
         password=pass;
 //        EntityManager.addUser(this);
     }
@@ -127,6 +127,6 @@ public class UserAccount {
 //    }
 	
 	public String toString() {
-		return "username: " + username + " password: " + password;
+		return "username: " + email + " password: " + password;
 	}
 }

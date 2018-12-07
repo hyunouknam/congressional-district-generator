@@ -24,8 +24,11 @@ public class Move {
         return precinct;
     }
     
-    public DistrictForMap getNewDistrict(){
-        return dNew;
+    public DistrictForMap getOldDistrict(){
+        return dOld;
     }
     
+    public DistrictForMap getNewDistrict(){
+        return dNew;
+    }    
 }

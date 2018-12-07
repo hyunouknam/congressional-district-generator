@@ -53,7 +53,7 @@ public class UserController {
 	}
 	
 	public String getUserSims(UserAccount user) {
-		if (user.getUsername().equals("abc@sbu.edu")) {
+		if (user.getEmail().equals("abc@sbu.edu")) {
 			FunctionWeights w = new FunctionWeights(0.3, 0.5, 0.7);
 			SimulationParams params = new SimulationParams(w, "NJ", "RegionGrowing");
 			Simulation s2 = new RegionGrowingSimulation(user, params);
@@ -67,7 +67,7 @@ public class UserController {
 			
 			String s = "{";
 			s = s + "\"user\":";
-			s = s + "\"" + user.getUsername() + "\"";
+			s = s + "\"" + user.getEmail() + "\"";
 			s = s + ", \"simulations\": [";
 			
 			for (Simulation sim : sims) {

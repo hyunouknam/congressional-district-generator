@@ -21,6 +21,7 @@ public class SimulationWorker extends Thread{
             ((RegionGrowingSimulation)sim).getSeedPrecincts();
         }
         while (!sim.isDone() && !sim.isPaused){
+            sim.savable=true;
             sim.doStep();
         }
         if(sim.isDone() && sim.getClass().equals(SimulatedAnnealingSimulation.class)){
@@ -30,8 +31,8 @@ public class SimulationWorker extends Thread{
             }
         }
         result=sim.currentMap;
-        //add result to database--entyManager.addSimulation(result)
-        if (sim.isDone()){
+        if (sim.isDone()){ 
+            SimulationManager.getInstance().addFinishedSim(sim);
             queue.remove(0);
         }
     }

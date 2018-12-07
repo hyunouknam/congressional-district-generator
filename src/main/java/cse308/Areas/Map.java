@@ -30,9 +30,7 @@ public class Map implements Cloneable{
     private HashMap<MasterDistrict, DistrictForMap> districts;
     private DistrictForMap nullDistrict;
     private HashMap<PrecinctForMap, DistrictForMap> precinctDistrictMapping;
-
-    private double currentGoodness;
-
+    private double goodness;
 
     public Map(MasterState state){
         master = state;
@@ -59,16 +57,14 @@ public class Map implements Cloneable{
         }
     }
 
-	// ======= GETTERS
+	// ======= GETTERS0
 
     public MasterState getState(){ return master; }
-	public Collection<PrecinctForMap> getAllPrecincts(){ return precincts.values(); }
+    public Collection<PrecinctForMap> getAllPrecincts(){ return precincts.values(); }
     public Collection<DistrictForMap> getAllDistricts(){ return districts.values(); }
     public DistrictForMap getNullDisrict(){ return nullDistrict; }
 
     public HashMap<PrecinctForMap, DistrictForMap> getPrecinctDistrictMapping(){ return precinctDistrictMapping; }
-
-    public double getGoodness(){ return currentGoodness; }
 
     public PrecinctForMap getPrecinct(MasterPrecinct precinct){ return precincts.get(precinct); }
     public DistrictForMap getDistrict(MasterDistrict district){ return districts.get(district); }
@@ -77,24 +73,37 @@ public class Map implements Cloneable{
     // ========== Rest of it
 
     public void apply(FunctionWeights weights, Move m){
-        calculateGoodness(weights);
-        precinctDistrictMapping.put(m.getPrecinct(), m.getNewDistrict()); //modifies precint to district mapping        
+        precinctDistrictMapping.put(m.getPrecinct(), m.getNewDistrict()); //modifies precint to district mapping 
+        m.getOldDistrict().calculateGoodness(weights);
+        m.getNewDistrict().calculateGoodness(weights);
+        //and calculate mas goofness
     }
     
     public Map cloneApply(FunctionWeights weights, Move m) {
         Map newMap = clone();
-        newMap.calculateGoodness(weights);
         newMap.getPrecinctDistrictMapping().put(m.getPrecinct(), m.getNewDistrict());
+        m.getOldDistrict().calculateGoodness(weights);
+        m.getNewDistrict().calculateGoodness(weights);
+        //and calculate mas goofness
         return newMap;
     }
     
-    public double calculateGoodness(FunctionWeights weights){
-        currentGoodness=ObjectiveFuncEvaluator.evaluateObjective(weights,this);
-        return currentGoodness;
+    public double calculateGoodness(){
+        //average of all the goodness of each of its districts
+        int count=0;
+        goodness=0;
+        for (DistrictForMap m: districts.values()){
+            goodness+=m.getGoodness();
+            count+=1;
+        }
+        goodness/=count;
+        return goodness;
     }
     
-
-
+    public double getGoodness(){
+        return goodness;
+    }
+    
     @Override
     public Map clone() {
         Map copy = new Map(master);
@@ -112,7 +121,16 @@ public class Map implements Cloneable{
             //assign copy's version of p to copy's version of d
             copy.precinctDistrictMapping.put(p_copy, d_copy);
         }
-
         return copy;
+    }
+    
+    /*
+     * Description:
+     *      Shows how objective function will change with requested move, doesn't change shown map
+    */
+    public void doTemporaryMove(FunctionWeights weights, PrecinctForMap p, DistrictForMap d){
+        Move m=new Move(p, precinctDistrictMapping.get(p), d);
+        Map newMap=cloneApply(weights, m);
+        //updateGUI with values
     }
 }

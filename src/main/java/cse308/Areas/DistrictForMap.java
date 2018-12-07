@@ -1,6 +1,8 @@
 package cse308.Areas;
 
 
+import cse308.Simulation.FunctionWeights;
+import cse308.Simulation.ObjectiveFuncEvaluator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +17,7 @@ public class DistrictForMap{
     private int id;
     private final MasterDistrict master;
     private Map map;
+    private double goodness;
     
     public DistrictForMap(){
         master=null; //null district, for unassigned precincts      
@@ -112,5 +115,14 @@ public class DistrictForMap{
     	
     	CascadedPolygonUnion polUnion = new CascadedPolygonUnion(polArray);
     	return null;
+    }
+    
+    public double calculateGoodness(FunctionWeights weights){
+        goodness=ObjectiveFuncEvaluator.evaluateObjective(weights,this);
+        return goodness;
+    }
+    
+    public double getGoodness(){
+        return goodness;
     }
 }

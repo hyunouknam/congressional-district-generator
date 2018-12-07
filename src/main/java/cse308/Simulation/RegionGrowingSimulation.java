@@ -39,14 +39,14 @@ public class RegionGrowingSimulation extends Simulation{
     /*
     Description:
         Checks if there are still precincts to be assigned.
-        Runs pickMove(), a call to updateGUI() and updates the progress of the simulation
+        Runs pickMove(), updates the progress of the simulation, and a call to updateGUI()
     */
     @Override
     public void doStep(){
         if(currentMap.getNullDisrict().getPrecincts().size()>0){
             pickMove();            
             updateProgress();
-            postUpdate();
+            updateGUI();
         }
     }
                  
@@ -63,12 +63,12 @@ public class RegionGrowingSimulation extends Simulation{
                     if(!p.isAssigned){
                         Move move=new Move(p, currentMap.getNullDisrict(), d);
                         Map m=currentMap.cloneApply(this.params.functionWeights, move);
-                        goodnesses.add(new MoveTriple(m.calculateGoodness(params.functionWeights), m, move));
+                        goodnesses.add(new MoveTriple(m.calculateGoodness(), m, move));
                     }
                 }
             }
         }
-        //sort map by goddnesses and add precinct that results in the best goodness
+        //sort map by goodnesses and add precinct that results in the best goodness
         MoveTriple bestTriple=null;
         for (MoveTriple t: goodnesses){
             bestTriple= t.compareTo(bestTriple)>0 ? t:bestTriple;
@@ -87,4 +87,6 @@ public class RegionGrowingSimulation extends Simulation{
     public void updateProgress(){
         progress=moves.size()/numOfPrecincts;
     }
+    
+    
 }

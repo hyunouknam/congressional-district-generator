@@ -9,14 +9,14 @@ public abstract class Simulation {
 	protected static final AtomicInteger count = new AtomicInteger(0);
 	protected int id;
 	protected UserAccount user;
-	protected SimulationParams params;
-	
+	protected SimulationParams params;	
 	protected Map startingMap;
 	protected Stack<Move> moves;
 	protected Map currentMap; // startMap+all moves so far
 	protected double currentGoodness; // goodness of the current map
 	protected float progress = 0;
 	boolean isPaused = false;
+        boolean savable=false;
 
 	public Simulation( UserAccount u,SimulationParams s) {
             id = count.incrementAndGet();
@@ -43,8 +43,9 @@ public abstract class Simulation {
 
 	public abstract void pickMove();
 
-	public void postUpdate() {
+	public void updateGUI() {
             // send progress to client
+            //Objective function for each relevant district
 	}
 
 	public void queueForWork() {
