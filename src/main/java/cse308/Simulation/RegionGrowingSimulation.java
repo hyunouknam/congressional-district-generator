@@ -63,7 +63,8 @@ public class RegionGrowingSimulation extends Simulation{
                     if(!p.isAssigned){
                         Move move=new Move(p, currentMap.getNullDisrict(), d);
                         Map m=currentMap.cloneApply(this.params.functionWeights, move);
-                        goodnesses.add(new MoveTriple(m.calculateGoodness(), m, move));
+                        double goodness = ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights,m);
+                        goodnesses.add(new MoveTriple(goodness, m, move));
                     }
                 }
             }
@@ -74,7 +75,7 @@ public class RegionGrowingSimulation extends Simulation{
             bestTriple= t.compareTo(bestTriple)>0 ? t:bestTriple;
         }
         currentMap=bestTriple.map;
-        currentGoodness=currentMap.getGoodness();
+        currentGoodness=bestTriple.goodness;
         moves.add(bestTriple.move);
     }
     

@@ -50,7 +50,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
     private Map getStartingMap(){
         //start is current districting? From 2016 election?
         //currentMap=EntityManager.findCurrentMap(State s);      
-        currentGoodness=currentMap.calculateGoodness();
+        currentGoodness=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights, currentMap);
         for (PrecinctForMap p: currentMap.getAllPrecincts()){
             p.isAssigned=true;
         }
@@ -95,7 +95,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
         DistrictForMap newDistrict=(DistrictForMap)newDistricts[newDistricts.length*(int)Math.random()]; //chooses random border district for move
         Move m=new Move(randomPrecinct, randomDistrict, newDistrict);
         Map nextMap=currentMap.cloneApply(this.params.functionWeights,m);
-        double nextGoodness=nextMap.calculateGoodness();
+        double nextGoodness=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights, nextMap);
         if(nextGoodness>currentGoodness){
             currentMap=nextMap;
             currentGoodness=nextGoodness;
@@ -110,7 +110,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
                 currentGoodness=nextGoodness;
             }
         }
-        if(currentGoodness>bestMap.getGoodness()){
+        if(currentGoodness>ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights,bestMap)){
             bestMap=currentMap;
         }
         moves.add(m);

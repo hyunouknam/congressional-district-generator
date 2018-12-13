@@ -11,14 +11,14 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.locationtech.jts.geom.Coordinate;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 public class DistrictForMap{
     private int id;
     private final MasterDistrict master;
     private Map map;
-    private double goodness;
-    
+
     public DistrictForMap(){
         master=null; //null district, for unassigned precincts      
     }
@@ -29,7 +29,7 @@ public class DistrictForMap{
     
     public Set<PrecinctForMap> getBorderPrecincts(){
         //get the precincts that are on te border of the district
-        return null;
+        throw new NotImplementedException();
     }
     
     /*
@@ -117,12 +117,4 @@ public class DistrictForMap{
     	return null;
     }
     
-    public double calculateGoodness(FunctionWeights weights){
-        goodness=ObjectiveFuncEvaluator.evaluateObjective(weights,this);
-        return goodness;
-    }
-    
-    public double getGoodness(){
-        return goodness;
-    }
 }

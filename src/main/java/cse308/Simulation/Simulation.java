@@ -57,7 +57,7 @@ public abstract class Simulation {
 	}
 
 	public double getGoodness() {
-            currentGoodness=currentMap.getGoodness();
+            currentGoodness=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights,currentMap);
             return currentGoodness;
 	}
 

@@ -74,34 +74,14 @@ public class Map implements Cloneable{
 
     public void apply(FunctionWeights weights, Move m){
         precinctDistrictMapping.put(m.getPrecinct(), m.getNewDistrict()); //modifies precint to district mapping 
-        m.getOldDistrict().calculateGoodness(weights);
-        m.getNewDistrict().calculateGoodness(weights);
         //and calculate mas goofness
     }
     
     public Map cloneApply(FunctionWeights weights, Move m) {
         Map newMap = clone();
         newMap.getPrecinctDistrictMapping().put(m.getPrecinct(), m.getNewDistrict());
-        m.getOldDistrict().calculateGoodness(weights);
-        m.getNewDistrict().calculateGoodness(weights);
         //and calculate mas goofness
         return newMap;
-    }
-    
-    public double calculateGoodness(){
-        //average of all the goodness of each of its districts
-        int count=0;
-        goodness=0;
-        for (DistrictForMap m: districts.values()){
-            goodness+=m.getGoodness();
-            count+=1;
-        }
-        goodness/=count;
-        return goodness;
-    }
-    
-    public double getGoodness(){
-        return goodness;
     }
     
     @Override
