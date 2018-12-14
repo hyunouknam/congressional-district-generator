@@ -67,9 +67,10 @@ public class MasterPrecinct{
     @JoinColumn(name = "state_id")
     private MasterState state;
     
-//    @Column(columnDefinition = "MEDIUMTEXT")
+//    @Transient
+//    @Column(columnDefinition = "LONGTEXT")
 //    @Convert(converter = NeighborsConverter.class)
-    @Transient
+    @OneToMany
     private Set<MasterPrecinct> neighboringPrecincts;
     
     public MasterPrecinct() {
@@ -140,6 +141,8 @@ public class MasterPrecinct{
 		JSONObject a = new JSONObject(s);
 		JSONArray b = a.getJSONArray("coordinates");
 		
+//		JSONArray d = new JSONArray(neighboringPrecincts);
+		
 		JSONObject c = new JSONObject();
 		JSONObject geo = new JSONObject();
 		geo.put("type", geometry.getGeometryType());
@@ -152,7 +155,9 @@ public class MasterPrecinct{
 		c.put("averageDeomcratsVotes", averageDeomcratVotes);
 		c.put("totalVotes", totalVotes);
 		c.put("district", district.getID());
-//		c.put("state", state.getName());
+		c.put("state", state.getName());
+		c.put("neighbors", neighboringPrecincts.size());
+		
 		return c.toString();
 	}
 	

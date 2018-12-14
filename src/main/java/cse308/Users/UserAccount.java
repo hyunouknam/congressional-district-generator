@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -27,8 +28,7 @@ public class UserAccount {
     
 //    private String preferencesJSON;
     
-    @OneToMany
-    @JoinColumn(name="simulation_id")
+    @Transient
     private List<Simulation> sims;
     private String email;
     private String password;

@@ -113,4 +113,8 @@ public class Map implements Cloneable{
         Map newMap=cloneApply(weights, m);
         //updateGUI with values
     }
+    
+    public int getGoodness() {
+    	return 1;
+    }
 }

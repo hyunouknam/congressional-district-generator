@@ -22,10 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import cse308.Data.PrecinctRepository;
 
-//import cse308.Data.PrecinctRepository;
-
-//import cse308.Data.PrecinctRepository;
-//import cse308.Data.StateRepository;
 
 @Entity
 @Table(name="state")
@@ -50,9 +46,9 @@ public class MasterState{
     private Set<MasterPrecinct> precincts;
     
     public MasterState() {
-    	currentMap = new Map(this);
     	districts = new HashSet<>();
     	precincts = new HashSet<>();
+    	currentMap = new Map(this);
     }
     
     public MasterState(String name, String consText, boolean popIsEst, int numOfDistricts){
@@ -62,9 +58,9 @@ public class MasterState{
 
 //        precinctRepository.findByStateId(this.id).forEach(precincts::add);
 //        currentMap = new Map(this);
-        currentMap = new Map(this);
         districts = new HashSet<>();
     	precincts = new HashSet<>();
+    	currentMap = new Map(this);
     }
     
     public MasterState(String id, String name, String consText, int numOfDistricts, Set<MasterDistrict> districts,

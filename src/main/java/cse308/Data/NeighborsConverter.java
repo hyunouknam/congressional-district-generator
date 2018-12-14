@@ -19,8 +19,7 @@ public class NeighborsConverter implements AttributeConverter<Set<MasterPrecinct
 
 	@Override
 	public String convertToDatabaseColumn(Set<MasterPrecinct> attribute) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not Implemented");
+		return "Y";
 	}
 
 	@Override
