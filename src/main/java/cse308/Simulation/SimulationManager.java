@@ -2,15 +2,16 @@ package cse308.Simulation;
 
 import cse308.Areas.MasterState;
 import cse308.Users.UserAccount;
-
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SimulationManager {
-	private static SimulationManager simManager = null; 
-	//can hold all master states? 
-    static Set<MasterState> states;    
-    private static Set<Simulation> simulations;
+    private static SimulationManager simManager = null;
+    private static SimulationWorker simWorker=null;
+    static Set<MasterState> states;
+    private List<Simulation> completedNotSaved;
     
     public SimulationManager() {
     	MasterState nj = new MasterState("NJ", "Constitution", true, 13);
@@ -19,15 +20,25 @@ public class SimulationManager {
     	states = new HashSet<>();
     	states.add(nj);
     	states.add(ct);
+        
+        completedNotSaved=new ArrayList<>();
     }
     
     public static SimulationManager getInstance() 
     { 
         if (simManager == null) 
             simManager = new SimulationManager(); 
-  
+        getSimWorker();
         return simManager; 
     } 
+    
+    public static SimulationWorker getSimWorker(){
+        if(simWorker==null){
+            simWorker=new SimulationWorker();
+            simWorker.run();
+        }
+        return simWorker;
+    }
     
     /*
     Description:
@@ -41,8 +52,21 @@ public class SimulationManager {
         else{
             newSim=new SimulatedAnnealingSimulation(user, params);
         }
-        SimulationWorker.addToRunQueue(newSim);
+        simWorker.addToRunQueue(newSim);
         return newSim;
+    }
+    
+    public void saveSim(Simulation s){
+        if(s.savable){
+            //add result to database--entyManager.addSimulation(result)
+            if(completedNotSaved.contains(s)){
+                completedNotSaved.remove(s);
+            }
+        }
+    }
+    
+    public void addFinishedSim(Simulation s){
+        completedNotSaved.add(0,s);
     }
     
     public Simulation[] getSimulationsForUser(UserAccount ua){

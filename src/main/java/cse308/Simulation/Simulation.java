@@ -2,80 +2,63 @@ package cse308.Simulation;
 
 import cse308.Areas.Map;
 import cse308.Users.UserAccount;
-
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
-import org.hibernate.annotations.Type;
-
-@Entity
 public abstract class Simulation {
-	
-	@Id
+	protected static final AtomicInteger count = new AtomicInteger(0);
 	protected int id;
-	
-	@ManyToOne
-	@JoinColumn(name="user_id")
 	protected UserAccount user;
-	
-	@Type(type="serializable")
-	protected SimulationParams params;
-	
-	@Type(type="serializable")
+	protected SimulationParams params;	
 	protected Map startingMap;
-	
-	@Type(type="serializable")
 	protected Stack<Move> moves;
-	
-	@Type(type="serializable")
 	protected Map currentMap; // startMap+all moves so far
-	protected float currentGoodness; // goodness of the current map
+	protected double currentGoodness; // goodness of the current map
 	protected float progress = 0;
 	boolean isPaused = false;
+        boolean savable=false;
 
-	public Simulation( UserAccount u, SimulationParams s) {
-		params = s;
-		user = u;
-		moves = new Stack<>();
+	public Simulation( UserAccount u,SimulationParams s) {
+            id = count.incrementAndGet();
+            params = s;
+            user = u;
+            moves = new Stack<>();
 	}
 	
 	public void setID(int id) {
-		this.id = id;
+            this.id = id;
 	}
 
 	public float getProgress() {
-		return progress;
+            return progress;
 	}
 
 	public abstract void updateProgress();
 
 	public boolean isDone() {
-		return getProgress() == 1;
+            return getProgress() == 1;
 	}
 
-	public abstract void doStep() throws CloneNotSupportedException;
+	public abstract void doStep();
 
-	public abstract void pickMove() throws CloneNotSupportedException;
+	public abstract void pickMove();
 
-	public void postUpdate() {
-		// send progress
+	public void updateGUI() {
+            // send progress to client
+            //Objective function for each relevant district
 	}
 
 	public void queueForWork() {
-		SimulationWorker.addToRunQueue(this);
+            SimulationManager.getSimWorker().addToRunQueue(this);
 	}
 
 	public void removeFromQueue() {
-		SimulationWorker.removeFromRunQueue(this);
+            SimulationManager.getSimWorker().removeFromRunQueue(this);
 	}
 
-	public float getGoodness() {
-		return currentMap.getGoodness();
+	public double getGoodness() {
+            currentGoodness=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights,currentMap);
+            return currentGoodness;
 	}
 
 	public String getJSON() {

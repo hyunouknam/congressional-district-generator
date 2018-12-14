@@ -3,11 +3,11 @@ package cse308.Simulation;
 import cse308.Areas.Map;
 
 public class MoveTriple implements Comparable<MoveTriple>{
-    float goodness;
+    double goodness;
     Map map;
     Move move;
     
-    public MoveTriple(float g, Map map, Move move){
+    public MoveTriple(double g, Map map, Move move){
         goodness=g;
         this.map=map;
         this.move=move;

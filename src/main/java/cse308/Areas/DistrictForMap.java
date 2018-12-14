@@ -1,6 +1,8 @@
 package cse308.Areas;
 
 
+import cse308.Simulation.FunctionWeights;
+import cse308.Simulation.ObjectiveFuncEvaluator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,32 +11,25 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.locationtech.jts.geom.Coordinate;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 public class DistrictForMap{
     private int id;
     private final MasterDistrict master;
     private Map map;
-    private Set<PrecinctForMap> precincts;
-    
+
     public DistrictForMap(){
-        master=null; //null district, for unassigned precincts
-        precincts=new HashSet<>();        
+        master=null; //null district, for unassigned precincts      
     }
     
     public DistrictForMap(MasterDistrict md){
         master=md;
-        precincts=new HashSet<>();
-    }
-    
-    
-    public Set<PrecinctForMap> getPrecincts(){
-        return precincts;
     }
     
     public Set<PrecinctForMap> getBorderPrecincts(){
         //get the precincts that are on te border of the district
-        return null;
+        throw new NotImplementedException();
     }
     
     /*
@@ -68,6 +63,16 @@ public class DistrictForMap{
     
     public MasterDistrict getMaster(){
         return master;
+    }
+    
+    public Set<PrecinctForMap> getPrecincts(){
+        Set <PrecinctForMap> precincts=new HashSet<>();
+        for(PrecinctForMap p: map.getPrecinctDistrictMapping().keySet()){
+            if (map.getPrecinctDistrictMapping().get(p)==this){
+                precincts.add(p);
+            }
+        }
+        return precincts;
     }
     
     public Geometry getDistrictBoundary() {
@@ -111,4 +116,5 @@ public class DistrictForMap{
     	CascadedPolygonUnion polUnion = new CascadedPolygonUnion(polArray);
     	return null;
     }
+    
 }

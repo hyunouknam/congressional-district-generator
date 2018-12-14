@@ -4,29 +4,25 @@ import cse308.Areas.Map;
 import java.util.ArrayList;
 
 public class SimulationWorker extends Thread{
-    private static ArrayList<Simulation> queue=new ArrayList<>();
+    private ArrayList<Simulation> queue=new ArrayList<>();
     
-    public static void addToRunQueue(Simulation sim){
+    public void addToRunQueue(Simulation sim){
         queue.add(sim);
     }
     
-    public static void removeFromRunQueue(Simulation sim){
+    public void removeFromRunQueue(Simulation sim){
         queue.remove(sim);
     }
     
-    public static void runNextSimulation(){
+    public void runNextSimulation(){
         Simulation sim=queue.get(0);
         Map result;
         if(sim.progress==0 && sim.getClass().equals(RegionGrowingSimulation.class)){
             ((RegionGrowingSimulation)sim).getSeedPrecincts();
         }
         while (!sim.isDone() && !sim.isPaused){
-            try{
-                sim.doStep();                
-            }
-            catch(CloneNotSupportedException exception){
-                System.err.println("Clone of simulation's map couldn't be made");
-            }            
+            sim.savable=true;
+            sim.doStep();
         }
         if(sim.isDone() && sim.getClass().equals(SimulatedAnnealingSimulation.class)){
             Map bestMap=((SimulatedAnnealingSimulation)sim).bestMap;
@@ -35,8 +31,8 @@ public class SimulationWorker extends Thread{
             }
         }
         result=sim.currentMap;
-        //add result to database--entyManager.addSimulation(result)
-        if (sim.isDone()){
+        if (sim.isDone()){ 
+            SimulationManager.getInstance().addFinishedSim(sim);
             queue.remove(0);
         }
     }
@@ -56,5 +52,12 @@ public class SimulationWorker extends Thread{
     public void terminate(){
         queue.get(0).isPaused=true;
         queue.remove(0);        
+    }
+    
+    @Override
+    public void run(){
+        if(!queue.isEmpty()){
+            runNextSimulation();
+        }
     }
 }

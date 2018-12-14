@@ -4,25 +4,43 @@ import cse308.Areas.DistrictForMap;
 import cse308.Areas.Map;
 import cse308.Areas.PrecinctForMap;
 import cse308.Users.UserAccount;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 public class SimulatedAnnealingSimulation extends Simulation{
-    private float temperature;
-    private float alpha;
-    private int rounds;
+    private double temperature;
+    private final double alpha;
+    private final int rounds;
     protected Map bestMap;
     private boolean repeat=false;
     
     public SimulatedAnnealingSimulation(UserAccount u, SimulationParams s){
-       super(u,s);
-       startingMap=getStartingMap();
-       currentMap=startingMap;
-       bestMap=currentMap;
-       //temperature=read from properties file; (1.0f)
-       //alpha=read from properties file; (between 0.8 and 0.99)
-       //rounds=read from propeties file; (between 100 and 1000)
+        super(u,s);
+        startingMap=getStartingMap();
+        currentMap=startingMap;
+        bestMap=currentMap;
+        File properties=new File(".."+File.separator+".."+File.separator+".."+File.separator+"resources"+File.separator+"constants.properties");
+        JsonReader reader;
+        try{
+            reader=Json.createReader(new FileReader(properties));
+        }catch (FileNotFoundException error){
+            System.err.println("Properties file could not be found, using default values.");
+            temperature=1.0;
+            alpha=0.9;
+            rounds=100;
+            return;
+        }       
+        JsonObject json=reader.readObject();
+        temperature=json.getJsonNumber("temperature").doubleValue();
+        alpha=json.getJsonNumber("alpha").doubleValue();
+        rounds=json.getJsonNumber("rounds").intValue();
     }
     
     /*
@@ -31,8 +49,11 @@ public class SimulatedAnnealingSimulation extends Simulation{
     */
     private Map getStartingMap(){
         //start is current districting? From 2016 election?
-        //EntityManager.findCurrentMap(State s);`         
-        currentGoodness=getGoodness();
+        //currentMap=EntityManager.findCurrentMap(State s);      
+        currentGoodness=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights, currentMap);
+        for (PrecinctForMap p: currentMap.getAllPrecincts()){
+            p.isAssigned=true;
+        }
         return null;
     }
     
@@ -41,13 +62,12 @@ public class SimulatedAnnealingSimulation extends Simulation{
         Tries to increase goodness <rounds> times at the given temperature
     */
     @Override
-    public void doStep()throws CloneNotSupportedException{
+    public void doStep(){
         for (int i=0;i<rounds;i++){
             pickMove();
         }
-        if(currentGoodness>bestMap.getGoodness()){
-            bestMap=currentMap;
-        }
+        updateProgress();
+        updateGUI();
         temperature*=alpha;
     }
 
@@ -58,8 +78,8 @@ public class SimulatedAnnealingSimulation extends Simulation{
         Moves the precinct from precinct A to precinct B if it's likely to improve the goodness.
     */
     @Override
-    public void pickMove() throws CloneNotSupportedException{
-        Object[] districts=currentMap.getAllDistricts().values().toArray();
+    public void pickMove() {
+        Object[] districts=currentMap.getAllDistricts().toArray();
         DistrictForMap randomDistrict=(DistrictForMap)districts[districts.length*(int)Math.random()]; //gets random district
         Object[] precincts=randomDistrict.getBorderPrecincts().toArray();
         PrecinctForMap randomPrecinct=(PrecinctForMap)precincts[precincts.length*(int)Math.random()]; //gets random border precinct
@@ -75,7 +95,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
         DistrictForMap newDistrict=(DistrictForMap)newDistricts[newDistricts.length*(int)Math.random()]; //chooses random border district for move
         Move m=new Move(randomPrecinct, randomDistrict, newDistrict);
         Map nextMap=currentMap.cloneApply(this.params.functionWeights,m);
-        float nextGoodness=nextMap.getGoodness();
+        double nextGoodness=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights, nextMap);
         if(nextGoodness>currentGoodness){
             currentMap=nextMap;
             currentGoodness=nextGoodness;
@@ -89,6 +109,9 @@ public class SimulatedAnnealingSimulation extends Simulation{
                 currentMap=nextMap;
                 currentGoodness=nextGoodness;
             }
+        }
+        if(currentGoodness>ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights,bestMap)){
+            bestMap=currentMap;
         }
         moves.add(m);
     }
@@ -111,7 +134,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
         //progress will be updated after each temp change: so divided into temp/alpha's
     }
     
-    public float calcAcceptanceProb(float current, float next, float temp){
-        return (float)Math.E*(next-current)/temp;
+    public double calcAcceptanceProb(double current, double next, double temp){
+        return Math.E*(next-current)/temp;
     }
 }
