@@ -35,21 +35,21 @@ ALL_CONFIGS = {
     "infile": './NJ/shapefiles/nj_final.shp',
     "outfile": './nj_out.csv',
     "properties_map": {
-        "GEOID10": "uid",
+        "GEOID10": "id",
 
-        "NAME10": "precinct_name",
-        "TOWN_NAME": "town_name",
-        "COUNTY_NAM": "county_name",
+        "NAME10": "name",
+        #"TOWN_NAME": "town_name",
+        #"COUNTY_NAM": "county_name",
 
-        "US_HOUSE": "district",
+        "US_HOUSE": "district_id",
 
         "POP100": "population",
-        "VAP": "voting_pop",
+        "VAP": "voting_population",
         "VOTES": "total_votes",
-        "AV": "dem_vote_fraction",
+        "AV": "average_democrat_votes",
 
         "geometry": "geometry",
-        "state": "state",
+        "state": "state_id",
         },
     },
 "CT": {
@@ -58,24 +58,23 @@ ALL_CONFIGS = {
     "outfile": './ct_out.csv',
     'process_raw': ct_add_districts, #is run at prepoc time
     "properties_map": {
-        "GEOID10": "uid",
+        "GEOID10": "id",
 
-        "NAME10": "precinct_name",
-        "TOWN": "town_name",
-        "COUNTY_NUM": "county_name", #not actually a name
+        "NAME10": "name",
+        #"TOWN": "town_name",
+        #"COUNTY_NUM": "county_name", #not actually a name
 
         # dataset didn't actually have districts, so we add them
         # in the ct_add_districts
-        "AUTOGEN_CT_DISTRICT": "district",
+        "AUTOGEN_CT_DISTRICT": "district_id",
 
         "POP100": "population",
-        "VAP": "voting_pop",
-        "VOTES": "total_votes",
-        "AV": "dem_vote_fraction",
-        "DEM_PCT": "fraction_votes_dem",
+        "VAP": "voting_population",
+        "TOTAL": "total_votes", 
+        "DEM_PCT": "average_democrat_votes",
 
         "geometry": "geometry",
-        "state": "state",
+        "state": "state_id",
         },
     },
 }
@@ -95,6 +94,7 @@ CURR_CONFIG = ALL_CONFIGS["NJ"]
 # ====================================================================================
 # ====================================================================================
 
+print("Loading from {}".format(CURR_CONFIG['infile']), flush=True)
 df_raw = gp.read_file(CURR_CONFIG['infile'])
 
 #TODO TEMP DEBUG
@@ -114,6 +114,7 @@ df_raw = df_raw[~ undef_dists]
 
 
 # ============= discard extra columns, rename  =================
+print("Selecting/renaming columns", flush=True)
 
 def noop(x): return x
 preproc_func = CURR_CONFIG.get("process_raw", noop)
@@ -122,10 +123,12 @@ df_raw = preproc_func(df_raw)
 prop_map = CURR_CONFIG["properties_map"]
 df = df_raw.reindex(columns=prop_map.keys())
 df = df.rename(columns=prop_map)
-df = df.set_index('uid')
+df = df.set_index('id')
 
 
 # ================= Add neighbors column ==========================
+print("Calculating neighbors", flush=True)
+
 geoms = df[['geometry']]
 
 #join geoms to the geoms they're intersecting
@@ -161,6 +164,7 @@ df['neighbors'] = neighbors
 
 
 # ============ SIMPLIFY POLYGONS =============
+print("Simplifying polygons... ", end='', flush=True)
 # we can cut down the number of points needed dramatically while still
 # having accurate enough shapes
 
@@ -176,7 +180,8 @@ def total_pts(df):
 
 df_simple = df.copy()
 df_simple.geometry = df.simplify(tolerance=1E-4)
-print("Points reduced from {} to {}".format(total_pts(df), total_pts(df_simple)))
+print("done")
+print("Points reduced from {} to {}".format(total_pts(df), total_pts(df_simple)), flush=True)
 
 df = df_simple
 
@@ -226,3 +231,4 @@ df['geometry'] = df['geometry'].apply(geom_to_json)
 out_df = pd.DataFrame(df)
 
 out_df.to_csv(CURR_CONFIG["outfile"], sep='|')
+print("Outputting |-delimited csv to {}".format(CURR_CONFIG['outfile']))
