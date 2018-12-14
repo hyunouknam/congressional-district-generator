@@ -35,7 +35,7 @@ public class PrecinctForMap{
     */
     public Set<PrecinctForMap> getNeighborPrecincts(){
         Set<PrecinctForMap> neighbors=new HashSet<>();
-        for(MasterPrecinct mp: master.getNeighbors()){
+        for(MasterPrecinct mp: master.getNeighboringPrecincts()){
             neighbors.add(map.getPrecinct(mp));
         }
         return neighbors;

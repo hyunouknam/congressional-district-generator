@@ -37,11 +37,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-                <dependency>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-devtools</artifactId>
-                        <scope>runtime</scope>
-                </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.jayway.jsonpath</groupId>
 			<artifactId>json-path</artifactId>
@@ -59,9 +59,14 @@
 		<dependency>
 			<groupId>javax.json</groupId>
 			<artifactId>javax.json-api</artifactId>
-			<version>1.1.4</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/javax.json.bind/javax.json.bind-api -->
+		<dependency>
+			<groupId>javax.json.bind</groupId>
+			<artifactId>javax.json.bind-api</artifactId>
+			<version>1.0</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts-core -->
 		<dependency>
@@ -70,17 +75,43 @@
 			<version>1.16.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.wololo</groupId>
+			<artifactId>jts2geojson</artifactId>
+			<version>0.12.0</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-spatial</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>6.0.6</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.vorburger.mariaDB4j</groupId>
+			<artifactId>mariaDB4j</artifactId>
+			<version>2.2.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.glassfish/json -->
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.json</artifactId>
+			<version>1.1.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20180813</version>
+		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>com.sun.xml.bind</groupId> -->
-		<!-- <artifactId>jaxb-impl</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>javax.persistence</groupId> -->
-		<!-- <artifactId>javax.persistence-api</artifactId> -->
-		<!-- <version>2.2</version> -->
-		<!-- </dependency> -->
 	</dependencies>
 
 
@@ -98,7 +129,6 @@
 			<id>spring-releases</id>
 			<url>https://repo.spring.io/libs-release</url>
 		</repository>
-
 		<repository>
 			<id>locationtech-releases</id>
 			<url>https://repo.locationtech.org/content/groups/releases</url>
@@ -116,8 +146,8 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-
 	</repositories>
+
 	<pluginRepositories>
 		<pluginRepository>
 			<id>spring-releases</id>

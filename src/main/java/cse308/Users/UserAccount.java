@@ -3,11 +3,8 @@ package cse308.Users;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,7 +14,6 @@ import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import cse308.Areas.Map;
 import cse308.Simulation.Simulation;
 
 @Entity
@@ -29,11 +25,10 @@ public class UserAccount {
 	private Integer id;
     private UserRole role;
     
-    @ElementCollection
-    private List<String> preferences;
+//    private String preferencesJSON;
     
     @OneToMany
-    @JoinColumn(name="map_id")
+    @JoinColumn(name="simulation_id")
     private List<Simulation> sims;
     private String username;
     private String password;
@@ -47,7 +42,7 @@ public class UserAccount {
         role=UserRole.REGISTERED;
         username=user;
         password=pass;
-        preferences = new ArrayList<>();
+//        preferences = new ArrayList<>();
         sims = new ArrayList<>();
     }
     
@@ -68,13 +63,13 @@ public class UserAccount {
 		this.role = role;
 	}
 
-	public List<String> getPreferences() {
-		return preferences;
-	}
-
-	public void setPreferences(List<String> preferences) {
-		this.preferences = preferences;
-	}
+//	public List<String> getPreferences() {
+//		return preferences;
+//	}
+//
+//	public void setPreferences(List<String> preferences) {
+//		this.preferences = preferences;
+//	}
 
 	public List<Simulation> getMaps() {
 		return sims;

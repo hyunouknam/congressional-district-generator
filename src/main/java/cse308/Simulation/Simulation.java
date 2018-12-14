@@ -6,20 +6,39 @@ import cse308.Users.UserAccount;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.Type;
+
+@Entity
 public abstract class Simulation {
-	protected static final AtomicInteger count = new AtomicInteger(0);
+	
+	@Id
 	protected int id;
+	
+	@ManyToOne
+	@JoinColumn(name="user_id")
 	protected UserAccount user;
+	
+	@Type(type="serializable")
 	protected SimulationParams params;
+	
+	@Type(type="serializable")
 	protected Map startingMap;
+	
+	@Type(type="serializable")
 	protected Stack<Move> moves;
+	
+	@Type(type="serializable")
 	protected Map currentMap; // startMap+all moves so far
 	protected float currentGoodness; // goodness of the current map
 	protected float progress = 0;
 	boolean isPaused = false;
 
 	public Simulation( UserAccount u, SimulationParams s) {
-		id = count.incrementAndGet();
 		params = s;
 		user = u;
 		moves = new Stack<>();

@@ -15,12 +15,10 @@ import cse308.Simulation.ObjectiveFuncEvaluator;
 
 //@Entity
 public class Map{
+
 //	@Id
 //	@GeneratedValue(strategy=GenerationType.AUTO)
-    private int id;
-	
-//	@ManyToOne
-//	@JoinColumn(name="state_id")
+//    private int id;
     private final MasterState master;
     private HashMap<MasterPrecinct, PrecinctForMap> precincts;
     private HashMap<MasterDistrict, DistrictForMap> districts;
@@ -28,24 +26,14 @@ public class Map{
     private HashMap<PrecinctForMap, DistrictForMap> precinctDistrictMapping;
     private float currentGoodness;
     
-//    public Map(MasterState state){
-//        //should id be static or changed by DB?
-//        master=state;
-//        nullDistrict=new DistrictForMap();
-//        for(MasterPrecinct mp: master.getPrecincts()){
-//            PrecinctForMap pm=new PrecinctForMap(mp);
-//            precincts.put(mp, pm);
-//            nullDistrict.getPrecincts().add(pm);
-//        }
-//        for(MasterDistrict md: master.getDistricts()){
-//            DistrictForMap dm=new DistrictForMap(md);
-//            districts.put(md, dm);
-//        }
-//    }
-    
     public Map(MasterState state) {
 		// TODO Auto-generated constructor stub
     	master=state;
+    	precincts=new HashMap<>();
+    	districts=new HashMap<>();
+    	nullDistrict=new DistrictForMap();
+    	precinctDistrictMapping=new HashMap<>();
+    	currentGoodness=0;
 	}
 
 	public HashMap<MasterPrecinct, PrecinctForMap> getAllPrecincts(){
