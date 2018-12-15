@@ -19,6 +19,9 @@ public class DistrictForMap implements GeoRegion{
     private int id;
     private final MasterDistrict master;
     private Map map;
+    private double perimeter;
+    private double area;
+    private int population;		// population can be add to/subtracted from when calling move
 
     public DistrictForMap(Map map){
         master=null; //null district, for unassigned precincts  
@@ -150,4 +153,31 @@ public class DistrictForMap implements GeoRegion{
 		return 0;
 	}
     
+    public double getPerimeter() {
+		return perimeter;
+	}
+
+	public void setPerimeter(double perimeter) {
+		this.perimeter = perimeter;
+	}
+
+	public double getArea() {
+		return area;
+	}
+
+	public void setArea(double area) {
+		this.area = area;
+	}
+    
+	public int getPopulation() {
+		return population;
+	}
+
+	public void addPopulation(int change) {
+		this.population += change;
+	}
+	
+	public void subtractPopulation(int change) {
+		this.population -= change;
+	}
 }
