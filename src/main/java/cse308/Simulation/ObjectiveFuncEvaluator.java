@@ -26,27 +26,34 @@ public class ObjectiveFuncEvaluator {
         
         double average = total / m.getState().getNumOfDistricts();
         return average;
-        //throw new NotImplementedException();
-        //return total / m.getAllDistricts().size();
     }
 
     public static double calcPopulationEquality(Map m){
         double total = 0;
         double avgPop = 1; // ...calcAvgPop()
 
-        for (DistrictForMap d: m.getAllDistricts()){
-        	
-        	
-        	
-        	
-            //double distance = 1; // d.getPop() - avgPop  // Or something. TODO
-            //total += distance; //TODO, we might not want just an average
-            //Maybe we want variance
+        List<DistrictForMap> districts = new ArrayList<>();
+    	for (DistrictForMap d: m.getAllDistricts()){
+        	districts.add(d);
         }
-
-        throw new NotImplementedException();
+        
+        double[] districtPopulations = districts
+        		.stream()
+        		.mapToDouble(x -> x.getPopulation())
+        		.sorted()
+        		.toArray();
+        
+        double popAvg = StatUtils.mean(districtPopulations);
+        double popVariance = StatUtils.variance(districtPopulations);
+        double popDeviation = Math.sqrt(popVariance);
+        
+        double score = popDeviation / popAvg;
+        
+        return (1 - score);
+        		
         //return total;
     }
+    
     public static double calcPartisanFairness(Map m){
         //Use Consistent Advantage
         
@@ -72,9 +79,9 @@ public class ObjectiveFuncEvaluator {
         double pValue = new NormalDistribution(0, 1)
                 .cumulativeProbability(zScore);
         
-        return (pValue / 10);
-    	
+        return (pValue / 10.0);
     }
+    
     public static double calcRacialFairness(Map m){
         throw new NotImplementedException();
     }
