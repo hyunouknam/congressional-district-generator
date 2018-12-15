@@ -37,7 +37,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cse308.Data.GeometryConverter;
-import cse308.Data.NeighborsConverter;
 
 @Entity
 @Table(name="precinct")
