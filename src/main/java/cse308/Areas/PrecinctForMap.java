@@ -3,10 +3,12 @@ package cse308.Areas;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PrecinctForMap{
-    private int id;
+import org.locationtech.jts.geom.Geometry;
+
+import cse308.Data.GeoRegion;
+
+public class PrecinctForMap implements GeoRegion{
     private final MasterPrecinct master;
-    private DistrictForMap parentDistrict;
     private Map map;
     public boolean isAssigned=false;
     
@@ -14,17 +16,15 @@ public class PrecinctForMap{
         master=mp;
     }
     
-    public PrecinctForMap(MasterPrecinct mp, DistrictForMap parent){
-        master=mp;
-        parentDistrict=parent;
-    }
-    
     public DistrictForMap getParentDistrict(){
-        return parentDistrict;
+        return this.map.getPrecinctDistrictMapping().get(this);
     }
     
     public boolean isDistrictBorder(){
-        //find if its on border of its districtformap
+        Set<PrecinctForMap> precincts = getNeighborPrecincts();
+        for(PrecinctForMap pr: precincts) {
+        	if(pr.getParentDistrict()!=this.getParentDistrict())return true;
+        }
         return false;
     }
     
@@ -41,26 +41,47 @@ public class PrecinctForMap{
         return neighbors;
     }
     
+    public Set<DistrictForMap> getNeighborDistricts(){
+    	Set<DistrictForMap> neighborDistricts=new HashSet<>();
+        for(PrecinctForMap np: this.getNeighborPrecincts()){
+        	DistrictForMap d = np.getParentDistrict();
+            if(d!=this.getParentDistrict()){
+                neighborDistricts.add(d); //adds each district bordering the previosuly chosen district
+            }
+        }
+        return neighborDistricts;
+    }
+    
     public Map getMap(){
         return map;
     }
     
-    public void setMap(Map m){
-        map=m;
-    }
-    
-    public int getID(){
-        return id;
-    }
-    
-    public void setID(int i){
-        id=i;
-    }
-    
-    public void setParentDistrict(DistrictForMap d){
-        parentDistrict=d;
-    }
     public MasterPrecinct getMaster(){
         return master;
     }
+
+	@Override
+	public int getPopulation() {
+		return master.getPopulation();
+	}
+
+	@Override
+	public int getVotingPopulation() {
+		return master.getVotingPopulation();
+	}
+
+	@Override
+	public int getTotalVotes() {
+		return master.getTotalVotes();
+	}
+
+	@Override
+	public double getPercentDemocrat() {
+		return master.getPercentDemocrat();
+	}
+
+	@Override
+	public Geometry getGeometry() {
+		return master.getGeometry();
+	}
 }

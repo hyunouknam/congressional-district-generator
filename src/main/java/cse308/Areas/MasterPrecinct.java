@@ -36,12 +36,13 @@ import org.wololo.jts2geojson.GeoJSONWriter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cse308.Data.GeoRegion;
 import cse308.Data.GeometryConverter;
 
 @Entity
 @Table(name="precinct")
 @Immutable
-public class MasterPrecinct{
+public class MasterPrecinct implements GeoRegion{
 
     
 //    @GeneratedValue(strategy=GenerationType.AUTO)
@@ -98,6 +99,14 @@ public class MasterPrecinct{
 		this.neighboringPrecincts = neighboringPrecincts;
 	}
 	
+	public MasterDistrict getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(MasterDistrict district) {
+		this.district = district;
+	}
+
 	public Geometry getGeometry() {
 		return geometry;
 	}
@@ -158,6 +167,16 @@ public class MasterPrecinct{
 		c.put("neighbors", neighboringPrecincts.size());
 		
 		return c.toString();
+	}
+
+	@Override
+	public int getVotingPopulation() {
+		return votingPopulation;
+	}
+
+	@Override
+	public double getPercentDemocrat() {
+		return averageDeomcratVotes;
 	}
 	
 	

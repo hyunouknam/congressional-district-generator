@@ -1,6 +1,7 @@
 package cse308.Areas;
 
 
+import cse308.Data.GeoRegion;
 import cse308.Simulation.FunctionWeights;
 import cse308.Simulation.ObjectiveFuncEvaluator;
 import java.util.ArrayList;
@@ -14,17 +15,19 @@ import org.locationtech.jts.geom.Coordinate;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
-public class DistrictForMap{
+public class DistrictForMap implements GeoRegion{
     private int id;
     private final MasterDistrict master;
     private Map map;
 
-    public DistrictForMap(){
-        master=null; //null district, for unassigned precincts      
+    public DistrictForMap(Map map){
+        master=null; //null district, for unassigned precincts  
+        this.map = map;
     }
     
-    public DistrictForMap(MasterDistrict md){
+    public DistrictForMap(MasterDistrict md, Map map){
         master=md;
+        this.map = map;
     }
     
     public Set<PrecinctForMap> getBorderPrecincts(){
@@ -116,5 +119,35 @@ public class DistrictForMap{
     	CascadedPolygonUnion polUnion = new CascadedPolygonUnion(polArray);
     	return null;
     }
+
+	@Override
+	public int getVotingPopulation() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getTotalVotes() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getPercentDemocrat() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Geometry getGeometry() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getPopulation() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
     
 }

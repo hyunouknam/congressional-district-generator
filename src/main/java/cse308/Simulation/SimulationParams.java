@@ -8,7 +8,7 @@ public class SimulationParams {
     final String algorithm;
 //    Set<PrecinctForMap> excludedPrecincts;
     
-    public SimulationParams(FunctionWeights weights, String state, String algorithm){
+    public SimulationParams(FunctionWeights weights, MasterState state, String algorithm){
     	assert weights 		!= null: "Sim weights must not be null";
     	assert state 		!= null: "Sim state must not be null";
     	assert algorithm 	!= null: "Sim algorithm must not be null";
@@ -16,9 +16,11 @@ public class SimulationParams {
     	SimulationManager simManager = SimulationManager.getInstance();
     	
     	functionWeights=weights;
-    	forState=simManager.getState(state);
+    	forState=state;
         this.algorithm=algorithm;
     }
+    
+    public MasterState getState() {return forState; }
     
     public String getJSON() {
     	String s = "{";

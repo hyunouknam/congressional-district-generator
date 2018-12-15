@@ -51,10 +51,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
         //start is current districting? From 2016 election?
         //currentMap=EntityManager.findCurrentMap(State s);      
         currentGoodness=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights, currentMap);
-        for (PrecinctForMap p: currentMap.getAllPrecincts()){
-            p.isAssigned=true;
-        }
-        return null;
+        return this.params.getState().getCurrentMap();
     }
     
     /*
@@ -65,6 +62,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
     public void doStep(){
         for (int i=0;i<rounds;i++){
             pickMove();
+            //TODO: keep track of total steps taken
         }
         updateProgress();
         updateGUI();
@@ -81,20 +79,18 @@ public class SimulatedAnnealingSimulation extends Simulation{
     public void pickMove() {
         Object[] districts=currentMap.getAllDistricts().toArray();
         DistrictForMap randomDistrict=(DistrictForMap)districts[districts.length*(int)Math.random()]; //gets random district
+        
         Object[] precincts=randomDistrict.getBorderPrecincts().toArray();
         PrecinctForMap randomPrecinct=(PrecinctForMap)precincts[precincts.length*(int)Math.random()]; //gets random border precinct
-        Set<DistrictForMap> neighborDistricts=new HashSet<>();
-        HashMap<PrecinctForMap, DistrictForMap> precinctDistrictMapping=currentMap.getPrecinctDistrictMapping();
-        for(PrecinctForMap p: randomPrecinct.getNeighborPrecincts()){
-            DistrictForMap district=precinctDistrictMapping.get(p);
-            if(!district.equals(randomDistrict)){
-                neighborDistricts.add(district); //adds each district bordering the previosuly chosen district
-            }
-        }
+        
+        Set<DistrictForMap> neighborDistricts = randomPrecinct.getNeighborDistricts();
+        
         Object[] newDistricts=neighborDistricts.toArray();
         DistrictForMap newDistrict=(DistrictForMap)newDistricts[newDistricts.length*(int)Math.random()]; //chooses random border district for move
-        Move m=new Move(randomPrecinct, randomDistrict, newDistrict);
-        Map nextMap=currentMap.cloneApply(this.params.functionWeights,m);
+        
+        Move m=new Move(randomPrecinct, newDistrict);
+        Map nextMap=currentMap.cloneApply(m);
+        
         double nextGoodness=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights, nextMap);
         if(nextGoodness>currentGoodness){
             currentMap=nextMap;

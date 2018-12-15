@@ -9,42 +9,32 @@ import java.util.Set;
 
 public class SimulationManager {
     private static SimulationManager simManager = null;
-    private static SimulationWorker simWorker=null;
-    static Set<MasterState> states;
-    private List<Simulation> completedNotSaved;
+    private SimulationWorker simWorker = null;
     
     public SimulationManager() {
-    	MasterState nj = new MasterState("NJ", "Constitution", true, 13);
-    	MasterState ct = new MasterState("CT", "Constitution", true, 5);
-    	
-    	states = new HashSet<>();
-    	states.add(nj);
-    	states.add(ct);
-        
-        completedNotSaved=new ArrayList<>();
+        simWorker = new SimulationWorker();
     }
     
     public static SimulationManager getInstance() 
     { 
         if (simManager == null) 
             simManager = new SimulationManager(); 
-        getSimWorker();
         return simManager; 
     } 
     
-    public static SimulationWorker getSimWorker(){
-        if(simWorker==null){
-            simWorker=new SimulationWorker();
-            simWorker.run();
-        }
-        return simWorker;
-    }
+//    public static SimulationWorker getSimWorker(){
+//        if(simWorker==null){
+//            simWorker=new SimulationWorker();
+//            simWorker.run();
+//        }
+//        return simWorker;
+//    }
     
     /*
     Description:
         creates simulation object, and adds simulation to simulationworker's queue
     */
-    public static Simulation createSim(UserAccount user, SimulationParams params){
+    public Simulation createSim(UserAccount user, SimulationParams params){
         Simulation newSim;
         if(params.algorithm.equals("Region Growing")){
             newSim=new RegionGrowingSimulation(user, params);
@@ -56,30 +46,12 @@ public class SimulationManager {
         return newSim;
     }
     
-    public void saveSim(Simulation s){
-        if(s.savable){
-            //add result to database--entyManager.addSimulation(result)
-            if(completedNotSaved.contains(s)){
-                completedNotSaved.remove(s);
-            }
-        }
-    }
-    
-    public void addFinishedSim(Simulation s){
-        completedNotSaved.add(0,s);
-    }
-    
     public Simulation[] getSimulationsForUser(UserAccount ua){
         //EntityManger.findSimulations(String username);
         return null;
     }
-    
-    public MasterState getState(String stateName){
-        for(MasterState state: states){
-            if(state.getName().equals(stateName)){
-                return state;
-            }
-        }
-        return null;
-    }
+
+	public SimulationWorker getSimWorker() {
+		return simWorker;
+	}
 }

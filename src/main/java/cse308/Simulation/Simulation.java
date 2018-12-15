@@ -5,6 +5,8 @@ import cse308.Users.UserAccount;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 public abstract class Simulation {
 	protected static final AtomicInteger count = new AtomicInteger(0);
 	protected int id;
@@ -44,16 +46,15 @@ public abstract class Simulation {
 	public abstract void pickMove();
 
 	public void updateGUI() {
-            // send progress to client
-            //Objective function for each relevant district
+		throw new NotImplementedException("Not Implemented Update GUI");
 	}
 
 	public void queueForWork() {
-            SimulationManager.getSimWorker().addToRunQueue(this);
+            SimulationManager.getInstance().getSimWorker().addToRunQueue(this);
 	}
 
 	public void removeFromQueue() {
-            SimulationManager.getSimWorker().removeFromRunQueue(this);
+            SimulationManager.getInstance().getSimWorker().removeFromRunQueue(this);
 	}
 
 	public double getGoodness() {

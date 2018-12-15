@@ -15,8 +15,8 @@ public class RegionGrowingSimulation extends Simulation{
        super(u,s);
        startingMap=new Map(params.forState); //create new blank map
        currentMap=startingMap;    //for regiongrowing, blankmap=startingmap=currentmap
-//       numOfPrecincts=startingMap.getAllPrecincts().values().size();
-       numOfPrecincts = 6339;
+       numOfPrecincts=startingMap.getAllPrecincts().size();
+       getSeedPrecincts();
     }
     
     /*
@@ -24,15 +24,15 @@ public class RegionGrowingSimulation extends Simulation{
         Gets the list of precincts for the state for which the algorithm is running.
         Picks random precincts to be chosen as the seeds, one for each district.
     */
-    public void getSeedPrecincts(){
+    private void getSeedPrecincts(){
         Object[] precincts=startingMap.getAllPrecincts().toArray();
         Collection <DistrictForMap> districts=startingMap.getAllDistricts();
         for(DistrictForMap d: districts){
             PrecinctForMap p=(PrecinctForMap)precincts[precincts.length*(int)Math.random()];
             p.isAssigned=true;
-            Move move=new Move(p, startingMap.getNullDisrict(), d);
+            Move move=new Move(p, d);
             moves.add(move);
-            currentMap.apply(this.params.functionWeights, move);
+            currentMap.apply(move);
         }
     }
         
@@ -61,8 +61,8 @@ public class RegionGrowingSimulation extends Simulation{
             for(PrecinctForMap p: d.getBorderPrecincts()){ //updates each time
                 for(PrecinctForMap pm: p.getNeighborPrecincts()){ //neighbors of precincts on the border of the district
                     if(!p.isAssigned){
-                        Move move=new Move(p, currentMap.getNullDisrict(), d);
-                        Map m=currentMap.cloneApply(this.params.functionWeights, move);
+                        Move move=new Move(p, d);
+                        Map m=currentMap.cloneApply(move);
                         double goodness = ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights,m);
                         goodnesses.add(new MoveTriple(goodness, m, move));
                     }

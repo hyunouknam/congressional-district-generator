@@ -17,22 +17,17 @@ public class SimulationWorker extends Thread{
     public void runNextSimulation(){
         Simulation sim=queue.get(0);
         Map result;
-        if(sim.progress==0 && sim.getClass().equals(RegionGrowingSimulation.class)){
-            ((RegionGrowingSimulation)sim).getSeedPrecincts();
-        }
         while (!sim.isDone() && !sim.isPaused){
-            sim.savable=true;
             sim.doStep();
         }
-        if(sim.isDone() && sim.getClass().equals(SimulatedAnnealingSimulation.class)){
-            Map bestMap=((SimulatedAnnealingSimulation)sim).bestMap;
-            if(bestMap.getGoodness()>sim.getGoodness()){
-                result=bestMap;
-            }
-        }
+//        if(sim.isDone() && sim.getClass().equals(SimulatedAnnealingSimulation.class)){
+//            Map bestMap=((SimulatedAnnealingSimulation)sim).bestMap;
+//            if(ObjectiveFuncEvaluator.evaluateObjective(sim.get, bestMap)>sim.getGoodness()){
+//                result=bestMap;
+//            }
+//        }
         result=sim.currentMap;
         if (sim.isDone()){ 
-            SimulationManager.getInstance().addFinishedSim(sim);
             queue.remove(0);
         }
     }

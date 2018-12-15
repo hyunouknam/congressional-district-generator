@@ -49,34 +49,35 @@ public class UserController {
 //										.add("population_equality", 0.5)
 //										.add("partisan_fairness", 0.6)))).build();
 //		return b.toString();
-		return getUserSims(userAcc);
+//		return getUserSims(userAcc);
+		return "a";
 	}
 	
-	public String getUserSims(UserAccount user) {
-		if (user.getEmail().equals("abc@sbu.edu")) {
-			FunctionWeights w = new FunctionWeights(0.3, 0.5, 0.7);
-			SimulationParams params = new SimulationParams(w, "NJ", "RegionGrowing");
-			Simulation s2 = new RegionGrowingSimulation(user, params);
-			FunctionWeights w1 = new FunctionWeights(0.4, 0.5, 0.6);
-			SimulationParams params1 = new SimulationParams(w1, "CT", "RegionGrowing");
-			Simulation s1 = new RegionGrowingSimulation(user, params1);
-			
-			AbstractCollection<Simulation> sims = new ArrayList<>();
-			sims.add(s1);
-			sims.add(s2);
-			
-			String s = "{";
-			s = s + "\"user\":";
-			s = s + "\"" + user.getEmail() + "\"";
-			s = s + ", \"simulations\": [";
-			
-			for (Simulation sim : sims) {
-				s = s + sim.getJSON() +", ";
-			}
-			s = s.substring(0, s.length()-2);
-			s = s + "]}";
-			return s;
-		}
-		return null;
-	}
+//	public String getUserSims(UserAccount user) {
+//		if (user.getEmail().equals("abc@sbu.edu")) {
+//			FunctionWeights w = new FunctionWeights(0.3, 0.5, 0.7);
+//			SimulationParams params = new SimulationParams(w, "NJ", "RegionGrowing");
+//			Simulation s2 = new RegionGrowingSimulation(user, params);
+//			FunctionWeights w1 = new FunctionWeights(0.4, 0.5, 0.6);
+//			SimulationParams params1 = new SimulationParams(w1, "CT", "RegionGrowing");
+//			Simulation s1 = new RegionGrowingSimulation(user, params1);
+//			
+//			AbstractCollection<Simulation> sims = new ArrayList<>();
+//			sims.add(s1);
+//			sims.add(s2);
+//			
+//			String s = "{";
+//			s = s + "\"user\":";
+//			s = s + "\"" + user.getEmail() + "\"";
+//			s = s + ", \"simulations\": [";
+//			
+//			for (Simulation sim : sims) {
+//				s = s + sim.getJSON() +", ";
+//			}
+//			s = s.substring(0, s.length()-2);
+//			s = s + "]}";
+//			return s;
+//		}
+//		return null;
+//	}
 }
