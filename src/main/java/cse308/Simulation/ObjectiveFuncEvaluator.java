@@ -7,9 +7,13 @@ import cse308.Areas.DistrictForMap;
 import cse308.Areas.Map;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.stat.*;
+
 public class ObjectiveFuncEvaluator {
 
-
+    private static final double CORRECTION_FACTOR = 0.5708;
+    
     public static double calcCompactness(Map m){
         double total = 0;
         
@@ -44,7 +48,32 @@ public class ObjectiveFuncEvaluator {
         //return total;
     }
     public static double calcPartisanFairness(Map m){
-        throw new NotImplementedException();
+        //Use Consistent Advantage
+        
+    	List<DistrictForMap> districts = new ArrayList<>();
+    	for (DistrictForMap d: m.getAllDistricts()){
+        	districts.add(d);
+        }
+        double[] democratVoteShares = districts
+        		.stream()
+        		.mapToDouble(x -> x.getDemocratVotePercentage())	// use real method later
+        		.sorted()
+        		.toArray();
+
+        double democratAvgShare = StatUtils.mean(democratVoteShares);
+        double democratMedShare = StatUtils.percentile(democratVoteShares, 50);
+        double democratShareVar = StatUtils.variance(democratVoteShares); 
+        
+        double meanMedDiff = democratAvgShare - democratMedShare;
+        double standardError = Math.sqrt(democratShareVar ) / Math.sqrt(democratVoteShares.length);
+        double zScore = meanMedDiff / standardError;
+        zScore = (zScore * CORRECTION_FACTOR);
+        
+        double pValue = new NormalDistribution(0, 1)
+                .cumulativeProbability(zScore);
+        
+        return (pValue / 10);
+    	
     }
     public static double calcRacialFairness(Map m){
         throw new NotImplementedException();
