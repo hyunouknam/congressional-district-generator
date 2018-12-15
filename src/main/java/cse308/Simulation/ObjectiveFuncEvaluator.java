@@ -1,5 +1,8 @@
 package cse308.Simulation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cse308.Areas.DistrictForMap;
 import cse308.Areas.Map;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -9,12 +12,17 @@ public class ObjectiveFuncEvaluator {
 
     public static double calcCompactness(Map m){
         double total = 0;
-        for (DistrictForMap d: m.getAllDistricts()){
-            double distCompactness = 1; // TODO actually implement this
-            total += distCompactness; //TODO, we might not want just an average
+        
+        List<Double> polsbyScoreList = new ArrayList<>();
+        for (DistrictForMap d: m.getAllDistricts()){        	
+        	double polsbyScore = (4 * Math.PI * d.getArea()) / Math.pow(d.getPerimeter(), 2);
+        	polsbyScoreList.add(polsbyScore);	// added to list in case we want more than average
+        	total += polsbyScore;
         }
-
-        throw new NotImplementedException();
+        
+        double average = total / m.getState().getNumOfDistricts();
+        return average;
+        //throw new NotImplementedException();
         //return total / m.getAllDistricts().size();
     }
 
@@ -23,8 +31,12 @@ public class ObjectiveFuncEvaluator {
         double avgPop = 1; // ...calcAvgPop()
 
         for (DistrictForMap d: m.getAllDistricts()){
-            double distance = 1; // d.getPop() - avgPop  // Or something. TODO
-            total += distance; //TODO, we might not want just an average
+        	
+        	
+        	
+        	
+            //double distance = 1; // d.getPop() - avgPop  // Or something. TODO
+            //total += distance; //TODO, we might not want just an average
             //Maybe we want variance
         }
 
