@@ -5,11 +5,10 @@ import cse308.Data.GeoRegion;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
+
+import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.util.GeometryCombiner;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
-import org.locationtech.jts.geom.Coordinate;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
@@ -159,14 +158,16 @@ public class DistrictForMap implements GeoRegion{
 	public Geometry getGeometry() {
 		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
 
-		// Buffer them by a little bit before we union them, so that we dont get tiny gaps between the precincts
-		// then undo it at the end so they're the right size
 		ArrayList<Geometry> polArray = new ArrayList<>();
 		for (PrecinctForMap pr: precincts) {
-			polArray.add(pr.getGeometry().buffer(0.0005));
+			polArray.add(pr.getGeometry());
 		}
+		Geometry geoms = new GeometryFactory().buildGeometry(polArray);
 
-		return CascadedPolygonUnion.union(polArray).buffer(-0.0005);
+		// buffering it unions them all together faster than cascadedpolygonunion
+		// buffer and unbuffer to get rid of gaps
+		Geometry unioned = geoms.buffer(0.0);
+		return unioned.buffer(0.005).buffer(-0.005);
 	}
 
 	@Override

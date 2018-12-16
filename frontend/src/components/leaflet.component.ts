@@ -58,7 +58,7 @@ export class LeafletComponent {
     // ASSIGN EVENTS
     this.map.on('zoomend', () => this.onZoom());
 
-    this.loadData();
+    this.loadData().catch(err => console.error("FAILED TO LOAD GEOM DATA", err));
   }
 
 

@@ -59,20 +59,6 @@ export class MapHandlerService {
   public currentFeature = new EventEmitter<leaflet.FeatureGroup | null>();
 
   constructor(private servercomm: ServerCommService){
-    const reqProm = this.servercomm.reqInitialGeomData();
-      
-    const dataProm = reqProm.then(statejsons => {
-      let states:MasterState[];
-      states = statejsons.map(json => MasterState.loadFromInitialJson(json))
-
-      console.log("LOADED STATES")  
-      console.log(states)
-      // takes list of masterstates
-
-      states.forEach(state => {
-      })
-
-    }).catch(err => console.error("FAILED TO GET INITIAL GEOM DATA", err));
 
   }
 
