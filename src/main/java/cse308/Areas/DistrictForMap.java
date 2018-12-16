@@ -159,12 +159,14 @@ public class DistrictForMap implements GeoRegion{
 	public Geometry getGeometry() {
 		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
 
+		// Buffer them by a little bit before we union them, so that we dont get tiny gaps between the precincts
+		// then undo it at the end so they're the right size
 		ArrayList<Geometry> polArray = new ArrayList<>();
 		for (PrecinctForMap pr: precincts) {
-			polArray.add(pr.getGeometry());
+			polArray.add(pr.getGeometry().buffer(0.0005));
 		}
 
-		return CascadedPolygonUnion.union(polArray);
+		return CascadedPolygonUnion.union(polArray).buffer(-0.0005);
 	}
 
 	@Override
