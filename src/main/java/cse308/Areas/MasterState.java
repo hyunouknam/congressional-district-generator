@@ -3,6 +3,7 @@ package cse308.Areas;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -157,27 +158,37 @@ public class MasterState {
 	}
 
 	public String toJSON() {
+		// convert each district to a JSON object
+		JSONArray districtArray	= new JSONArray(
+				districts.stream()
+						.map(d -> d.toJSON())
+						.collect(Collectors.toList()));
+
 		int prs = precincts.size();
-		JSONArray a = new JSONArray(districts);
 		JSONObject c = new JSONObject();
 		c.put("id", id);
 		c.put("name", name);
 		c.put("constitution text", consText);
 		c.put("number of districts", numOfDistricts);
-		c.put("districts", a);
+		c.put("districts", districtArray);
 		c.put("precincts", prs);
 		c.put("Map", currentMap.toString());
 		return c.toString();
 	}
 	
 	public String fetchState() {
-		JSONArray a = new JSONArray(districts);
+	    // convert each district to a JSON object
+		JSONArray districtArray	= new JSONArray(
+				districts.stream()
+                    .map(d -> d.toJSON())
+                    .collect(Collectors.toList()));
+
 		JSONObject c = new JSONObject();
 		c.put("id", id);
 		c.put("name", name);
 		c.put("constitution text", consText);
 		c.put("number of districts", numOfDistricts);
-		c.put("districts", a);
+		c.put("districts", districtArray);
 		return c.toString();
 	}
 	

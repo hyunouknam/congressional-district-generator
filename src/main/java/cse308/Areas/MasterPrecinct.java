@@ -107,9 +107,6 @@ public class MasterPrecinct implements GeoRegion{
 		this.defaultDistrict = district;
 	}
 
-	public Geometry getGeometry() {
-		return geometry;
-	}
 
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
@@ -123,15 +120,6 @@ public class MasterPrecinct implements GeoRegion{
 	}
 	public String getName() {
 		return name;
-	}
-	public int getPopulation() {
-		return population;
-	}
-	public double getAverageDeomcratsVotes() {
-		return averageDeomcratVotes;
-	}
-	public int getTotalVotes() {
-		return totalVotes;
 	}
 	public Set<MasterPrecinct> getNeighboringPrecincts() {
 		return neighboringPrecincts;
@@ -169,6 +157,18 @@ public class MasterPrecinct implements GeoRegion{
 		return c.toString();
 	}
 
+	@Override
+	public Geometry getGeometry() {
+		return geometry;
+	}
+	@Override
+	public int getPopulation() {
+		return population;
+	}
+	@Override
+	public int getTotalVotes() {
+		return totalVotes;
+	}
 	@Override
 	public int getVotingPopulation() {
 		return votingPopulation;

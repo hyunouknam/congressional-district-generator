@@ -147,19 +147,24 @@ public class DistrictForMap implements GeoRegion{
 			totalVotes += pr.getTotalVotes();
 			demVotes = pr.getPercentDemocrat()*totalVotes;
 		}
-		return demVotes/totalVotes;
+
+		if(totalVotes < 1) {
+			return 0;
+		} else {
+			return demVotes/totalVotes;
+		}
 	}
 
 	@Override
 	public Geometry getGeometry() {
-		ArrayList<Polygon> polArray = new ArrayList<>();
 		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+
+		ArrayList<Geometry> polArray = new ArrayList<>();
 		for (PrecinctForMap pr: precincts) {
-			Polygon p = (Polygon) pr.getGeometry();
-			polArray.add(p);
+			polArray.add(pr.getGeometry());
 		}
-		CascadedPolygonUnion union = new CascadedPolygonUnion(polArray);
-		return union.union();
+
+		return CascadedPolygonUnion.union(polArray);
 	}
 
 	@Override
