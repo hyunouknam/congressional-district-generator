@@ -2,8 +2,6 @@ package cse308.Areas;
 
 
 import cse308.Data.GeoRegion;
-import cse308.Simulation.FunctionWeights;
-import cse308.Simulation.ObjectiveFuncEvaluator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,9 +17,6 @@ public class DistrictForMap implements GeoRegion{
     private int id;
     private final MasterDistrict master;
     private Map map;
-    private double perimeter;
-    private double area;
-    private int population;		// population can be add to/subtracted from when calling move
 
     public DistrictForMap(Map map){
         master=null; //null district, for unassigned precincts  
@@ -81,103 +76,107 @@ public class DistrictForMap implements GeoRegion{
         return precincts;
     }
     
-    public Geometry getDistrictBoundary() {
-    	GeometryFactory geometryFactory = new GeometryFactory();
-    	Coordinate a = new Coordinate(-83.86962890625,40.94671366508002);
-    	Coordinate b = new Coordinate(-84.24316406249999,40.12849105685408);
-    	Coordinate c = new Coordinate(-83.75976562499999, 39.825413103424786);
-    	Coordinate d = new Coordinate(-83.07861328125,40.06125658140474);
-    	Coordinate e = new Coordinate(-83.86962890625,40.94671366508002);
-    	Coordinate[] coord = new Coordinate[5];
-    	coord[0]=a;
-    	coord[1]=b;
-    	coord[2]=c;
-    	coord[3]=d;
-    	coord[4]=e;
-    	Polygon pol1 = geometryFactory.createPolygon(coord);
-    	
-    	Coordinate f = new Coordinate(-83.86962890625,40.94671366508002);
-    	Coordinate g = new Coordinate(-83.07861328125,40.094882122321145);
-        Coordinate h = new Coordinate(-82.705078125,40.329795743702064);
-    	Coordinate i = new Coordinate(-82.55126953124999,40.730608477796636);
-    	Coordinate j = new Coordinate(-82.5732421875,41.11246878918088);
-    	Coordinate k = new Coordinate(-83.86962890625,40.94671366508002);
-    	Coordinate[] coord1 = new Coordinate[5];
-    	coord1[0]=f;
-    	coord1[1]=g;
-    	coord1[2]=h;
-    	coord1[3]=i;
-    	coord1[4]=j;
-    	coord1[5]=k;
-    	Polygon pol2 = geometryFactory.createPolygon(coord1);
-    	
-//    	Polygon[] polArray = new Polygon[2];
-//    	polArray[0]=pol1;
-//    	polArray[1]=pol2;
-    	
-    	ArrayList<Polygon> polArray = new ArrayList<>();
-    	polArray.add(pol1);
-    	polArray.add(pol2);
-    	
-    	CascadedPolygonUnion polUnion = new CascadedPolygonUnion(polArray);
-    	return null;
-    }
+//    public Geometry getDistrictBoundary() {
+//    	GeometryFactory geometryFactory = new GeometryFactory();
+//    	Coordinate a = new Coordinate(-83.86962890625,40.94671366508002);
+//    	Coordinate b = new Coordinate(-84.24316406249999,40.12849105685408);
+//    	Coordinate c = new Coordinate(-83.75976562499999, 39.825413103424786);
+//    	Coordinate d = new Coordinate(-83.07861328125,40.06125658140474);
+//    	Coordinate e = new Coordinate(-83.86962890625,40.94671366508002);
+//    	Coordinate[] coord = new Coordinate[5];
+//    	coord[0]=a;
+//    	coord[1]=b;
+//    	coord[2]=c;
+//    	coord[3]=d;
+//    	coord[4]=e;
+//    	Polygon pol1 = geometryFactory.createPolygon(coord);
+//    	
+//    	Coordinate f = new Coordinate(-83.86962890625,40.94671366508002);
+//    	Coordinate g = new Coordinate(-83.07861328125,40.094882122321145);
+//        Coordinate h = new Coordinate(-82.705078125,40.329795743702064);
+//    	Coordinate i = new Coordinate(-82.55126953124999,40.730608477796636);
+//    	Coordinate j = new Coordinate(-82.5732421875,41.11246878918088);
+//    	Coordinate k = new Coordinate(-83.86962890625,40.94671366508002);
+//    	Coordinate[] coord1 = new Coordinate[5];
+//    	coord1[0]=f;
+//    	coord1[1]=g;
+//    	coord1[2]=h;
+//    	coord1[3]=i;
+//    	coord1[4]=j;
+//    	coord1[5]=k;
+//    	Polygon pol2 = geometryFactory.createPolygon(coord1);
+//    	
+////    	Polygon[] polArray = new Polygon[2];
+////    	polArray[0]=pol1;
+////    	polArray[1]=pol2;
+//    	
+//    	ArrayList<Polygon> polArray = new ArrayList<>();
+//    	polArray.add(pol1);
+//    	polArray.add(pol2);
+//    	
+//    	CascadedPolygonUnion polUnion = new CascadedPolygonUnion(polArray);
+//    	return null;
+//    }
 
 	@Override
 	public int getVotingPopulation() {
-		// TODO Auto-generated method stub
-		return 0;
+		int votingPopulation = 0;
+		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		for (PrecinctForMap pr: precincts) {
+			votingPopulation += pr.getVotingPopulation();
+		}
+		return votingPopulation;
 	}
 
 	@Override
 	public int getTotalVotes() {
-		// TODO Auto-generated method stub
-		return 0;
+		int totalVotes = 0;
+		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		for (PrecinctForMap pr: precincts) {
+			totalVotes += pr.getTotalVotes();
+		}
+		return totalVotes;
 	}
 
 	@Override
 	public double getPercentDemocrat() {
-		// TODO Auto-generated method stub
-		return 0;
+		int totalVotes = 0;
+		double demVotes = 0;
+		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		for (PrecinctForMap pr: precincts) {
+			totalVotes += pr.getTotalVotes();
+			demVotes = pr.getPercentDemocrat()*totalVotes;
+		}
+		return demVotes/totalVotes;
 	}
 
 	@Override
 	public Geometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Polygon> polArray = new ArrayList<>();
+		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		for (PrecinctForMap pr: precincts) {
+			Polygon p = (Polygon) pr.getGeometry();
+			polArray.add(p);
+		}
+		CascadedPolygonUnion union = new CascadedPolygonUnion(polArray);
+		return union.union();
 	}
 
 	@Override
 	public int getPopulation() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-    
-    public double getPerimeter() {
-		return perimeter;
-	}
-
-	public void setPerimeter(double perimeter) {
-		this.perimeter = perimeter;
-	}
-
-	public double getArea() {
-		return area;
-	}
-
-	public void setArea(double area) {
-		this.area = area;
-	}
-    
-	public int getPopulation() {
+		int population = 0;
+		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		for (PrecinctForMap pr: precincts) {
+			population += pr.getPopulation();
+		}
 		return population;
 	}
 
-	public void addPopulation(int change) {
-		this.population += change;
+	public double getArea() {
+		return getGeometry().getArea();
 	}
-	
-	public void subtractPopulation(int change) {
-		this.population -= change;
+
+	public double getPerimeter() {
+		return getGeometry().getLength();
 	}
 }

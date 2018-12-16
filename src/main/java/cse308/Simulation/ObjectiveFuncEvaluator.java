@@ -63,7 +63,7 @@ public class ObjectiveFuncEvaluator {
         }
         double[] democratVoteShares = districts
         		.stream()
-        		.mapToDouble(x -> x.getDemocratVotePercentage())	// use real method later
+        		.mapToDouble(x -> x.getPercentDemocrat())	// use real method later
         		.sorted()
         		.toArray();
 

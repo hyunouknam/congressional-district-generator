@@ -20,6 +20,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
     private final int rounds;
     protected Map bestMap;
     private boolean repeat=false;
+    private boolean isDone;
     
     public SimulatedAnnealingSimulation(UserAccount u, SimulationParams s){
         super(u,s);
@@ -41,6 +42,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
         temperature=json.getJsonNumber("temperature").doubleValue();
         alpha=json.getJsonNumber("alpha").doubleValue();
         rounds=json.getJsonNumber("rounds").intValue();
+        isDone=false;
     }
     
     /*

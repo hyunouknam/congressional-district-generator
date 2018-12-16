@@ -12,8 +12,9 @@ public class PrecinctForMap implements GeoRegion{
     private Map map;
     public boolean isAssigned=false;
     
-    public PrecinctForMap(MasterPrecinct mp){
+    public PrecinctForMap(MasterPrecinct mp, Map map){
         master=mp;
+        this.map=map;
     }
     
     public DistrictForMap getParentDistrict(){

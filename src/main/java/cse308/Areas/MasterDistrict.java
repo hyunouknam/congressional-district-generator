@@ -4,6 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Immutable;
@@ -19,6 +22,10 @@ public class MasterDistrict{
     @Id
     private String id;
     private String name;
+    
+    @ManyToOne
+	@JoinColumn(name = "state_id")
+    private MasterState state;
     
     public MasterDistrict() {
     	
@@ -54,8 +61,8 @@ public class MasterDistrict{
     }
     
     public String toString() {
-    	String s = "id: " + id;
-    	s = s + "name: " + name;
+    	String s = "(id: " + id;
+    	s = s + "name: " + name + "java: " + System.identityHashCode(this) + ")";
     	return s;
     }
 }

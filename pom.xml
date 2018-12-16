@@ -112,10 +112,18 @@
 			<version>20180813</version>
 		</dependency>
 		<dependency>
-   			<groupId>org.apache.commons</groupId>
-    		<artifactId>commons-math3</artifactId>
-    		<version>3.0</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.0</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.amlinv/stats-utils -->
+		<dependency>
+			<groupId>com.amlinv</groupId>
+			<artifactId>stats-utils</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 
 	</dependencies>
 

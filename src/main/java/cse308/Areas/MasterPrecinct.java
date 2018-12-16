@@ -61,7 +61,7 @@ public class MasterPrecinct implements GeoRegion{
     
     @ManyToOne
     @JoinColumn(name = "district_id")
-    private MasterDistrict district;
+    private MasterDistrict defaultDistrict;
     
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -99,12 +99,12 @@ public class MasterPrecinct implements GeoRegion{
 		this.neighboringPrecincts = neighboringPrecincts;
 	}
 	
-	public MasterDistrict getDistrict() {
-		return district;
+	public MasterDistrict getDefaultDistrict() {
+		return defaultDistrict;
 	}
 
-	public void setDistrict(MasterDistrict district) {
-		this.district = district;
+	public void setDefaultDistrict(MasterDistrict district) {
+		this.defaultDistrict = district;
 	}
 
 	public Geometry getGeometry() {
@@ -162,7 +162,7 @@ public class MasterPrecinct implements GeoRegion{
 		c.put("votingPopulation", votingPopulation);
 		c.put("averageDeomcratsVotes", averageDeomcratVotes);
 		c.put("totalVotes", totalVotes);
-		c.put("district", district.getID());
+		c.put("district", defaultDistrict.getID());
 		c.put("state", state.getName());
 		c.put("neighbors", neighboringPrecincts.size());
 		
@@ -177,6 +177,26 @@ public class MasterPrecinct implements GeoRegion{
 	@Override
 	public double getPercentDemocrat() {
 		return averageDeomcratVotes;
+	}
+	
+	public String toString() {
+		return " (id: " + this.id + " district: " + this.defaultDistrict.getID() + "java: " + System.identityHashCode(this.defaultDistrict) + ")";
+	}
+
+	public String fetchMasterPrecinct() {
+		GeoJSONWriter w = new GeoJSONWriter();
+		GeoJSON j = w.write(geometry);
+		String s = j.toString();
+		
+		JSONObject c = new JSONObject();
+		c.put("id", id);
+		c.put("name", name);
+		c.put("geometry", s);
+		c.put("population", population);
+		c.put("votingPopulation", votingPopulation);
+		c.put("averageDeomcratVotes", averageDeomcratVotes);
+		c.put("totalVotes", totalVotes);
+		return c.toString();
 	}
 	
 	

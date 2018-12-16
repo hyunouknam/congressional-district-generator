@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cse308.Data.PrecinctRepository;
+import cse308.Simulation.Move;
 
 @Entity
 @Table(name = "state")
@@ -48,38 +49,33 @@ public class MasterState {
 	public MasterState() {
 		districts = new HashSet<>();
 		precincts = new HashSet<>();
-		currentMap = new Map(this);
+		currentMap = null;
 	}
 
 	public MasterState(String name, String consText, boolean popIsEst, int numOfDistricts) {
 		this.name = name;
 		this.consText = consText;
 		this.numOfDistricts = numOfDistricts;
+		
 
 //        precinctRepository.findByStateId(this.id).forEach(precincts::add);
 //        currentMap = new Map(this);
 		districts = new HashSet<>();
 		precincts = new HashSet<>();
-		currentMap = new Map(this);
-	}
 
-	public MasterState(String id, String name, String consText, int numOfDistricts, Set<MasterDistrict> districts,
-			Set<MasterPrecinct> precincts) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.consText = consText;
-		this.numOfDistricts = numOfDistricts;
-		this.districts = districts;
-		this.precincts = precincts;
+		currentMap = null;
 	}
 
 	@PostLoad
 	public void populateCurrentMap() {
+		currentMap = new Map(this);
+		System.out.println("Here");
 		for(PrecinctForMap p: this.currentMap.getAllPrecincts()) {
-			MasterDistrict dist = p.getMaster().getDistrict();
+			MasterDistrict dist = p.getMaster().getDefaultDistrict();
 			DistrictForMap distForMap = currentMap.getDistrict(dist);
-            this.currentMap.getPrecinctDistrictMapping().put(p, distForMap);
+			if(distForMap!=null) {
+				this.currentMap.apply(new Move(p, distForMap));
+			}
         }
 	}
 
@@ -157,16 +153,38 @@ public class MasterState {
 	}
 
 	public String toJSON() {
-//		int prs = precincts.size();
-//		JSONArray a = new JSONArray(districts);
+		int prs = precincts.size();
+		JSONArray a = new JSONArray(districts);
 		JSONObject c = new JSONObject();
-//		c.put("id", id);
-//		c.put("name", name);
-//		c.put("constitution text", consText);
-//		c.put("number of districts", numOfDistricts);
-//		c.put("districts", a);
-//		c.put("precincts", prs);
+		c.put("id", id);
+		c.put("name", name);
+		c.put("constitution text", consText);
+		c.put("number of districts", numOfDistricts);
+		c.put("districts", a);
+		c.put("precincts", prs);
 		c.put("Map", currentMap.toString());
 		return c.toString();
+	}
+	
+	public String fetchState() {
+		JSONArray a = new JSONArray(districts);
+		JSONObject c = new JSONObject();
+		c.put("id", id);
+		c.put("name", name);
+		c.put("constitution text", consText);
+		c.put("number of districts", numOfDistricts);
+		c.put("districts", a);
+		return c.toString();
+	}
+	
+	public String toString() {
+		String s = "id: " + id;
+		for(MasterDistrict d: districts) {
+			s = s + d.toString();
+		}
+		for(MasterPrecinct p: precincts) {
+			s = s + p.toString();
+		}
+		return s;
 	}
 }
