@@ -7,8 +7,6 @@ import cse308.Users.UserAccount;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -20,9 +18,8 @@ public class SimulatedAnnealingSimulation extends Simulation{
     private final int rounds;
     protected Map bestMap;
     private boolean repeat=false;
-    private boolean isDone;
     
-    public SimulatedAnnealingSimulation(UserAccount u, SimulationParams s){
+    public SimulatedAnnealingSimulation(UserAccount u, SimulatedAnnealingParams s){
         super(u,s);
         startingMap=getStartingMap();
         currentMap=startingMap;
@@ -42,7 +39,6 @@ public class SimulatedAnnealingSimulation extends Simulation{
         temperature=json.getJsonNumber("temperature").doubleValue();
         alpha=json.getJsonNumber("alpha").doubleValue();
         rounds=json.getJsonNumber("rounds").intValue();
-        isDone=false;
     }
     
     /*
@@ -79,10 +75,10 @@ public class SimulatedAnnealingSimulation extends Simulation{
     */
     @Override
     public void pickMove() {
-        Object[] districts=currentMap.getAllDistricts().toArray();
-        DistrictForMap randomDistrict=(DistrictForMap)districts[districts.length*(int)Math.random()]; //gets random district
-        
-        Object[] precincts=randomDistrict.getBorderPrecincts().toArray();
+        boolean var=params.algorithm.contains("Random")? false: true;
+        DistrictForMap district = var ? variantOne():variantTwo();
+     
+        Object[] precincts=district.getBorderPrecincts().toArray();
         PrecinctForMap randomPrecinct=(PrecinctForMap)precincts[precincts.length*(int)Math.random()]; //gets random border precinct
         
         Set<DistrictForMap> neighborDistricts = randomPrecinct.getNeighborDistricts();
@@ -112,6 +108,35 @@ public class SimulatedAnnealingSimulation extends Simulation{
             bestMap=currentMap;
         }
         moves.add(m);
+    }
+    
+    /*
+    Description:
+        Chooses a random district (A) and gets a random precinct on its border.
+        Chooses a random district (B) that borders the previously chosen district.
+    */
+    public DistrictForMap variantOne(){
+        Object[] districts=currentMap.getAllDistricts().toArray();
+        DistrictForMap randomDistrict=(DistrictForMap)districts[districts.length*(int)Math.random()]; //gets random district
+        return randomDistrict;
+    }
+    
+    /*
+    Description:
+        Chooses the district (A) with the highest population.
+        Chooses a random district (B) that borders the previously chosen district.
+    */
+    public DistrictForMap variantTwo(){
+        Object[] districts=currentMap.getAllDistricts().toArray();
+        DistrictForMap mostPopulated=(DistrictForMap)districts[0];
+        int population=mostPopulated.getPopulation();
+        for (int i=1;i<districts.length;i++){
+            DistrictForMap d=(DistrictForMap)districts[i];
+            if(d.getPopulation()>population){
+                mostPopulated=d;
+            }
+        }
+        return mostPopulated;
     }
     
     /*

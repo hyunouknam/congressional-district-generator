@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.locationtech.jts.geom.*;
-import org.locationtech.jts.geom.util.GeometryCombiner;
-import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
@@ -120,7 +118,7 @@ public class DistrictForMap implements GeoRegion{
 	@Override
 	public int getVotingPopulation() {
 		int votingPopulation = 0;
-		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		Set<PrecinctForMap> precincts = getPrecincts();
 		for (PrecinctForMap pr: precincts) {
 			votingPopulation += pr.getVotingPopulation();
 		}
@@ -130,7 +128,7 @@ public class DistrictForMap implements GeoRegion{
 	@Override
 	public int getTotalVotes() {
 		int totalVotes = 0;
-		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		Set<PrecinctForMap> precincts = getPrecincts();
 		for (PrecinctForMap pr: precincts) {
 			totalVotes += pr.getTotalVotes();
 		}
@@ -141,7 +139,7 @@ public class DistrictForMap implements GeoRegion{
 	public double getPercentDemocrat() {
 		int totalVotes = 0;
 		double demVotes = 0;
-		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		Set<PrecinctForMap> precincts = getPrecincts();
 		for (PrecinctForMap pr: precincts) {
 			totalVotes += pr.getTotalVotes();
 			demVotes = pr.getPercentDemocrat()*totalVotes;
@@ -156,7 +154,7 @@ public class DistrictForMap implements GeoRegion{
 
 	@Override
 	public Geometry getGeometry() {
-		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		Set<PrecinctForMap> precincts = getPrecincts();
 
 		ArrayList<Geometry> polArray = new ArrayList<>();
 		for (PrecinctForMap pr: precincts) {
@@ -173,7 +171,7 @@ public class DistrictForMap implements GeoRegion{
 	@Override
 	public int getPopulation() {
 		int population = 0;
-		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		Set<PrecinctForMap> precincts = getPrecincts();
 		for (PrecinctForMap pr: precincts) {
 			population += pr.getPopulation();
 		}

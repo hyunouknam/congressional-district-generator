@@ -1,14 +1,10 @@
 package cse308.Areas;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -17,12 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.Type;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import cse308.Data.PrecinctRepository;
 import cse308.Simulation.Move;
 
 @Entity
@@ -72,14 +64,14 @@ public class MasterState {
 
 	@PostLoad
 	public void populateCurrentMap() {
-		currentMap = new Map(this);
+		currentMap = new Map(this, numOfDistricts);
 		originalMap = currentMap.clone();
 		System.out.println("Here");
-		for(PrecinctForMap p: this.currentMap.getAllPrecincts()) {
+		for(PrecinctForMap p: currentMap.getAllPrecincts()) {
 			MasterDistrict dist = p.getMaster().getDefaultDistrict();
 			DistrictForMap distForMap = currentMap.getDistrict(dist);
 			if(distForMap!=null) {
-				this.currentMap.apply(new Move(p, distForMap));
+				currentMap.apply(new Move(p, distForMap));
 			}
         }
 	}

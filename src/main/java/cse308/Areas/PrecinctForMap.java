@@ -9,7 +9,7 @@ import cse308.Data.GeoRegion;
 
 public class PrecinctForMap implements GeoRegion{
     private final MasterPrecinct master;
-    private Map map;
+    private final Map map;
     public boolean isAssigned=false;
     
     public PrecinctForMap(MasterPrecinct mp, Map map){
