@@ -49,7 +49,7 @@ public class ObjectiveFuncEvaluator {
         
         double score = popDeviation / popAvg;
         
-        return (1 - score);
+        return (1.0 - score);
         		
         //return total;
     }

@@ -37,6 +37,9 @@ public class MasterState {
 
 	@Transient
 	private Map currentMap;
+	
+	@Transient
+	private Map originalMap;
 
 	@OneToMany()
 	@JoinColumn(name = "state_id")
@@ -62,13 +65,14 @@ public class MasterState {
 //        currentMap = new Map(this);
 		districts = new HashSet<>();
 		precincts = new HashSet<>();
-
 		currentMap = null;
+		originalMap = null;	// used for viewing the original map to compare with new map
 	}
 
 	@PostLoad
 	public void populateCurrentMap() {
 		currentMap = new Map(this);
+		originalMap = currentMap.clone();
 		System.out.println("Here");
 		for(PrecinctForMap p: this.currentMap.getAllPrecincts()) {
 			MasterDistrict dist = p.getMaster().getDefaultDistrict();

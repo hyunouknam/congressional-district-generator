@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
 	<title>Redistricting Login</title>
 
     <!-- BOOTSTRAP 4 -->
@@ -27,20 +28,18 @@
 
     <main>
         <article class="d-flex flex-column flex-md-row">
-            <form class="border rounded p-3 m-2">
+            <form  action="/api/register" method="post"
+              class="border rounded p-3 m-2">
                 <label>Register new account</label>
-                <div class="alert alert-danger" role="alert">
-                      NOT YET IMPLEMENTED
-                </div>
 
                 <div class="form-group">
-                    <input type="email" class="form-control col" id="register-email" placeholder="E-Mail">
+                    <input required type="email" class="form-control col" id="register-email" placeholder="E-Mail">
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" id="register-password" placeholder="Password">
+                    <input required type="password" class="form-control" id="register-password" placeholder="Password">
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" id="register-password2" placeholder="Confirm Password">
+                    <input required type="password" class="form-control" id="register-password2" placeholder="Confirm Password">
                 </div>
                 <div class="form-group d-flex flex-row-reverse mb-0">
                     <button type="submit" class="btn btn-primary">Create Account</button>
@@ -53,11 +52,11 @@
                     class="border rounded p-3 m-2">
                 <label>Existing User login</label>
                 <div class="form-group">
-                    <input type="text" name="username"
-                            class="form-control col" id="login-username" placeholder="User Name">
+                    <input required type="email" name="username"
+                            class="form-control col" id="login-username" placeholder="E-Mail">
                 </div>
                 <div class="form-group">
-                    <input type="password" name="password"
+                    <input required type="password" name="password"
                             class="form-control" id="login-password" placeholder="Password">
                 </div>
                 <div class="form-group d-flex flex-row-reverse mb-0">
