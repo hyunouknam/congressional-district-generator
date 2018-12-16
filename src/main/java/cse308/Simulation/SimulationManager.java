@@ -1,6 +1,11 @@
 package cse308.Simulation;
 
+import cse308.Areas.MasterState;
 import cse308.Users.UserAccount;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class SimulationManager {
     private static SimulationManager simManager = null;
@@ -32,19 +37,13 @@ public class SimulationManager {
     public Simulation createSim(UserAccount user, SimulationParams params){
         Simulation newSim;
         if(params.algorithm.equals("Region Growing")){
-            newSim=new RegionGrowingSimulation(user, (RegionGrowingParams)params);
+            newSim=new RegionGrowingSimulation(user, params);
         }
         else{
-            newSim=new SimulatedAnnealingSimulation(user, (SimulatedAnnealingParams)params);
+            newSim=new SimulatedAnnealingSimulation(user, params);
         }
         simWorker.addToRunQueue(newSim);
         return newSim;
-    }
-    
-    //Continues a saved simulation from where it left off
-    public void continueSimulation(){
-        Simulation sim=null;//=EntityManager.findSimulation(simID);
-        simWorker.addToRunQueue(sim);
     }
     
     public Simulation[] getSimulationsForUser(UserAccount ua){

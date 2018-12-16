@@ -11,22 +11,12 @@ import java.util.Set;
 public class RegionGrowingSimulation extends Simulation{
     int numOfPrecincts;
     
-    public RegionGrowingSimulation(UserAccount u, RegionGrowingParams s){
-        super(u,s);
-        startingMap=new Map(params.forState, params.numDistricts); //create new blank map
-        currentMap=startingMap.clone();    //for regiongrowing, blankmap=startingmap=currentmap
-            numOfPrecincts=startingMap.getAllPrecincts().size();
-        getSeedPrecincts();
-    }
-    
-    public void getSeedPrecincts(){
-        boolean var=params.algorithm.contains("Random")? false: true;
-        if(var){
-            getSeedPrecinctsOne();
-        }
-        else{
-            getSeedPrecinctsTwo();
-        }
+    public RegionGrowingSimulation(UserAccount u,SimulationParams s){
+       super(u,s);
+       startingMap=new Map(params.forState); //create new blank map
+       currentMap=startingMap;    //for regiongrowing, blankmap=startingmap=currentmap
+       numOfPrecincts=startingMap.getAllPrecincts().size();
+       getSeedPrecincts();
     }
     
     /*
@@ -34,7 +24,7 @@ public class RegionGrowingSimulation extends Simulation{
         Gets the list of precincts for the state for which the algorithm is running.
         Picks random precincts to be chosen as the seeds, one for each district.
     */
-    private void getSeedPrecinctsOne(){
+    private void getSeedPrecincts(){
         Object[] precincts=startingMap.getAllPrecincts().toArray();
         Collection <DistrictForMap> districts=startingMap.getAllDistricts();
         for(DistrictForMap d: districts){
@@ -44,10 +34,6 @@ public class RegionGrowingSimulation extends Simulation{
             moves.add(move);
             currentMap.apply(move);
         }
-    }
-    
-    private void getSeedPrecinctsTwo(){
-        //seeds are the n precincts with the smallest opulations
     }
         
     /*

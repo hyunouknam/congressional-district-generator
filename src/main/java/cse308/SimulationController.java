@@ -12,12 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import cse308.Areas.MasterState;
 import cse308.Data.StateRepository;
 import cse308.Simulation.FunctionWeights;
-import cse308.Simulation.RegionGrowingParams;
-import cse308.Simulation.SimulatedAnnealingParams;
 import cse308.Simulation.SimulationManager;
 import cse308.Simulation.SimulationParams;
 import cse308.Users.UserAccount;
-import java.util.HashSet;
 
 @RestController
 public class SimulationController {
@@ -36,28 +33,12 @@ public class SimulationController {
 				(float)(double) b.get("wPartisanFairness"));
 		
 		Optional<MasterState> obj = staterepository.findById((String) simParams.get("state"));
-                MasterState state = obj.orElseThrow();
-		String algorithm=(String) simParams.get("algorithm");                
-                Integer districts=(Integer)simParams.get("districts");
-                SimulationParams simulationParams;
-                if(algorithm.equals("Region Growing")){
-                    simulationParams = new RegionGrowingParams(
-                        functionWeights,
-                        state,
-                        algorithm,
-                        districts,
-                        new HashSet<>()
-                    );
-                }
-                else{
-                    simulationParams = new SimulatedAnnealingParams(
-                        functionWeights,
-                        state,
-                        algorithm,
-                        districts,
-                        new cse308.Areas.Map(state, districts)
-                    );
-                }
+		MasterState state = obj.orElseThrow();
+
+		SimulationParams simulationParams = new SimulationParams(
+					functionWeights,
+					state,
+					(String) simParams.get("algorithm"));
 		
 		UserAccount userAccount = new UserAccount();
 		

@@ -2,15 +2,25 @@ package cse308.Areas;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import cse308.Simulation.FunctionWeights;
 import cse308.Simulation.Move;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import cse308.Simulation.ObjectiveFuncEvaluator;
 
 //@Entity
 public class Map implements Cloneable{
@@ -27,10 +37,9 @@ public class Map implements Cloneable{
     private HashMap<MasterDistrict, DistrictForMap> districts;
     private DistrictForMap nullDistrict;
     private HashMap<PrecinctForMap, DistrictForMap> precinctDistrictMapping;
-    private double goodness;
-    private int numDistricts;
+    private HashMap<DistrictForMap, Set<PrecinctForMap>> districtPrecinctMapping;
 
-    public Map(MasterState state, int numDistricts){
+    public Map(MasterState state){
         master = state;
 
         //prepare precincts, associate with master precincts
@@ -43,34 +52,20 @@ public class Map implements Cloneable{
         //prepare districts
         districts = new HashMap<>();
         nullDistrict=new DistrictForMap(this);
-        numDistricts=(numDistricts==0)? this.numDistricts: numDistricts;
-        if(numDistricts>=master.getDistricts().size()){
-            int i=0;
-            for(MasterDistrict md: master.getDistricts()){
-                DistrictForMap d = new DistrictForMap(md, this);
-                districts.put(md, d);
-                i++;
-            }
-            for (int j=i;j<numDistricts;j++){
-                MasterDistrict temp=new MasterDistrict();
-                DistrictForMap district=new DistrictForMap(temp, this);
-                districts.put(temp, district);
-            }
+        for(MasterDistrict md: master.getDistricts()){
+            DistrictForMap d = new DistrictForMap(md, this);
+            districts.put(md, d);
         }
-        else{
-            Object[] masters=master.getDistricts().toArray();
-            for(int i=0;i<numDistricts;i++){
-                MasterDistrict md=(MasterDistrict)masters[i];
-                DistrictForMap d = new DistrictForMap(md, this);
-                districts.put(md, d);
-            }
-        }        
-        this.numDistricts= numDistricts;
-        
+
         // Initialize, all precincts start in null district
         this.precinctDistrictMapping = new HashMap<>();
         for(PrecinctForMap p: getAllPrecincts()) {
-            precinctDistrictMapping.put(p, nullDistrict);
+            precinctDistrictMapping.put(p, this.nullDistrict);
+        }
+        this.districtPrecinctMapping = new HashMap<>();
+        districtPrecinctMapping.put(nullDistrict, new HashSet<>(getAllPrecincts()));
+        for(DistrictForMap d: getAllDistricts()) {
+        	districtPrecinctMapping.put(d, new HashSet<>());
         }
     }
 
@@ -79,13 +74,12 @@ public class Map implements Cloneable{
     public MasterState getState(){ return master; }
     public Collection<PrecinctForMap> getAllPrecincts(){ return precincts.values(); }
     public Collection<DistrictForMap> getAllDistricts(){ return districts.values(); }
-    public Collection<MasterDistrict> getMasterDistricts(){ return districts.keySet(); }
-    public HashMap<MasterDistrict, DistrictForMap> getDistricts(){ return districts; }
     public DistrictForMap getNullDisrict(){ return nullDistrict; }
 
     public HashMap<PrecinctForMap, DistrictForMap> getPrecinctDistrictMapping(){ return precinctDistrictMapping; }
+    public HashMap<DistrictForMap, Set<PrecinctForMap>> getDistrictPrecinctMapping(){ return districtPrecinctMapping; }
 
-    public PrecinctForMap getPrecinct(MasterPrecinct precinct){ return precincts.get(precinct); }
+	public PrecinctForMap getPrecinct(MasterPrecinct precinct){ return precincts.get(precinct); }
     public DistrictForMap getDistrict(MasterDistrict district){ return districts.get(district); }
 
 
@@ -93,17 +87,22 @@ public class Map implements Cloneable{
 
     public void apply(Move m){
         precinctDistrictMapping.put(m.getPrecinct(), m.getNewDistrict()); //modifies precint to district mapping
+        DistrictForMap oldDistrict = m.getPrecinct().getParentDistrict();
+        districtPrecinctMapping.get(oldDistrict).remove(m.getPrecinct());
+        districtPrecinctMapping.get(m.getNewDistrict()).add(m.getPrecinct());
+        //and calculate mas goofness
     }
     
     public Map cloneApply(Move m) {
         Map newMap = clone();
         newMap.getPrecinctDistrictMapping().put(m.getPrecinct(), m.getNewDistrict());
+        //and calculate mas goofness
         return newMap;
     }
     
     @Override
     public Map clone() {
-        Map copy = new Map(master, numDistricts);
+        Map copy = new Map(master);
 
         //Make sure all precincts are assigned to their corresponding districts
         for(PrecinctForMap p: getAllPrecincts()){
@@ -112,7 +111,7 @@ public class Map implements Cloneable{
             PrecinctForMap p_copy = copy.getPrecinct(mp);
 
             //get corresponding parent district in copy
-            MasterDistrict md = getPrecinctDistrictMapping().get(p).getMaster();
+            MasterDistrict md = p.getParentDistrict().getMaster();
             DistrictForMap d_copy = copy.getDistrict(md);
 
             //assign copy's version of p to copy's version of d
@@ -120,12 +119,12 @@ public class Map implements Cloneable{
         }
         return copy;
     }
-	
-	 public String serializeMap() {
+    
+    public String serializeMap() {
     	JSONObject c = new JSONObject();
     	System.out.println("Here in Sear");
     	for(DistrictForMap district: getAllDistricts()) {
-    		Set<PrecinctForMap> precinctsForDistrict = district.getPrecincts();
+    		Set<PrecinctForMap> precinctsForDistrict = districtPrecinctMapping.get(district);
     		Set<String> idsOfPrecincts = precinctsForDistrict.stream().map(p -> p.getMaster().getId()).collect(Collectors.toSet());
     		JSONArray arrayOfPrecincts = new JSONArray(idsOfPrecincts);
     		c.put(district.getMaster().getID(), arrayOfPrecincts);
@@ -142,16 +141,5 @@ public class Map implements Cloneable{
     			.map(e -> e.getKey().getMaster().getId() + " :  " + e.getValue().getMaster().getID())
     			.collect(Collectors.joining(", "));
     	return s;
-    }
-    
-    public List<DistrictForMap> addDistricts(int numDistricts){
-        List<DistrictForMap> newDistricts=new ArrayList<>();
-        for (int j=0;j<numDistricts;j++){
-            MasterDistrict temp=new MasterDistrict();
-            DistrictForMap district=new DistrictForMap(temp, this);
-            districts.put(temp, district);
-            newDistricts.add(district);
-        }
-        return newDistricts;
     }
 }
