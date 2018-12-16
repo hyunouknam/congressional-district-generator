@@ -36,6 +36,7 @@ public class MasterState {
 
 	@Transient
 	private Map currentMap;
+	private Map originalMap;
 
 	@OneToMany()
 	@JoinColumn(name = "state_id")
@@ -61,6 +62,7 @@ public class MasterState {
 		districts = new HashSet<>();
 		precincts = new HashSet<>();
 		currentMap = new Map(this);
+		originalMap = currentMap.clone();	// used for viewing the original map to compare with new map
 	}
 
 	public MasterState(String id, String name, String consText, int numOfDistricts, Set<MasterDistrict> districts,
