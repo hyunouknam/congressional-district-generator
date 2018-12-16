@@ -6,9 +6,10 @@ public class SimulationParams {
     final FunctionWeights functionWeights;
     final MasterState forState;
     final String algorithm;
+    int numDistricts;
 //    Set<PrecinctForMap> excludedPrecincts;
     
-    public SimulationParams(FunctionWeights weights, MasterState state, String algorithm){
+    public SimulationParams(FunctionWeights weights, MasterState state, String algorithm, int numDistricts){
     	assert weights 		!= null: "Sim weights must not be null";
     	assert state 		!= null: "Sim state must not be null";
     	assert algorithm 	!= null: "Sim algorithm must not be null";
@@ -18,6 +19,7 @@ public class SimulationParams {
     	functionWeights=weights;
     	forState=state;
         this.algorithm=algorithm;
+        this.numDistricts=numDistricts;
     }
     
     public MasterState getState() {return forState; }
@@ -30,6 +32,8 @@ public class SimulationParams {
 		s = s + "\"" + "NJ" + "\"";
 		s = s + ", \"algorithm\":";
 		s = s + "\"" + algorithm + "\"";
+                s = s + ", \"numDistricts\":";
+		s = s + "\"" + numDistricts + "\"";
 		s = s + "}";
 		return s;
     }

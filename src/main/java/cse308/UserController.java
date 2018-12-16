@@ -1,23 +1,11 @@
 package cse308;
 
-import java.util.AbstractCollection;
-import java.util.ArrayList;
-
-import javax.json.Json;
-import javax.json.JsonBuilderFactory;
-import javax.json.JsonObjectBuilder;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import cse308.Areas.MasterDistrict;
-import cse308.Areas.MasterState;
-import cse308.Simulation.FunctionWeights;
-import cse308.Simulation.RegionGrowingSimulation;
-import cse308.Simulation.Simulation;
-import cse308.Simulation.SimulationParams;
 import cse308.Users.UserAccount;
 
 @RestController
