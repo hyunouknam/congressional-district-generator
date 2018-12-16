@@ -49,7 +49,7 @@ public class ObjectiveFuncEvaluator {
         
         double score = popDeviation / popAvg;
         
-        return (1 - score);
+        return (1.0 - score);
         		
         //return total;
     }
@@ -63,7 +63,7 @@ public class ObjectiveFuncEvaluator {
         }
         double[] democratVoteShares = districts
         		.stream()
-        		.mapToDouble(x -> x.getDemocratVotePercentage())	// use real method later
+        		.mapToDouble(x -> x.getPercentDemocrat())
         		.sorted()
         		.toArray();
 
