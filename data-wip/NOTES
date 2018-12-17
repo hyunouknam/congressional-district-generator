@@ -10,6 +10,10 @@ libspatialindex
 
 ( if you want to use plots to debug the code, you also need matplotlib)
 
+Also uses some node scripts for topological simplification
+
+run `npm install` to install them
+
 
 
 

@@ -37,6 +37,18 @@ def ne_rename_districts(df_raw):
         #"INTPTLAT10": "lat",
         #"INTPTLON10": "lon",
 
+#TOPO STUFF:
+#get everything ready
+#then output df to build/NJ_clean_geojson.json
+#then run shell commands to make build/NJ_simplified_topo.json
+#then run shell commands to make build/NJ_simplified_geojson.json
+#then load build.NJ_simplified_geojson.json, output as csv
+#output neighbors csv
+#copy NJ_simplified_topo.json to out folder
+
+OUTFOLDER='./final_data/'
+BUILD_FOLDER='./tmp/'
+
 ALL_CONFIGS = {
 "NJ": {
     "state": "NJ",
@@ -217,62 +229,69 @@ print("Outputting neighbor data to {}".format(neighbors_outfile))
 t_precinct_to_precinct.to_csv(neighbors_outfile);
 
 
-#TODO TEMP :Lets disable simplyfying polygons, as we might be able to do it better if
-#theyre meshy
-# ============ SIMPLIFY POLYGONS =============
-#print("Simplifying polygons... ", end='', flush=True)
-## we can cut down the number of points needed dramatically while still
-## having accurate enough shapes
-#
-#
-#def count_pts(d):
-#    if(d.geom_type == 'MultiPolygon'):
-#        return sum(count_pts(g) for g in d.geoms)
-#    else:
-#        return len(d.exterior.coords)
-#def total_pts(df):
-#    return sum(df.geometry.apply(count_pts))
-#
-#
-#df_simple = df.copy()
-#df_simple.geometry = df.simplify(tolerance=1E-4)
-#print("done")
-#print("Points reduced from {} to {}".format(total_pts(df), total_pts(df_simple)), flush=True)
-#
-#df = df_simple
+# ======================== PRETTY MUCH DONE
+#NOW:
+#do topological simplification with topojson scripts (shell commands)
+#1: store a copy of the topojson in the out_dir
+#2: store a temp copy of the simplified geojson
+#3: read that in, and output as geopandas csv
 
-##### RESULTS FROM TESTING: how much to simplify
-# 1E-5 reduces to ~60% for basically no quality reduction
-# 3E-5 is about 40%, and is also pretty good
-# 1E-4 reduces to ~25%, but has some gaps when you zoom in
-# anything  >1E-4 is ridiculously unsuable
+from subprocess import call
+from shutil import copyfile
+import os
+os.makedirs(BUILD_FOLDER, exist_ok=True) #make sure tmp exists
 
-# ======= TEST CODE FOR TESTING TOLERANCES
-#def show(d):
-#    d.plot(column="dem_vote_fraction")
-#    plt.show()
-#testf = pd.DataFrame({'tol':[ 0, 0.00001, 0.00004, 0.0001, 0.00035, 0.001 ]})
-#
-#fig = plt.figure()
-#for index, row in testf.iterrows():
-#    tol = row['tol']
-#
-#    d_new = df.copy()
-#    d_new.geometry = df.simplify(tolerance = tol)
-#    pts = total_pts(d_new)
-#
-#    ax = fig.add_subplot(2,4, index + 1)
-#    ax.margins(-0.3)
-#    d_new.plot(column="dem_vote_fraction", ax=ax)
-#    ax.set_title("tol: {}; pts:{}".format(tol, pts))
-#
-#    row['pts'] = pts
-#
-#plt.show()
+TEMP_CLEAN_GEOJSON_FILE = f'{BUILD_FOLDER}/{CURR_CONFIG["state"]}_clean_geojson.json'
+TEMP_CLEAN_TOPO_FILE = f'{BUILD_FOLDER}/{CURR_CONFIG["state"]}_clean_topo.json'
+TEMP_SIMPLIFIED_TOPO_FILE = f'{BUILD_FOLDER}/{CURR_CONFIG["state"]}_simplified_topo.json'
+TEMP_SIMPLIFIED_GEOJSON_FILE = f'{BUILD_FOLDER}/{CURR_CONFIG["state"]}_simplified_geojson.json'
 
-#show(df)
-#show(df2)
+OUT_TOPO_FILE= f'{OUTFOLDER}/{CURR_CONFIG["state"]}_topo.json'
 
+#Output df as geojson to tmp
+with open(TEMP_CLEAN_GEOJSON_FILE, 'w') as temp_outf:
+    temp_outf.write(df.to_json())
+
+
+#convert geojson to topojson
+print("Converting to topology")
+call(['npx','geo2topo', '-q', '1e8', 
+    f'precincts={TEMP_CLEAN_GEOJSON_FILE}',
+    '-o', TEMP_CLEAN_TOPO_FILE])
+#npx geo2topo -q 1e8 nj=NJ_geo.json -o NJ_topo.json
+
+
+#Simplify topojson
+print("Simplifying topology")
+#planar-quantile decides what fraction to keep
+#i.e. 0.1 means keep 10% of the points
+#it will always remove the easiest ones first
+#0.5 looks flawless unless you zoom in reaaaal hard
+#0.35 is fine
+#0.2 is getting chunky in places but still looks acceptable
+call(['npx', 'toposimplify', '--planar-quantile', '0.2',  
+    TEMP_CLEAN_TOPO_FILE, 
+    '-o', TEMP_SIMPLIFIED_TOPO_FILE])
+
+
+print("Converting back to geojson")
+#npx topo2geo nj=NJ_geo2.json < NJ_topo2.json
+call(['npx', 'topo2geo', 
+    '--in', TEMP_SIMPLIFIED_TOPO_FILE,
+    f'precincts={TEMP_SIMPLIFIED_GEOJSON_FILE}'])
+
+
+#### We've created our files now just copy the topo file to outdir
+print("Copying topo file to output")
+copyfile(TEMP_SIMPLIFIED_TOPO_FILE, OUT_TOPO_FILE)
+
+
+# ================= FINAL STAGE, OUTPUT GEOJSON AS CSV FOR DB
+# load TEMP_SIMPLIFIED_GEOJSON_FILE into geopandas, output as csv
+
+print("Loading simplified json {}".format(TEMP_SIMPLIFIED_GEOJSON_FILE), flush=True)
+df_simple = gp.read_file(TEMP_SIMPLIFIED_GEOJSON_FILE)
+df_simple = df_simple.set_index('id')
 
 
 # ============== OUTPUT ===============
@@ -281,11 +300,11 @@ t_precinct_to_precinct.to_csv(neighbors_outfile);
 def geom_to_json(geom):
     return json.dumps(shapely.geometry.mapping(geom))
 
-df['geometry'] = df['geometry'].apply(geom_to_json)
+df_simple['geometry'] = df_simple['geometry'].apply(geom_to_json)
 
 #df is still a geodatafram, but there's nothing geographic about it
-out_df = pd.DataFrame(df)
+out_df = pd.DataFrame(df_simple)
 
 outfile = CURR_CONFIG["outfile"]
-out_df.to_csv(outfile, sep='|')
 print("Outputting |-delimited csv to {}".format(outfile))
+out_df.to_csv(outfile, sep='|')
