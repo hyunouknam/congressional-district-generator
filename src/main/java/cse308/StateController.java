@@ -47,19 +47,7 @@ public class StateController {
 		}
 		return "[" + joiner.toString() + "]";
 	}
-	
-	@RequestMapping(value = "/api/fetchPrecinctsByDistrict/{id}", method = RequestMethod.GET, produces = "application/json")
-	public String fetchPrecinctsByDistrict(@PathVariable String id) {
-		String string = "[";
-		Iterable<MasterPrecinct> precincts = prec.findByDefaultDistrictId(id);
-		for(MasterPrecinct p: precincts) {
-			string = string + p.fetchMasterPrecinct() + ",";
-		}
-		string = string.substring(0, string.length()-1);
-		string += "]";
-		return string;
-	}
-	
+
 	@RequestMapping(value = "/api/prec", method = RequestMethod.GET, produces = "application/json")
 	public String getPrecincts() throws JsonProcessingException {
 		Optional<MasterPrecinct> pc = prec.findById("3400142202");

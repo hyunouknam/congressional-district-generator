@@ -167,16 +167,7 @@ public class MasterPrecinct implements GeoRegion{
 		return " (id: " + this.id + " district: " + this.defaultDistrict.getID() + "java: " + System.identityHashCode(this.defaultDistrict) + ")";
 	}
 
-	public String fetchMasterPrecinct() {
-		JSONObject c = new JSONObject();
-		c.put("id", id);
-		c.put("name", name);
-        c.put("data", Util.geoRegionToJson(this));
 
-		return c.toString();
-	}
-	
-	
     
 //    public MasterPrecinct(String name, Geometry geo, MasterPrecinct[] neighbors, DemographicInfo pop){
 //        this.name=name;

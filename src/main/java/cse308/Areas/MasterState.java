@@ -4,13 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Immutable;
 import org.json.JSONArray;
@@ -32,11 +26,11 @@ public class MasterState {
     //Current map is the 2010 districting map
 	private Map currentMap;
 
-	@OneToMany()
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "state_id")
 	private Set<MasterDistrict> districts;
 
-	@OneToMany()
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "state_id")
 	private Set<MasterPrecinct> precincts;
 
