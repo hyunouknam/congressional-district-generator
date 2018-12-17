@@ -7,5 +7,5 @@ import cse308.Users.UserAccount;
 
 @Repository
 public interface UserAccountRepository extends JpaRepository<UserAccount, Integer>{
-
+	UserAccount findByEmail(String email);
 }
