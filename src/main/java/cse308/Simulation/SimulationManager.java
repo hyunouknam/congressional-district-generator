@@ -31,7 +31,7 @@ public class SimulationManager {
     */
     public Simulation createSim(UserAccount user, SimulationParams params){
         Simulation newSim;
-        if(params.algorithm.equals("Region Growing")){
+        if(params.algorithm.equals("REGION_GROWING")){
             newSim=new RegionGrowingSimulation(user, (RegionGrowingParams)params);
         }
         else{

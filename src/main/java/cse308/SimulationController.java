@@ -38,18 +38,17 @@ public class SimulationController {
 				(float)(double) b.get("wPartisanFairness"));
 		
 		Optional<MasterState> obj = staterepository.findById((String) simParams.get("state"));
-               // MasterState state = obj.orElseThrow();
-                MasterState state=new MasterState();
+                MasterState state = obj.get();
+               // MasterState state=new MasterState();
                                 
 		String algorithm=(String) simParams.get("algorithm");                
                 Integer districts=(Integer)simParams.get("districts");
                 SimulationParams simulationParams;
-                if(algorithm.equals("Region Growing")){
+                if(algorithm.equals("REGION_GROWING")){
                     simulationParams = new RegionGrowingParams(
                         functionWeights,
                         state,
-                        algorithm,
-                        new HashSet<>()
+                        algorithm
                     );
                 }
                 else{

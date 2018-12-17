@@ -37,9 +37,7 @@ public abstract class Simulation {
 
 	public abstract void updateProgress();
 
-	public boolean isDone() {
-            return getProgress() == 1;
-	}
+	public abstract boolean isDone();
 
 	public abstract void doStep();
 

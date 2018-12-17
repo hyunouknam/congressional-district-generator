@@ -16,7 +16,7 @@ public class RegionGrowingSimulation extends Simulation{
         startingMap=new Map(params.forState); //create new blank map
         currentMap=startingMap.clone();    //for regiongrowing, blankmap=startingmap=currentmap
             numOfPrecincts=startingMap.getAllPrecincts().size();
-        getSeedPrecincts();
+        getSeedPrecinctsOne();
     }
     
     public void getSeedPrecincts(){

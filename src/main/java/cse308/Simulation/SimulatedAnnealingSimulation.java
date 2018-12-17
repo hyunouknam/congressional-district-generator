@@ -160,4 +160,9 @@ public class SimulatedAnnealingSimulation extends Simulation{
     public double calcAcceptanceProb(double current, double next, double temp){
         return Math.E*(next-current)/temp;
     }
+    
+    @Override
+    public boolean isDone() {
+    	return false;
+    }
 }
