@@ -40,7 +40,8 @@ ALL_CONFIGS = {
 "NJ": {
     "state": "NJ",
     "infile": './NJ/shapefiles/nj_final.shp',
-    "outfile": './nj_out.csv',
+    "outfile": './final_data/nj_out.csv',
+    "out_neighbors": './final_data/nj_neighbors.csv',
     "properties_map": {
         "GEOID10": "id",
 
@@ -62,7 +63,8 @@ ALL_CONFIGS = {
 "CT": {
     "state": "CT",
     "infile": './CT/ct_final.shp',
-    "outfile": './ct_out.csv',
+    "outfile": './final_data/ct_out.csv',
+    "out_neighbors": './final_data/ct_neighbors.csv',
     'process_raw': ct_add_districts, #is run at prepoc time
     "properties_map": {
         "GEOID10": "id",
@@ -87,7 +89,8 @@ ALL_CONFIGS = {
 "NE": {
     "state": "NE",
     "infile": './NE/ne_final.shp',
-    "outfile": './ne_out.csv',
+    "outfile": './final_data/ne_out.csv',
+    "out_neighbors": './final_data/ne_neighbors.csv',
     "process_raw": ne_rename_districts,
     "properties_map": {
         "GEOID10": "id",
@@ -121,7 +124,7 @@ elif(len(args) > 1):
     print("Please enter only 1 state: " + str(list(ALL_CONFIGS.keys())))
     exit(-1)
 else:
-    statecode = args[0]
+    statecode = args[0].upper()
     if(statecode not in ALL_CONFIGS):
         print("Unrecognized statecode '{}'".format(statecode))
         print("Please enter a state: " + str(list(ALL_CONFIGS.keys())))
@@ -157,6 +160,7 @@ undef_dists = df_raw['NAME10'].str.contains(
 df_raw = df_raw[~ undef_dists]
 
 
+
 # ============= discard extra columns, rename  =================
 print("Selecting/renaming columns", flush=True)
 
@@ -169,6 +173,9 @@ df = df_raw.reindex(columns=prop_map.keys())
 df = df.rename(columns=prop_map)
 df = df.set_index('id')
 
+# ================ assign districts = None to null district for state ===
+df.loc[df.district_id.isnull(), 'district_id'] = CURR_CONFIG["state"] + "_NULL"
+
 
 # ================= Add neighbors column ==========================
 print("Calculating neighbors", flush=True)
@@ -180,14 +187,19 @@ geoms = df[['geometry']]
 #columns will be: geometry, index_right
 t_joined = gp.sjoin(geoms, geoms, how='left')
 
+# take just index column, then filter out self neightbors
+t_indices = t_joined["index_right"]
+t_precinct_to_precinct = t_indices[t_indices != t_indices.index]
+
+
+# ============ Put neighbors into a comma-delimited neighbors column
 
 #group duplicate entries, 
-#filter out self
-t_groups = t_joined.groupby(t_joined.index)
-
+t_groups = t_precinct_to_precinct.groupby(t_precinct_to_precinct.index)
 
 #result is series of index: 'neighb,neighb,...'
-neighbors = t_groups.apply(lambda subf: ','.join(subf[subf['index_right']!=subf.index]['index_right']))
+#filter out (entries == self)
+neighbors = t_groups.apply(lambda subf: ','.join(subf))
 
 #alternatively:             ['neighb','neighb',...]
 #neighbors = t_groups.apply(lambda subf: list(subf[subf['index_right']!=subf.index]['index_right']))
@@ -196,40 +208,39 @@ neighbors = t_groups.apply(lambda subf: ','.join(subf[subf['index_right']!=subf.
 df['neighbors'] = neighbors
 
 
+# ============== output neighbors in separate neighbors table (precinct_to_precinct)
 
-#TODO
-# ===========  WEIGHTED AVERAGES? PREPROCESS DISTRICTS ===========
-#df_tmp = df.copy(deep=False)
-#df_tmp['dem_votes'] = df['dem_vote_fraction'] * df['total_votes']
-#
-#df2 = df[['district', 'dem_votes','total_votes','geometry']]
-#districts = df[['US_HOUSE','AV','geometry']].dissolve(by="US_HOUSE", aggfunc='sum' )
-#districts['dem_vote_fraction']
+#t_joined
+neighbors_outfile = CURR_CONFIG["out_neighbors"]
+print("Outputting neighbor data to {}".format(neighbors_outfile))
+t_precinct_to_precinct.to_csv(neighbors_outfile);
 
 
+#TODO TEMP :Lets disable simplyfying polygons, as we might be able to do it better if
+#theyre meshy
 # ============ SIMPLIFY POLYGONS =============
-print("Simplifying polygons... ", end='', flush=True)
-# we can cut down the number of points needed dramatically while still
-# having accurate enough shapes
+#print("Simplifying polygons... ", end='', flush=True)
+## we can cut down the number of points needed dramatically while still
+## having accurate enough shapes
+#
+#
+#def count_pts(d):
+#    if(d.geom_type == 'MultiPolygon'):
+#        return sum(count_pts(g) for g in d.geoms)
+#    else:
+#        return len(d.exterior.coords)
+#def total_pts(df):
+#    return sum(df.geometry.apply(count_pts))
+#
+#
+#df_simple = df.copy()
+#df_simple.geometry = df.simplify(tolerance=1E-4)
+#print("done")
+#print("Points reduced from {} to {}".format(total_pts(df), total_pts(df_simple)), flush=True)
+#
+#df = df_simple
 
-
-def count_pts(d):
-    if(d.geom_type == 'MultiPolygon'):
-        return sum(count_pts(g) for g in d.geoms)
-    else:
-        return len(d.exterior.coords)
-def total_pts(df):
-    return sum(df.geometry.apply(count_pts))
-
-
-df_simple = df.copy()
-df_simple.geometry = df.simplify(tolerance=1E-4)
-print("done")
-print("Points reduced from {} to {}".format(total_pts(df), total_pts(df_simple)), flush=True)
-
-df = df_simple
-
-# results from testing:
+##### RESULTS FROM TESTING: how much to simplify
 # 1E-5 reduces to ~60% for basically no quality reduction
 # 3E-5 is about 40%, and is also pretty good
 # 1E-4 reduces to ~25%, but has some gaps when you zoom in
@@ -274,5 +285,6 @@ df['geometry'] = df['geometry'].apply(geom_to_json)
 #df is still a geodatafram, but there's nothing geographic about it
 out_df = pd.DataFrame(df)
 
-out_df.to_csv(CURR_CONFIG["outfile"], sep='|')
-print("Outputting |-delimited csv to {}".format(CURR_CONFIG['outfile']))
+outfile = CURR_CONFIG["outfile"]
+out_df.to_csv(outfile, sep='|')
+print("Outputting |-delimited csv to {}".format(outfile))
