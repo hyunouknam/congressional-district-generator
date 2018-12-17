@@ -1,54 +1,28 @@
 import { Observable, Observer, fromEvent } from 'rxjs';
 import  * as Rx from 'rxjs';
-import { take, map } from 'rxjs/operators';
+import * as rxOp from 'rxjs/operators';
 import { Injectable, EventEmitter } from "@angular/core";
-import { ServerCommService } from './servercomm.service';
 
 import * as leaflet from 'leaflet'
-
+import { ServerCommService } from './servercomm.service';
 import { MasterDistrict, MasterState, MasterStateInitialJson } from './models/geometry';
 
 
-export enum States {
-  CT="CT",
-    MD="MD",
-    NJ="NJ",
-}
+// ========== Weird-ass types
+//district, precinct, etc that backs a layer
+export type LayerBacker = MasterDistrict; // | MasterPrecinct or ...
+export type LOAD_PHASE = "LOADING_INITIAL" | "LOADING_PRECINCTS" | "FULLY_LOADED" | "ERROR";
 
 
-export type PrecinctProperties = {
-  id: string,
-  precinct_name: string,
-  town_name: string,
-  county_name: string,
-  lat: string,
-  lon: string,
-  population: number,
-  voting_population: number,
-  total_votes: number,
-  fraction_votes_democrat: number,
-}
+// ============ end of types
 
 
-
-const nj_view = {coords: [40.19, -74.70], zoom: 8};
-
-const NJ_DATA_URL = "assets/nj_data.json"
-const CT_DATA_URL = "assets/ct_data.json"
-
-
-type load_phase = "LOADING_INITIAL" | "LOADING_PRECINCTS" | "FULLY_LOADED" | "ERROR";
-// Phases of loading
-// in loading_precincts, initial states and 
+// Maphandler
 
 @Injectable({ providedIn: 'root', })
 export class MapHandlerService {
 
 
-  private map: leaflet.Map;
-  private precintGeoJson: leaflet.GeoJSON;
-
-  public reqInitialGeomData: Promise<MasterState>;
 
   /*
   private state: leaflet.LayerGroup;
@@ -56,9 +30,12 @@ export class MapHandlerService {
   private precinct: leaflet.LayerGroup = leaflet.layerGroup();
    */
 
-  public currentFeature = new EventEmitter<leaflet.FeatureGroup | null>();
+
+  public currentFeatureIn = new EventEmitter<LayerBacker | null>();
+  public currentFeature: Observable<LayerBacker | null>;
 
   constructor(private servercomm: ServerCommService){
+    this.currentFeature = this.currentFeatureIn.pipe(rxOp.startWith(null));
 
   }
 

@@ -2,43 +2,57 @@ import { Component, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
-import { MapHandlerService } from '../maphandler.service';
+import { MapHandlerService, LayerBacker } from '../maphandler.service';
+import { MasterDistrict } from '../models/geometry';
 
 @Component({
   selector: 'app-leaflet-info',
   template: `
-<h5>Selected Precinct:</h5>
-<div>{{ featureName | async }}</div>
-<br>
-<div>Population: {{ population | async }}</div>
-<div>{{ vote_fraction | async }}</div>
+<div *ngIf="!isValid; else elseBlock">
+  <h5>No feature selected</h5>
+</div>
+<ng-template #elseBlock>
+  <h5>Selected {{featureType}}:</h5>
+  <div>{{ featureName }}</div>
+  <br>
+  <div>Population: {{ population }}</div>
+  <div>{{ vote_fraction }}</div>
+</ng-template> 
   `
 })
 
 export class LeafletInfoComponent {
-  featureName: Observable<string>;
+  isValid: boolean;
+  featureType: string;
+  featureName: string;
   
-  population: Observable<number>;
-  vote_fraction: Observable<string>;
+  population: number;
+  vote_fraction: string;
 
   constructor(private maphandler: MapHandlerService) {
-    
-    this.featureName = this.maphandler.currentFeature.pipe(
-        map(e => e == null ? 
-            "Nothing selected" : (e as any).feature.properties.precinct_name));
+    this.maphandler.currentFeature.subscribe((next:LayerBacker|null) => this.updateCurrentFeature(next));
+  }
 
-    this.population = this.maphandler.currentFeature
-          .pipe(filter(e => e!=null))
-          .pipe(map( (e:any) => e.feature.properties.population));
+  private updateCurrentFeature(next:LayerBacker|null) {
+    if(next == null) {
+      this.isValid = false;
+    } else {
+      this.isValid = true;
+      this.featureName = next.name;
+      this.population = next.initialData.population;
+      this.vote_fraction = this.formatVoteFraction(next.initialData.average_democrat_votes);
 
-    this.vote_fraction = this.maphandler.currentFeature
-          .pipe(filter(e => e!=null))
-          .pipe(map( (e:any) => e.feature.properties.fraction_votes_dem))
-          .pipe(map( (e:number) => {
-            let val = e >= 0.5 ? e: 1 - e;
-            let str = (''+ (val*100).toFixed(0)) + '% ' + (e>=0.5?"Democrat":"Republican");
-            return str;
-          }));
+      if(next instanceof MasterDistrict) {
+        this.featureType="District";
+      }
+    }
+  }
+
+  private formatVoteFraction(frac: number) {
+      let val = frac >= 0.5 ? frac: 1 - frac;
+
+      let str = (''+ (val*100).toFixed(0)) + '% ' + (frac>=0.5?"Democrat":"Republican");
+      return str;
   }
 }
 

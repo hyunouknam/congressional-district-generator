@@ -4,7 +4,7 @@ export type GeoJson = any;
 export type GeoDataJson = {
     geometry: GeoJson;
     population: number;
-    dem_vote_fraction: number;
+    average_democrat_votes: number;
 }
 
 
@@ -22,14 +22,16 @@ export type MasterStateInitialJson = {
 }
 
 export class GeoData {
+    public layer: any = null; //TODO TEMP
+
     public constructor(
             public readonly geometry: GeoJson,
             public readonly population: number,
-            public readonly dem_vote_fraction: number,
+            public readonly average_democrat_votes: number,
     ){}
 
     public static loadFromJSON(json: GeoDataJson) {
-        return new GeoData(json.geometry, json.population, json.dem_vote_fraction);
+        return new GeoData(json.geometry, json.population, json.average_democrat_votes);
     }
 }
 
