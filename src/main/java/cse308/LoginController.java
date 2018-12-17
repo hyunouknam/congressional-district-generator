@@ -38,7 +38,7 @@ public class LoginController {
 		return "redirect:/usernotfound";
 	}
 
-	@RequestMapping(value = "/api/login", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(value = "/api/logout", method = RequestMethod.GET, produces = "application/json")
 	public String property(HttpServletRequest request) {
 
 		if (request.getSession().getAttribute("user") != null) {
