@@ -35,7 +35,8 @@ public class StateController {
 	@RequestMapping(value = "/api/simulation", method = RequestMethod.GET, produces = "application/json")
 	public String getMap() {
 		Optional<MasterState> state = staterepository.findById("CT");
-		return state.get().getCurrentMap().serializeMap();
+		//TODO: lookup simulation by id, send latest map of that
+		return state.get().getCurrentMap().toJSON().toString();
 	}
 	
 	@RequestMapping(value = "/api/fetchInitialStates", method = RequestMethod.GET, produces = "application/json")

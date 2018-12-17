@@ -54,9 +54,8 @@ public class MasterDistrict{
         j.put("id", id);
         j.put("name", name);
 
-        //add initial data from corresponding district in default map
-        DistrictForMap d_default = this.state.getCurrentMap().getDistrict(this);
-        j.put("initialData", Util.geoRegionToJson(d_default));
+
+        //dont need to add any extra data, as district data is now computed on client
         return j;
     }
 

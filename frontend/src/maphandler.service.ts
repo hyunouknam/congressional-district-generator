@@ -5,7 +5,7 @@ import { Injectable, EventEmitter } from "@angular/core";
 
 import * as leaflet from 'leaflet'
 import { ServerCommService } from './servercomm.service';
-import { LayerBacker, MasterPrecinct, MasterDistrict, MasterState, MasterStateInitialJson } from './models/geometry';
+import { GeoRegion, MasterPrecinct, MasterDistrict, MasterState, MasterStateJson } from './models/geometry';
 
 
 // ========== Weird-ass types
@@ -30,8 +30,8 @@ export class MapHandlerService {
    */
 
 
-  public currentFeatureIn = new EventEmitter<LayerBacker | null>();
-  public currentFeature: Observable<LayerBacker | null>;
+  public currentFeatureIn = new EventEmitter<GeoRegion | null>();
+  public currentFeature: Observable<GeoRegion | null>;
 
   constructor(private servercomm: ServerCommService){
     this.currentFeature = this.currentFeatureIn.pipe(rxOp.startWith(null));

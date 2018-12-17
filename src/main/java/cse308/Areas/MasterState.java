@@ -29,10 +29,8 @@ public class MasterState {
 	private int numOfDistricts;
 
 	@Transient
+    //Current map is the 2010 districting map
 	private Map currentMap;
-	
-	@Transient
-	private Map originalMap;
 
 	@OneToMany()
 	@JoinColumn(name = "state_id")
@@ -59,13 +57,11 @@ public class MasterState {
 		districts = new HashSet<>();
 		precincts = new HashSet<>();
 		currentMap = null;
-		originalMap = null;	// used for viewing the original map to compare with new map
 	}
 
 	@PostLoad
 	public void populateCurrentMap() {
 		currentMap = new Map(this);
-		originalMap = currentMap.clone();
 		System.out.println("Here");
 		for(PrecinctForMap p: currentMap.getAllPrecincts()) {
 			MasterDistrict dist = p.getMaster().getDefaultDistrict();
@@ -165,6 +161,10 @@ public class MasterState {
 	}
 	
 	public String fetchState() {
+		/*
+		Since we're loading precinct data from the topo file, we don't actually need to send it up
+		all we need to send up is the state info, masterdistricts, and defaultmap
+		 */
 	    // convert each district to a JSON object
 		JSONArray districtArray	= new JSONArray(
 				districts.stream()
@@ -177,6 +177,7 @@ public class MasterState {
 		c.put("constitution text", consText);
 		c.put("number of districts", numOfDistricts);
 		c.put("districts", districtArray);
+		c.put("default_map", this.currentMap.toJSON());
 		return c.toString();
 	}
 	

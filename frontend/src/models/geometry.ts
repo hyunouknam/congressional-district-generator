@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
+import * as Topo from 'topojson-client';
 
-export type LayerBacker = MasterDistrict | MasterPrecinct; // | MasterPrecinct or ...
 
 // Holds all objects that have unique ids, as well as a few extra mappings
 export class Repo {
@@ -9,7 +9,7 @@ export class Repo {
   static precincts: Map<string, MasterPrecinct> = new Map();
 
   //map from layer to the District,precinct, etc, it refers to
-  static layers: Map<L.Layer, LayerBacker> = new Map();
+  static layers: Map<L.Layer, GeoRegion> = new Map();
 }
 
 //TODO TEMP DEBUG
@@ -22,136 +22,157 @@ export class Repo {
 // All of the following should only ever be created by the loadFromJson methods
 // Furthermore, they should only every be created in the following way:
 //
-// MasterStates are loaded from initialdata json, which in turn creates districts
+// MasterStates are loaded from initialdata json + corresponding StateTopoJson
+// this initializes masterdistricts, masterprecincts, defaultmap, districts4map
+// also adds all of them to repo
 //
-// MasterPrecincts are subsequently loaded one at a time, which automatically connects them
-// to their state
-//
-// A StateMap should be created and assigned to each MasterState's defaultMap
-// Statemap should then be filled in by calling set_p_d
-//
-//
-// StateMap also needs district data. (geoms, pop)
-// Everything is terrible, so fill those in by calling setDistrictData
-// 
-//
-// TODO: JESUS CHRIST this oughta be simpler
 
+// =========== Define all json formats
+//
 export type GeoJson = any;
 
+//TODO: outdated?
 export type GeoDataJson = {
   geometry: GeoJson;
   population: number;
   average_democrat_votes: number;
 }
 
-
-
-export type MasterPrecinctJson = {
-  name: string;
+export type PrecinctTopoEntry = {
   id: string;
-  data: GeoDataJson;
-}
-
-export type MasterDistrictInitialJson = {
-  name: string;
-  id: string;
-  initialData: GeoDataJson;
-}
-
-export type MasterStateInitialJson = {
-  name: string;
-  id: string;
-  districts: MasterDistrictInitialJson[];
-}
-
-export class GeoData {
-  public layer: L.Polygon|null = null; //TODO TEMP
-
-  public constructor(
-    public readonly geometry: GeoJson,
-    public readonly population: number,
-    public readonly average_democrat_votes: number,
-  ){}
-
-  public static loadFromJSON(json: GeoDataJson) {
-    return new GeoData(json.geometry, json.population, json.average_democrat_votes);
+  properties: {
+    name: string;
+    population: number;
+    average_democrat_votes: number;
   }
 }
 
 
+export type MasterDistrictJson = {
+  name: string;
+  id: string;
+}
+
+export type MasterStateJson = {
+  name: string;
+  id: string;
+  districts: MasterDistrictJson[];
+  default_map: StateMapJson;
+}
+
+export type StateMapJson = { [dist_Id:string]: string[]}
+
+export type StateTopoJson = {
+  type: "Topology";
+  objects: {
+    precincts: {
+      type: "GeometryCollection";
+      geometries: Array<PrecinctTopoEntry>;
+    }
+  }
+  arcs: any[];
+  bbox?: any;
+  transform?: any;
+}
 
 
-export class MasterPrecinct {
+// =============== Classes
+
+
+export interface GeoRegion {
+  readonly geometry: GeoJson;
+  readonly layer: L.Polygon;
+  readonly name: string;
+  readonly population: number;
+  readonly average_democrat_votes: number;
+}
+
+
+export class MasterPrecinct implements GeoRegion{
   private constructor(
     public readonly name: string, 
     public readonly id: string, 
     public readonly state: MasterState,
-    public readonly data: GeoData) {
+    public readonly topoJsonEntry: PrecinctTopoEntry ) {
   }
 
-  public static loadFromJson(json: MasterPrecinctJson, state: MasterState){
-    let geodat = GeoData.loadFromJSON(json.data);
-    const mp = new MasterPrecinct(json.name, json.id, state, geodat);
-
+  public static loadFromJson(json: PrecinctTopoEntry, state: MasterState){
+    const mp = new MasterPrecinct(json.properties.name, json.id, state, json);
     Repo.precincts.set(mp.id, mp);
-    state.precincts.push(mp);
 
-    const layer = GeoJsonToPolygon(mp.data.geometry);
-    mp.data.layer = layer;
-    Repo.layers.set(layer, mp)
+    //const layer = GeoJsonToPolygon(mp.data.geometry);
+    //mp.data.layer = layer;
+    //Repo.layers.set(layer, mp)
 
     return mp;
   }
+
+  private cache_layer: L.Polygon|null = null;
+  private cache_geometry: GeoJson|null = null;
+  get geometry() { this.cache_geometry = this.cache_geometry || 
+      Topo.feature(this.state.topo as any, this.topoJsonEntry as any);
+      return this.cache_geometry;}
+
+  get layer() { 
+    if(this.cache_layer==null) {
+      this.cache_layer = GeoJsonToPolygon(this.geometry); 
+      Repo.layers.set(this.cache_layer, this);
+    }
+    return this.cache_layer; 
+  }
+
+  get population() { return this.topoJsonEntry.properties.population; }
+  get average_democrat_votes() { return this.topoJsonEntry.properties.average_democrat_votes; }
 }
 
 export class MasterDistrict {
   private constructor(
     public readonly name: string, 
     public readonly id: string, 
-    public readonly state: MasterState,
-    public readonly data: GeoData) { //note, masterDistrict data is only initial data
+    public readonly state: MasterState,) { 
   }
 
-  public static loadFromInitialJson(json: MasterDistrictInitialJson, state:MasterState){
-    let geodat = GeoData.loadFromJSON(json.initialData);
-    const md =  new MasterDistrict(json.name, json.id, state, geodat);
+  public static loadFromInitialJson(json: MasterDistrictJson, state:MasterState){
+    const md =  new MasterDistrict(json.name, json.id, state);
     Repo.districts.set(md.id, md);
 
-    const layer = GeoJsonToPolygon(md.data.geometry)
-    md.data.layer = layer;
-    Repo.layers.set(layer, md)
-
+    //TODO generate layer?
     return md;
   }
 }
 
-export class DistrictForMap {
-  public constructor(
-    public readonly map: StateMap, 
-    public readonly id: string, 
-    public readonly data: GeoData) { //note, masterDistrict data is only initial data
-  }
-}
 
 export class MasterState {
   public districts: MasterDistrict[] = [];
   public precincts: MasterPrecinct[] = [];
   public defaultMap: StateMap;
+  public topo: StateTopoJson;
 
   private constructor(public name: string, public id: string) {
   }
 
-  public static loadFromInitialJson(json: MasterStateInitialJson) {
+  public static loadFromInitialJson(json: MasterStateJson, topo: StateTopoJson) {
     let ms = new MasterState(json.name, json.id);
+    ms.topo = topo;
     Repo.states.set(ms.id, ms);
 
+    //add all districts
     json.districts.forEach(distJson => {
       let md = MasterDistrict.loadFromInitialJson(distJson, ms);
       ms.districts.push(md)
     })
 
-    return ms
+    //add all precincts
+    topo.objects.precincts.geometries.forEach(geom => {
+      const mp = MasterPrecinct.loadFromJson(geom, ms);
+      ms.precincts.push(mp);
+    });
+
+    //add defaultMap
+    let map = StateMap.loadFromJson(json.default_map,ms);
+    ms.defaultMap = map;
+
+    return ms;
   }
 
   public toString() {
@@ -162,6 +183,49 @@ export class MasterState {
 }
 
 
+
+export class DistrictForMap implements GeoRegion{
+  public constructor(
+    public readonly map: StateMap, 
+    public readonly id: string, ) { //note, masterDistrict data is only initial data
+  }
+
+  get master():MasterDistrict { return Repo.districts.get(this.id)!; }
+
+  //discards cached stuff
+  public dirty() {
+    throw Error("Dist4Map Dirty() not implemented")
+  }
+
+  // ================= GeoRegion implementation
+  
+  private cache_layer: L.Polygon|null = null;
+  private cache_geometry: GeoJson|null = null;
+
+  get geometry() { 
+    if(this.cache_geometry == null) {
+      const prec_geoms: PrecinctTopoEntry[] = [];
+      this.map.d_p_get(this.id)!.forEach(pId => {
+        prec_geoms.push(Repo.precincts.get(pId)!.topoJsonEntry);
+      });
+
+      this.cache_geometry = Topo.merge(this.master.state.topo as any, prec_geoms as any);
+    }
+    return this.cache_geometry;
+  }
+
+  get layer() { 
+    if(this.cache_layer==null) {
+      this.cache_layer = GeoJsonToPolygon(this.geometry); 
+      Repo.layers.set(this.cache_layer, this);
+    }
+    return this.cache_layer; 
+  }
+
+  get name() { return this.master.name}
+  get population() { return -999; }
+  get average_democrat_votes() { return -999; }
+}
 
 //StateMap can only be made
 export class StateMap {
@@ -189,6 +253,24 @@ export class StateMap {
     this.d_p_map.set("NULL", new Set(state.precincts.map(mp => mp.id)));
   }
 
+  public static loadFromJson(json: StateMapJson, state: MasterState){
+    const map = new StateMap(state);
+
+    //Assing precincts from mapping
+    for(const distId of Object.keys(json)) {
+      for(const precId of json[distId]) {
+        map.set_p_d(precId,distId);
+      } }
+
+    //Make district4map objects
+    for(const distId of Object.keys(json)) {
+      map.districts4map.set(distId, new DistrictForMap(map, distId));
+    //this.districts4map.set(md.id, new DistrictForMap(this, md.id, md.data));
+    }
+    
+    return map;
+  }
+
   //assigns prec to specified district
   public set_p_d(pId:string, dId: string) {
     if(!(this.p_d_map.has(pId) && this.d_p_map.has(dId))){
@@ -202,14 +284,17 @@ export class StateMap {
 
     //assign prec to dist
     this.p_d_map.set(pId, dId);
+
+    //dirty all affected districts TODO, NOT YET IMPLEMENTED SAFELY
+    const d4m_old = this.districts4map.get(oldD!);
+    const d4m_new = this.districts4map.get(dId);
+    d4m_old && d4m_old.dirty();
+    d4m_new && d4m_new.dirty();
   }
 
-  // TODO: TEMPORARY, eventually we'll either generate district geoms here,
-  // or we'll get them from the server and so will have a json constructor
-  // that populates them
-  public setDistrictData(md: MasterDistrict) {
-    this.districts4map.set(md.id, new DistrictForMap(this, md.id, md.data));
-  }
+  public d_p_get(dId: string) { return this.d_p_map.get(dId); }
+  public p_d_get(pId: string) { return this.p_d_map.get(pId); }
+
 
   public toString() {
     const vals: { [s:string]: string[]} = {};
@@ -219,7 +304,6 @@ export class StateMap {
 
     const s = `Map for ${this.state.id} {` +
               JSON.stringify(vals) + "\n}\n";
-
 
     //test that both mapping match up
     for(const [dId, v] of this.d_p_map.entries()) {
@@ -250,6 +334,8 @@ function GeoJsonToPolygon(g: any): L.Polygon {
         });
       });
     });
+  } else if (g.type == "Feature") {
+    return GeoJsonToPolygon(g.geometry);
   } else {
     throw Error("geometry is not polygonal: \n" + JSON.stringify(g));
   }

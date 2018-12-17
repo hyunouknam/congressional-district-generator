@@ -101,9 +101,10 @@ public class Map implements Cloneable{
         return copy;
     }
 	
-	 public String serializeMap() {
+	 public JSONObject toJSON() {
+        // Outputs { dist_id: [p_id, p_id,...], ...}
     	JSONObject c = new JSONObject();
-    	System.out.println("Here in Sear");
+    	System.out.println("Here in Map.toJSON()");
     	for(DistrictForMap district: getAllDistricts()) {
     		Set<PrecinctForMap> precinctsForDistrict = district.getPrecincts();
     		Set<String> idsOfPrecincts = precinctsForDistrict.stream().map(p -> p.getMaster().getId()).collect(Collectors.toSet());
@@ -111,7 +112,7 @@ public class Map implements Cloneable{
     		c.put(district.getMaster().getID(), arrayOfPrecincts);
     		System.out.println(district.getMaster().getID());
     	}
-    	return c.toString();
+    	return c;
     }
     
     public String toString() {

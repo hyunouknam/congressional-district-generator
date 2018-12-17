@@ -37,5 +37,9 @@
     "webpack": "^4.25.1",
     "webpack-cli": "^3.1.2",
     "zone.js": "^0.8.26"
+  },
+  "dependencies": {
+    "@types/topojson-client": "^3.0.0",
+    "topojson-client": "^3.0.0"
   }
 }
