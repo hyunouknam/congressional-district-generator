@@ -177,7 +177,12 @@ export class LeafletComponent {
       for(const mp of state.precincts) {
         const pId = mp.id;
         const dId = this.tempPrecinctDistrictMap!.get(pId);
-        defaultMap.p_d_set(pId, dId!);
+        defaultMap.set_p_d(pId, dId!);
+      }
+
+      //add all district data TODO TEMPORARY HACK
+      for(const md of state.districts) {
+        defaultMap.setDistrictData(md);
       }
 
       console.log(defaultMap.toString());
@@ -189,6 +194,14 @@ export class LeafletComponent {
     //clean up
     this.tempPrecinctDistrictMap!.clear();
     this.tempPrecinctDistrictMap = null;
+
+    // clear all precincts from the screen
+    for(const state of Repo.states.values()) {
+      for(const mp of state.precincts) {
+        mp.data.layer!.removeFrom(this.map);
+      }
+    }
+    
   }
 
 
@@ -234,8 +247,72 @@ export class LeafletComponent {
 
 
   // map helpers 
-  // THINGS I WANT TO DO WITH THE MAP
+  // ========= MAP CONTROLLER? Interaction ideas
+  // new type: LayerHaver: thing that has a layer
+  //
+  // each state can have a list of LayerHavers currently displayed
+  // if we want to change what is rendered for a given state, we should
+  // give it a new list of things to render
+  //
+  //
+  // At any given time, we can render one or more maps (from separate states)
+  // at one of two (three?) zoom levels: districts or precincts
+  // 
+  // members:
+  //  currentMap, LOD = "DISTRICT" | "PRECINCT"
+  // functions:
+  //   displayStateMap(map, level_of_detail): hides all other maps, shows this one at the desired level
+  //    
+  
+  private currentMap: StateMap | null = null;
+  private currentLOD: LEVEL_OF_DETAIL = "DISTRICT";
+  private displayStateMap(map: StateMap, lod: LEVEL_OF_DETAIL) {
+    //If nothing needs to change then change nothing
+    if (this.currentMap == map && this.currentLOD == lod) { return; }
+
+
+    this.clearDisplay();
+
+    switch (lod) {
+      case "DISTRICT":
+        for(const d4m of map.districts4map.values()) {
+          d4m.data.layer!.addTo(this.map);
+        }
+        break;
+      case "PRECINCT":
+        map.state.precincts.forEach(mp => {
+          mp.data.layer!.addTo(this.map);
+        });
+        break;
+    }
+
+    this.currentMap = map;
+    this.currentLOD = lod;
+  }
+
+  // removes whatever is displayed from the map
+  private clearDisplay() {
+    if(this.currentMap == null) { return; }
+
+    switch (this.currentLOD) {
+      case "DISTRICT":
+        for(const d4m of this.currentMap.districts4map.values()) {
+          d4m.data.layer!.removeFrom(this.map);
+        }
+        //TODO
+        break;
+      case "PRECINCT":
+        this.currentMap.state.precincts.forEach(mp => {
+          mp.data.layer!.removeFrom(this.map);
+        });
+        break;
+    }
+
+    this.currentMap = null;
+  }
+
+
 }
 
 
-
+type LEVEL_OF_DETAIL = "DISTRICT" | "PRECINCT"

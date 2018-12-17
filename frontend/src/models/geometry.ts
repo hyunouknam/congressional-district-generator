@@ -28,6 +28,12 @@ export class Repo {
 // to their state
 //
 // A StateMap should be created and assigned to each MasterState's defaultMap
+// Statemap should then be filled in by calling set_p_d
+//
+//
+// StateMap also needs district data. (geoms, pop)
+// Everything is terrible, so fill those in by calling setDistrictData
+// 
 //
 // TODO: JESUS CHRIST this oughta be simpler
 
@@ -120,6 +126,14 @@ export class MasterDistrict {
   }
 }
 
+export class DistrictForMap {
+  public constructor(
+    public readonly map: StateMap, 
+    public readonly id: string, 
+    public readonly data: GeoData) { //note, masterDistrict data is only initial data
+  }
+}
+
 export class MasterState {
   public districts: MasterDistrict[] = [];
   public precincts: MasterPrecinct[] = [];
@@ -160,8 +174,11 @@ export class StateMap {
   //districtid to precinctid[]
   private d_p_map = new Map<string, Set<string>>();
 
+  //districtid to districtformap
+  public districts4map = new Map<string, DistrictForMap>();
+
   //constructor starts by setting all precincts to null district
-  public constructor(private state: MasterState) {
+  public constructor(public readonly state: MasterState) {
     state.precincts.forEach(mp => {
       this.p_d_map.set(mp.id, "NULL");
     });
@@ -173,7 +190,7 @@ export class StateMap {
   }
 
   //assigns prec to specified district
-  public p_d_set(pId:string, dId: string) {
+  public set_p_d(pId:string, dId: string) {
     if(!(this.p_d_map.has(pId) && this.d_p_map.has(dId))){
       throw Error(`Invalid precint or district ids: '${pId}', '${dId}'`);
     }
@@ -185,6 +202,13 @@ export class StateMap {
 
     //assign prec to dist
     this.p_d_map.set(pId, dId);
+  }
+
+  // TODO: TEMPORARY, eventually we'll either generate district geoms here,
+  // or we'll get them from the server and so will have a json constructor
+  // that populates them
+  public setDistrictData(md: MasterDistrict) {
+    this.districts4map.set(md.id, new DistrictForMap(this, md.id, md.data));
   }
 
   public toString() {
