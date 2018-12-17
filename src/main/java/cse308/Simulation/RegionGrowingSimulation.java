@@ -13,7 +13,7 @@ public class RegionGrowingSimulation extends Simulation{
     
     public RegionGrowingSimulation(UserAccount u, RegionGrowingParams s){
         super(u,s);
-        startingMap=new Map(params.forState, params.numDistricts); //create new blank map
+        startingMap=new Map(params.forState); //create new blank map
         currentMap=startingMap.clone();    //for regiongrowing, blankmap=startingmap=currentmap
             numOfPrecincts=startingMap.getAllPrecincts().size();
         getSeedPrecincts();
@@ -102,6 +102,4 @@ public class RegionGrowingSimulation extends Simulation{
     public void updateProgress(){
         progress=moves.size()/numOfPrecincts;
     }
-    
-    
 }
