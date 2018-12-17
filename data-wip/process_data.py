@@ -19,7 +19,8 @@ def ct_add_districts(df_raw):
 
 #nebraska dataset has districts as numbers, change them to be NEnum
 def ne_rename_districts(df_raw):
-    df_raw['CD_06'] = df_raw['CD_06'].apply(lambda x: "NE0{}".format(x))
+    df_raw['CD_06'] = df_raw['CD_06'].apply(
+            lambda x: "NE0{}".format(x) if x != 0 else None)
     return df_raw
 
 
