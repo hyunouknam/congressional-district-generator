@@ -3,16 +3,18 @@ import { HttpClient } from "@angular/common/http";
 
 import { User, UserSerializedJSON, Simulation, SimulationSerializedJSON} from "./models/user"
 import { SimParams } from "./models/params";
-import { MasterStateInitialJson } from "./models/geometry";
+import { MasterStateInitialJson, MasterPrecinctJson } from "./models/geometry";
 
 import { resolveAfter } from './utils';
 
 
+//<id> to be replaced by id
 const api_urls = {
     fetchUserData: '/api/getUserData',
     startSimulation: '/api/startSimulation',
     deleteSimulation: '/api/startSimulation/<id>',
     reqInitialGeomData: '/api/fetchInitialStates',
+    reqPrecinctData: '/api/fetchPrecinctsByDistrict/<id>',
 }
 
 
@@ -110,43 +112,21 @@ export class ServerCommService {
   }
 
 
-    // ============= get data
-    //
-    public reqInitialGeomData(): Promise<MasterStateInitialJson[]> {
-        //POST /api/fetchInitialGeoms
-        //
-        const dummyGeom = {
-            "type": "Polygon",
-            "coordinates": [[
-            [-73.5,40],
-            [-74,40],
-            [-74,41],
-            [-73.5,41],
-            [-73.5,40]
-            ]]
-        }
+  // ============= get data
+  //
+  public reqInitialGeomData(): Promise<MasterStateInitialJson[]> {
+      //POST /api/fetchInitialGeoms
+      return this.http.get<MasterStateInitialJson[]>(
+        api_urls.reqInitialGeomData)
+      .toPromise();
+      //return Promise.resolve(dummyData);
+  }
 
-        const dummyData = [
-            {
-                id: "CT",
-                name: "Connecticut",
-                masterDistricts: [
-                    {
-                        id: "CT01",
-                        name: "Congressional district 1",
-                        initialData: {
-                            population: 100,
-                            dem_vote_fraction: 0.5,
-                            geometry: dummyGeom
-                        }
-                    }
-                ]
-            }
-        ]
-
-        return this.http.get<MasterStateInitialJson[]>(api_urls.reqInitialGeomData).toPromise();
-        //return Promise.resolve(dummyData);
-    }
+  public reqPrecinctsForDistrict(districtId: string) {
+    return this.http.get<MasterPrecinctJson[]>(
+      api_urls.reqPrecinctData.replace('<id>', districtId))
+    .toPromise();
+  }
 
 
 }

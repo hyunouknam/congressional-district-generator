@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import cse308.Data.Util;
 import org.hibernate.annotations.Immutable;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -167,18 +168,11 @@ public class MasterPrecinct implements GeoRegion{
 	}
 
 	public String fetchMasterPrecinct() {
-		GeoJSONWriter w = new GeoJSONWriter();
-		GeoJSON j = w.write(geometry);
-		String s = j.toString();
-		
 		JSONObject c = new JSONObject();
 		c.put("id", id);
 		c.put("name", name);
-		c.put("geometry", s);
-		c.put("population", population);
-		c.put("votingPopulation", votingPopulation);
-		c.put("averageDeomcratVotes", averageDeomcratVotes);
-		c.put("totalVotes", totalVotes);
+        c.put("data", Util.geoRegionToJson(this));
+
 		return c.toString();
 	}
 	

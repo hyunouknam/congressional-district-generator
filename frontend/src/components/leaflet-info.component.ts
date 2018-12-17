@@ -2,8 +2,8 @@ import { Component, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
-import { MapHandlerService, LayerBacker } from '../maphandler.service';
-import { MasterDistrict } from '../models/geometry';
+import { MapHandlerService } from '../maphandler.service';
+import { MasterDistrict, MasterPrecinct, LayerBacker } from '../models/geometry';
 
 @Component({
   selector: 'app-leaflet-info',
@@ -39,11 +39,16 @@ export class LeafletInfoComponent {
     } else {
       this.isValid = true;
       this.featureName = next.name;
-      this.population = next.initialData.population;
-      this.vote_fraction = this.formatVoteFraction(next.initialData.average_democrat_votes);
+      this.population = next.data.population;
+      this.vote_fraction = this.formatVoteFraction(next.data.average_democrat_votes);
 
       if(next instanceof MasterDistrict) {
         this.featureType="District";
+      } else if (next instanceof MasterPrecinct) {
+        this.featureType="Precinct";
+      } else {
+        this.featureType="UNKNOWN_FEATURE_TYPE";
+        console.error("UNKNOWN FEATURE:", next)
       }
     }
   }

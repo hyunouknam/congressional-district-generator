@@ -5,12 +5,11 @@ import { Injectable, EventEmitter } from "@angular/core";
 
 import * as leaflet from 'leaflet'
 import { ServerCommService } from './servercomm.service';
-import { MasterDistrict, MasterState, MasterStateInitialJson } from './models/geometry';
+import { LayerBacker, MasterPrecinct, MasterDistrict, MasterState, MasterStateInitialJson } from './models/geometry';
 
 
 // ========== Weird-ass types
 //district, precinct, etc that backs a layer
-export type LayerBacker = MasterDistrict; // | MasterPrecinct or ...
 export type LOAD_PHASE = "LOADING_INITIAL" | "LOADING_PRECINCTS" | "FULLY_LOADED" | "ERROR";
 
 
