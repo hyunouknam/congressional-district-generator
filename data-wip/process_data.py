@@ -10,7 +10,7 @@ import json
 
 
 #adds AUTOGEN_CT_DISTRICT column to table using TOWN column
-from ct_towns_to_districts import towns_to_districts
+from input_data.ct_towns_to_districts import towns_to_districts
 def ct_add_districts(df_raw):
     df_raw['AUTOGEN_CT_DISTRICT'] = df_raw.TOWN.apply(
             lambda x : towns_to_districts.get(x,None))
@@ -40,7 +40,7 @@ def ne_rename_districts(df_raw):
 ALL_CONFIGS = {
 "NJ": {
     "state": "NJ",
-    "infile": './NJ/shapefiles/nj_final.shp',
+    "infile": './input_data/NJ/shapefiles/nj_final.shp',
     "outfile": './final_data/nj_out.csv',
     "out_neighbors": './final_data/nj_neighbors.csv',
     "properties_map": {
@@ -63,7 +63,7 @@ ALL_CONFIGS = {
     },
 "CT": {
     "state": "CT",
-    "infile": './CT/ct_final.shp',
+    "infile": './input_data/CT/ct_final.shp',
     "outfile": './final_data/ct_out.csv',
     "out_neighbors": './final_data/ct_neighbors.csv',
     'process_raw': ct_add_districts, #is run at prepoc time
@@ -89,7 +89,7 @@ ALL_CONFIGS = {
     },
 "NE": {
     "state": "NE",
-    "infile": './NE/ne_final.shp',
+    "infile": './input_data/NE/ne_final.shp',
     "outfile": './final_data/ne_out.csv',
     "out_neighbors": './final_data/ne_neighbors.csv',
     "process_raw": ne_rename_districts,
