@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 
+import sys
 
 import pandas as pd
 import geopandas as gp
@@ -7,14 +8,20 @@ import re
 import shapely
 import json
 
-from ct_towns_to_districts import towns_to_districts
 
 #adds AUTOGEN_CT_DISTRICT column to table using TOWN column
-def ct_add_districts(df):
+from ct_towns_to_districts import towns_to_districts
+def ct_add_districts(df_raw):
     df_raw['AUTOGEN_CT_DISTRICT'] = df_raw.TOWN.apply(
             lambda x : towns_to_districts.get(x,None))
 
-    return df
+    return df_raw
+
+#nebraska dataset has districts as numbers, change them to be NEnum
+def ne_rename_districts(df_raw):
+    df_raw['CD_06'] = df_raw['CD_06'].apply(lambda x: "NE0{}".format(x))
+    return df_raw
+
 
 # ============ COMMON PROPERTY NAMES
 # These are the properties we want to have across all states that we support
@@ -79,12 +86,13 @@ ALL_CONFIGS = {
     },
 "NE": {
     "state": "NE",
-    "infile": './NE/shapefiles/ne_final.shp',
+    "infile": './NE/ne_final.shp',
     "outfile": './ne_out.csv',
+    "process_raw": ne_rename_districts,
     "properties_map": {
         "GEOID10": "id",
 
-        "NAME10": "name",
+        "NAMELSAD10": "name",
         #"TOWN_NAME": "town_name",
         #"COUNTY_NAM": "county_name",
 
@@ -92,7 +100,7 @@ ALL_CONFIGS = {
 
         "POP100": "population",
         "VAP": "voting_population",
-        "NE_AGG": "total_votes",
+        "USHTOT08": "total_votes",
         "AV_0608": "average_democrat_votes",
 
         "geometry": "geometry",
@@ -105,7 +113,21 @@ ALL_CONFIGS = {
 
 # ================== CHANGE THIS TO CHANGE WHICH IT GENERATES
 # TODO, maybe just loop through all of em
-CURR_CONFIG = ALL_CONFIGS["NJ"]
+args = sys.argv[1:]
+if(len(args) == 0):
+    print("Please enter a state: " + str(list(ALL_CONFIGS.keys())))
+    exit(-1)
+elif(len(args) > 1):
+    print("Please enter only 1 state: " + str(list(ALL_CONFIGS.keys())))
+    exit(-1)
+else:
+    statecode = args[0]
+    if(statecode not in ALL_CONFIGS):
+        print("Unrecognized statecode '{}'".format(statecode))
+        print("Please enter a state: " + str(list(ALL_CONFIGS.keys())))
+        exit(-1)
+
+CURR_CONFIG = ALL_CONFIGS[statecode]
 
 
 
