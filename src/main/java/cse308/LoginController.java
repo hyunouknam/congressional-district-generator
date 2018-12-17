@@ -46,7 +46,7 @@ public class LoginController {
 		}
 		return "redirect:/";
 	}
-
+	
 	@RequestMapping(value = "/api/register", method = RequestMethod.POST, produces = "application/json")
 	public String register(HttpServletRequest request) {
 		;
