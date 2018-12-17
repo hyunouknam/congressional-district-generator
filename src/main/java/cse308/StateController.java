@@ -2,8 +2,8 @@ package cse308;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,14 +40,11 @@ public class StateController {
 	
 	@RequestMapping(value = "/api/fetchInitialStates", method = RequestMethod.GET, produces = "application/json")
 	public String fetchInitialStates() {
-		String string = "[";
-		Iterable<MasterState> states = staterepository.findAll();
-		for(MasterState s: states) {
-			string = string + s.fetchState() + ",";
+		StringJoiner joiner = new StringJoiner(",");
+		for(MasterState s: staterepository.findAll()) {
+		    joiner.add(s.fetchState());
 		}
-		string = string.substring(0, string.length()-1);
-		string += "]";
-		return string;
+		return "[" + joiner.toString() + "]";
 	}
 	
 	@RequestMapping(value = "/api/fetchPrecinctsByDistrict/{id}", method = RequestMethod.GET, produces = "application/json")

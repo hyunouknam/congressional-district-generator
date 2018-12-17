@@ -5,11 +5,8 @@ import cse308.Data.GeoRegion;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.operation.union.CascadedPolygonUnion;
-import org.locationtech.jts.geom.Coordinate;
+
+import org.locationtech.jts.geom.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
@@ -121,7 +118,7 @@ public class DistrictForMap implements GeoRegion{
 	@Override
 	public int getVotingPopulation() {
 		int votingPopulation = 0;
-		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		Set<PrecinctForMap> precincts = getPrecincts();
 		for (PrecinctForMap pr: precincts) {
 			votingPopulation += pr.getVotingPopulation();
 		}
@@ -131,7 +128,7 @@ public class DistrictForMap implements GeoRegion{
 	@Override
 	public int getTotalVotes() {
 		int totalVotes = 0;
-		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		Set<PrecinctForMap> precincts = getPrecincts();
 		for (PrecinctForMap pr: precincts) {
 			totalVotes += pr.getTotalVotes();
 		}
@@ -142,30 +139,39 @@ public class DistrictForMap implements GeoRegion{
 	public double getPercentDemocrat() {
 		int totalVotes = 0;
 		double demVotes = 0;
-		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		Set<PrecinctForMap> precincts = getPrecincts();
 		for (PrecinctForMap pr: precincts) {
 			totalVotes += pr.getTotalVotes();
 			demVotes = pr.getPercentDemocrat()*totalVotes;
 		}
-		return demVotes/totalVotes;
+
+		if(totalVotes < 1) {
+			return 0;
+		} else {
+			return demVotes/totalVotes;
+		}
 	}
 
 	@Override
 	public Geometry getGeometry() {
-		ArrayList<Polygon> polArray = new ArrayList<>();
-		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		Set<PrecinctForMap> precincts = getPrecincts();
+
+		ArrayList<Geometry> polArray = new ArrayList<>();
 		for (PrecinctForMap pr: precincts) {
-			Polygon p = (Polygon) pr.getGeometry();
-			polArray.add(p);
+			polArray.add(pr.getGeometry());
 		}
-		CascadedPolygonUnion union = new CascadedPolygonUnion(polArray);
-		return union.union();
+		Geometry geoms = new GeometryFactory().buildGeometry(polArray);
+
+		// buffering it unions them all together faster than cascadedpolygonunion
+		// buffer and unbuffer to get rid of gaps
+		Geometry unioned = geoms.buffer(0.0);
+		return unioned.buffer(0.005).buffer(-0.005);
 	}
 
 	@Override
 	public int getPopulation() {
 		int population = 0;
-		Set<PrecinctForMap> precincts = this.map.getDistrictPrecinctMapping().get(this);
+		Set<PrecinctForMap> precincts = getPrecincts();
 		for (PrecinctForMap pr: precincts) {
 			population += pr.getPopulation();
 		}

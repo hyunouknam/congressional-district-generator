@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { User, UserSerializedJSON, Simulation } from "./models/user"
+import { User, UserSerializedJSON, Simulation, SimulationSerializedJSON} from "./models/user"
 import { SimParams } from "./models/params";
+import { MasterStateInitialJson } from "./models/geometry";
 
 import { resolveAfter } from './utils';
 
@@ -11,6 +12,7 @@ const api_urls = {
     fetchUserData: '/api/getUserData',
     startSimulation: '/api/startSimulation',
     deleteSimulation: '/api/startSimulation/<id>',
+    reqInitialGeomData: '/api/fetchInitialStates',
 }
 
 
@@ -90,9 +92,13 @@ export class ServerCommService {
     //body: params.serialize()
     //response: serialized simulation, do Simulation.createParse(JSON);
     
-    // get user 
-    console.log("Doing startSimulation:" +  JSON.stringify(SimParams, null, "  "));
-    return Promise.reject("REQUEST NOT IMPLEMENTED");
+    console.log("Doing startSimulation:" +  JSON.stringify(params, null, "  "));
+    
+    //get response
+    let req = this.http.post<SimulationSerializedJSON>(api_urls.startSimulation, params).toPromise();
+    
+    //parse response
+    return req.then(json => Simulation.createParse(json));
   }
 
 
@@ -102,6 +108,45 @@ export class ServerCommService {
     
     return Promise.reject("REQUEST NOT IMPLEMENTED");
   }
+
+
+    // ============= get data
+    //
+    public reqInitialGeomData(): Promise<MasterStateInitialJson[]> {
+        //POST /api/fetchInitialGeoms
+        //
+        const dummyGeom = {
+            "type": "Polygon",
+            "coordinates": [[
+            [-73.5,40],
+            [-74,40],
+            [-74,41],
+            [-73.5,41],
+            [-73.5,40]
+            ]]
+        }
+
+        const dummyData = [
+            {
+                id: "CT",
+                name: "Connecticut",
+                masterDistricts: [
+                    {
+                        id: "CT01",
+                        name: "Congressional district 1",
+                        initialData: {
+                            population: 100,
+                            dem_vote_fraction: 0.5,
+                            geometry: dummyGeom
+                        }
+                    }
+                ]
+            }
+        ]
+
+        return this.http.get<MasterStateInitialJson[]>(api_urls.reqInitialGeomData).toPromise();
+        //return Promise.resolve(dummyData);
+    }
 
 
 }

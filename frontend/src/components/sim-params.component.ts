@@ -168,11 +168,10 @@ export class SimParamsComponent {
   
 
   constructor(private servercomm: ServerCommService ) {
-    this.params = new SimParams("CT");
+    this.params = new SimParams("CT"); //TODO TEMP DEBUG, need a dropdown for this or something
   }
 
   submit() {
-    console.log(this.params.serialize());
     this.servercomm.reqStartSimulation(this.params)
   }
 

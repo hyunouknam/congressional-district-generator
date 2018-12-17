@@ -1,15 +1,14 @@
 package cse308.Areas;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import cse308.Data.Util;
 import org.hibernate.annotations.Immutable;
+import org.json.JSONObject;
 
 //import javax.persistence.Entity;
 //import javax.persistence.Id;
@@ -50,16 +49,17 @@ public class MasterDistrict{
     	this.name=name;
     }
     
-    public String jsonFormat() {
-    	String s = "{";
-    	s = s + "\"id\":";
-    	s = s + "\"" + id + "\"";
-    	s = s + ", \"name\":";
-    	s = s + "\"" + name + "\"";
-    	s = s + "}";
-    	return s;
+    public JSONObject toJSON() {
+        JSONObject j = new JSONObject();
+        j.put("id", id);
+        j.put("name", name);
+
+        //add initial data from corresponding district in default map
+        DistrictForMap d_default = this.state.getCurrentMap().getDistrict(this);
+        j.put("initialData", Util.geoRegionToJson(d_default));
+        return j;
     }
-    
+
     public String toString() {
     	String s = "(id: " + id;
     	s = s + "name: " + name + "java: " + System.identityHashCode(this) + ")";

@@ -3,38 +3,21 @@ package cse308.Areas;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import org.apache.tomcat.util.json.JSONParser;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.Type;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.wololo.geojson.GeoJSON;
 import org.wololo.jts2geojson.GeoJSONWriter;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cse308.Data.GeoRegion;
 import cse308.Data.GeometryConverter;
@@ -107,9 +90,6 @@ public class MasterPrecinct implements GeoRegion{
 		this.defaultDistrict = district;
 	}
 
-	public Geometry getGeometry() {
-		return geometry;
-	}
 
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
@@ -123,15 +103,6 @@ public class MasterPrecinct implements GeoRegion{
 	}
 	public String getName() {
 		return name;
-	}
-	public int getPopulation() {
-		return population;
-	}
-	public double getAverageDeomcratsVotes() {
-		return averageDeomcratVotes;
-	}
-	public int getTotalVotes() {
-		return totalVotes;
 	}
 	public Set<MasterPrecinct> getNeighboringPrecincts() {
 		return neighboringPrecincts;
@@ -169,6 +140,18 @@ public class MasterPrecinct implements GeoRegion{
 		return c.toString();
 	}
 
+	@Override
+	public Geometry getGeometry() {
+		return geometry;
+	}
+	@Override
+	public int getPopulation() {
+		return population;
+	}
+	@Override
+	public int getTotalVotes() {
+		return totalVotes;
+	}
 	@Override
 	public int getVotingPopulation() {
 		return votingPopulation;

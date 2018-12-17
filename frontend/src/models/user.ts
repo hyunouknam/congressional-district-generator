@@ -5,6 +5,13 @@ export type SimulationData = string;
 
 //keep track of all simulataions
 
+export type SimulationSerializedJSON = {
+    name: string;
+    id: string;
+    params: any;
+    data: string | null;
+}
+
 
 
 export class Simulation implements UIDable {
@@ -13,15 +20,8 @@ export class Simulation implements UIDable {
 
   // persistence stuff
   static repo : UIDRepository<Simulation> = new UIDRepository();
-  static createParse(data: any): Simulation {
-    let testObj: {
-      id: string;
-      name: string;
-      data: string | null;
-    }
-
-    testObj = data;
-    return new Simulation(testObj.id, testObj.name, testObj.data);
+  static createParse(json: SimulationSerializedJSON): Simulation {
+    return new Simulation(json.id, json.name, json.data);
   }
 
   public constructor(public id: string, public name: string, data?: SimulationData|null) {
@@ -48,12 +48,7 @@ export class Simulation implements UIDable {
 export type UserSerializedJSON = {
       id: string;
       user: string;
-      simulations: Array< {
-          name: string;
-          id: string;
-          params: any;
-          //etc
-                        } >
+      simulations: SimulationSerializedJSON[];
 }
 
 export class User implements UIDable {
