@@ -46,7 +46,6 @@ public class SimulationController {
                         functionWeights,
                         state,
                         algorithm,
-                        districts,
                         new HashSet<>()
                     );
                 }
@@ -55,8 +54,7 @@ public class SimulationController {
                         functionWeights,
                         state,
                         algorithm,
-                        districts,
-                        new cse308.Areas.Map(state, districts)
+                        new cse308.Areas.Map(state)
                     );
                 }
 		

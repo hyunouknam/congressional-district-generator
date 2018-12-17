@@ -28,9 +28,8 @@ public class Map implements Cloneable{
     private DistrictForMap nullDistrict;
     private HashMap<PrecinctForMap, DistrictForMap> precinctDistrictMapping;
     private double goodness;
-    private int numDistricts;
 
-    public Map(MasterState state, int numDistricts){
+    public Map(MasterState state){
         master = state;
 
         //prepare precincts, associate with master precincts
@@ -43,29 +42,10 @@ public class Map implements Cloneable{
         //prepare districts
         districts = new HashMap<>();
         nullDistrict=new DistrictForMap(this);
-        numDistricts=(numDistricts==0)? this.numDistricts: numDistricts;
-        if(numDistricts>=master.getDistricts().size()){
-            int i=0;
-            for(MasterDistrict md: master.getDistricts()){
-                DistrictForMap d = new DistrictForMap(md, this);
-                districts.put(md, d);
-                i++;
-            }
-            for (int j=i;j<numDistricts;j++){
-                MasterDistrict temp=new MasterDistrict();
-                DistrictForMap district=new DistrictForMap(temp, this);
-                districts.put(temp, district);
-            }
+        for(MasterDistrict md: master.getDistricts()){
+            DistrictForMap d = new DistrictForMap(md, this);
+            districts.put(md, d);    
         }
-        else{
-            Object[] masters=master.getDistricts().toArray();
-            for(int i=0;i<numDistricts;i++){
-                MasterDistrict md=(MasterDistrict)masters[i];
-                DistrictForMap d = new DistrictForMap(md, this);
-                districts.put(md, d);
-            }
-        }        
-        this.numDistricts= numDistricts;
         
         // Initialize, all precincts start in null district
         this.precinctDistrictMapping = new HashMap<>();
@@ -103,7 +83,7 @@ public class Map implements Cloneable{
     
     @Override
     public Map clone() {
-        Map copy = new Map(master, numDistricts);
+        Map copy = new Map(master);
 
         //Make sure all precincts are assigned to their corresponding districts
         for(PrecinctForMap p: getAllPrecincts()){

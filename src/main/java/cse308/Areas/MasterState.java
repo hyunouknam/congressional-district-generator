@@ -64,7 +64,7 @@ public class MasterState {
 
 	@PostLoad
 	public void populateCurrentMap() {
-		currentMap = new Map(this, numOfDistricts);
+		currentMap = new Map(this);
 		originalMap = currentMap.clone();
 		System.out.println("Here");
 		for(PrecinctForMap p: currentMap.getAllPrecincts()) {
@@ -87,10 +87,6 @@ public class MasterState {
 
 	public String getConsText() {
 		return consText;
-	}
-
-	public int getNumDistricts() {
-		return numOfDistricts;
 	}
 
 	public Map getCurrentMap() {
