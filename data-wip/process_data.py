@@ -77,6 +77,28 @@ ALL_CONFIGS = {
         "state": "state_id",
         },
     },
+"NE": {
+    "state": "NE",
+    "infile": './NE/shapefiles/ne_final.shp',
+    "outfile": './ne_out.csv',
+    "properties_map": {
+        "GEOID10": "id",
+
+        "NAME10": "name",
+        #"TOWN_NAME": "town_name",
+        #"COUNTY_NAM": "county_name",
+
+        "CD_06": "district_id",
+
+        "POP100": "population",
+        "VAP": "voting_population",
+        "NE_AGG": "total_votes",
+        "AV_0608": "average_democrat_votes",
+
+        "geometry": "geometry",
+        "state": "state_id",
+        },
+    }
 }
 
 
