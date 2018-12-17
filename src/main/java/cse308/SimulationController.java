@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import cse308.Areas.MasterDistrict;
+import cse308.Areas.MasterPrecinct;
 import cse308.Areas.MasterState;
 import cse308.Data.StateRepository;
 import cse308.Simulation.FunctionWeights;
@@ -38,6 +40,7 @@ public class SimulationController {
 		Optional<MasterState> obj = staterepository.findById((String) simParams.get("state"));
                // MasterState state = obj.orElseThrow();
                 MasterState state=new MasterState();
+                                
 		String algorithm=(String) simParams.get("algorithm");                
                 Integer districts=(Integer)simParams.get("districts");
                 SimulationParams simulationParams;
@@ -61,6 +64,8 @@ public class SimulationController {
 		UserAccount userAccount = new UserAccount();
 		
 		SimulationManager.getInstance().createSim(userAccount,  simulationParams);
+		
+		SimulationManager.getInstance().getSimWorker().runNextSimulation();
 	}
 
 }

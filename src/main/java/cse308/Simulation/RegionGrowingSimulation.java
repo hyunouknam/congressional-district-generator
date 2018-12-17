@@ -57,7 +57,7 @@ public class RegionGrowingSimulation extends Simulation{
     */
     @Override
     public void doStep(){
-        if(currentMap.getNullDisrict().getPrecincts().size()>0){
+        if(!isDone()){
             pickMove();            
             updateProgress();
             updateGUI();
@@ -101,5 +101,10 @@ public class RegionGrowingSimulation extends Simulation{
     @Override
     public void updateProgress(){
         progress=moves.size()/numOfPrecincts;
+    }
+    
+    @Override
+    public boolean isDone() {
+    	return (currentMap.getNullDisrict().getPrecincts().size() == 0);
     }
 }
