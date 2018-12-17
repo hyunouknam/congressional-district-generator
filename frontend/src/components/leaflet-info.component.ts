@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
 import { MapHandlerService } from '../maphandler.service';
-import { MasterDistrict, MasterPrecinct, LayerBacker } from '../models/geometry';
+import { MasterState, DistrictForMap, MasterPrecinct, GeoRegion } from '../models/geometry';
 
 @Component({
   selector: 'app-leaflet-info',
@@ -30,22 +30,24 @@ export class LeafletInfoComponent {
   vote_fraction: string;
 
   constructor(private maphandler: MapHandlerService) {
-    this.maphandler.currentFeature.subscribe((next:LayerBacker|null) => this.updateCurrentFeature(next));
+    this.maphandler.currentFeature.subscribe((next:GeoRegion|null) => this.updateCurrentFeature(next));
   }
 
-  private updateCurrentFeature(next:LayerBacker|null) {
+  private updateCurrentFeature(next:GeoRegion|null) {
     if(next == null) {
       this.isValid = false;
     } else {
       this.isValid = true;
       this.featureName = next.name;
-      this.population = next.data.population;
-      this.vote_fraction = this.formatVoteFraction(next.data.average_democrat_votes);
+      this.population = next.population;
+      this.vote_fraction = this.formatVoteFraction(next.average_democrat_votes);
 
-      if(next instanceof MasterDistrict) {
+      if(next instanceof DistrictForMap) {
         this.featureType="District";
       } else if (next instanceof MasterPrecinct) {
         this.featureType="Precinct";
+      } else if (next instanceof MasterState) {
+        this.featureType="State";
       } else {
         this.featureType="UNKNOWN_FEATURE_TYPE";
         console.error("UNKNOWN FEATURE:", next)

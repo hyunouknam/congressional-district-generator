@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 
 import { User, UserSerializedJSON, Simulation, SimulationSerializedJSON} from "./models/user"
 import { SimParams } from "./models/params";
-import { MasterStateInitialJson, MasterPrecinctJson } from "./models/geometry";
+import { MasterStateJson } from "./models/geometry";
 
 import { resolveAfter } from './utils';
 
@@ -15,6 +15,7 @@ const api_urls = {
     deleteSimulation: '/api/startSimulation/<id>',
     reqInitialGeomData: '/api/fetchInitialStates',
     reqPrecinctData: '/api/fetchPrecinctsByDistrict/<id>',
+    reqStateTopoJson: '/assets/<id>_topo.json',
 }
 
 
@@ -114,17 +115,28 @@ export class ServerCommService {
 
   // ============= get data
   //
-  public reqInitialGeomData(): Promise<MasterStateInitialJson[]> {
+  public reqInitialGeomData(): Promise<MasterStateJson[]> {
       //POST /api/fetchInitialGeoms
-      return this.http.get<MasterStateInitialJson[]>(
+      return this.http.get<MasterStateJson[]>(
         api_urls.reqInitialGeomData)
       .toPromise();
       //return Promise.resolve(dummyData);
   }
 
-  public reqPrecinctsForDistrict(districtId: string) {
-    return this.http.get<MasterPrecinctJson[]>(
-      api_urls.reqPrecinctData.replace('<id>', districtId))
+  // //=======TODO DELETE
+  //public reqPrecinctsForDistrict(districtId: string) {
+  //  return this.http.get<MasterPrecinctJson[]>(
+  //    api_urls.reqPrecinctData.replace('<id>', districtId))
+  //  .toPromise();
+  //}
+
+
+  public reqStateTopoJson(stateId: string) {
+    if(["CT","NJ","NE"].indexOf(stateId) < 0) {
+        throw Error(`INVALID STATE ID '${stateId}'`);
+    }
+    return this.http.get<any>(
+      api_urls.reqStateTopoJson.replace('<id>', stateId))
     .toPromise();
   }
 
