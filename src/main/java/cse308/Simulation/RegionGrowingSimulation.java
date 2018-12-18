@@ -7,6 +7,8 @@ import cse308.Areas.PrecinctForMap;
 import cse308.Users.UserAccount;
 
 import java.util.ArrayList;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,7 +20,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.NotImplementedException;
 
+@Entity
 public class RegionGrowingSimulation extends Simulation{
+    @Transient
     int numOfPrecincts;
     private Random rand = new Random();
     
@@ -26,7 +30,6 @@ public class RegionGrowingSimulation extends Simulation{
         super(u,s);
         startingMap=new Map(params.getState()); //create new blank map
         currentMap=startingMap.clone();    //for regiongrowing, blankmap=startingmap=currentmap
-            numOfPrecincts=startingMap.getAllPrecincts().size();
         getSeedPrecinctsOne();
     }
     
@@ -176,7 +179,7 @@ public class RegionGrowingSimulation extends Simulation{
     */
     @Override
     public void updateProgress(){
-        progress=moves.size()/numOfPrecincts;
+        progress=moves.size()/1;
     }
     
     @Override

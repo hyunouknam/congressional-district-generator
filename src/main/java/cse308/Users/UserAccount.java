@@ -13,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import cse308.Simulation.Simulation;
@@ -27,9 +29,11 @@ public class UserAccount {
     private UserRole role;
     
 //    private String preferencesJSON;
-    
-    @Transient
+
+    @OneToMany
+    @JoinColumn(name = "fk_user")
     private List<Simulation> sims;
+
     private String email;
     private String password;
 //    private boolean signedIn=false;
@@ -50,15 +54,12 @@ public class UserAccount {
     public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
 	public UserRole getRole() {
 		return role;
 	}
-
 	public void setRole(UserRole role) {
 		this.role = role;
 	}
@@ -123,5 +124,19 @@ public class UserAccount {
 	
 	public String toString() {
 		return "username: " + email + " password: " + password;
+	}
+
+	public JSONObject toJSON() {
+    	JSONObject json = new JSONObject();;
+    	json.put("username", email);
+		json.put("id", String.valueOf(id));
+
+		JSONArray simJsons = new JSONArray();
+		for(Simulation sim: this.sims) {
+			simJsons.put(sim.toJSON());
+		}
+		json.put("simulations", simJsons);
+
+		return json;
 	}
 }

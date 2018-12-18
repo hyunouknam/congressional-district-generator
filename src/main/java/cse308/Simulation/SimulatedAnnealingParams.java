@@ -10,4 +10,5 @@ public class SimulatedAnnealingParams extends SimulationParams{
         super(weights, state, algorithm);
         this.startingMap=startingMap;
     }
+
 }

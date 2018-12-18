@@ -4,14 +4,26 @@ import cse308.Areas.DistrictForMap;
 import cse308.Areas.Map;
 import cse308.Areas.PrecinctForMap;
 import cse308.Users.UserAccount;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Set;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 
+@Entity
 public class SimulatedAnnealingSimulation extends Simulation{
     private float temperature;
     private double alpha;
     private int rounds;
+    @Transient
     private boolean repeat=false;
-    public Map bestMap;
-    
+    @Transient
+    private Map bestMap;
+
     public SimulatedAnnealingSimulation(UserAccount u, SimulatedAnnealingParams s){
         super(u,s);
         startingMap=getStartingMap();

@@ -1,6 +1,7 @@
 package cse308.Simulation;
 
 import cse308.Areas.MasterState;
+import org.json.JSONObject;
 
 public class SimulationParams {
     final FunctionWeights functionWeights;
@@ -31,7 +32,16 @@ public class SimulationParams {
 		s = s + "}";
 		return s;
     }
-    
+
+	public JSONObject toJSON() {
+        JSONObject json = new JSONObject();
+        json.put("state", forState.getID());
+		json.put("algorithm", algorithm);
+		json.put("functionWeights", functionWeights.toJSON());
+		return json;
+	}
+
+
 //    public void addExcusion(PrecinctForMap p){
 //        excludedPrecincts.add(p);
 //    } 

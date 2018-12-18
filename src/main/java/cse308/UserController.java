@@ -2,6 +2,8 @@ package cse308;
 
 import javax.servlet.http.HttpServletRequest;
 
+import cse308.Data.UserAccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,35 +12,23 @@ import cse308.Users.UserAccount;
 
 @RestController
 public class UserController {
-	
+    @Autowired
+	private UserAccountRepository userAccountRepository;
+
 	@RequestMapping(value = "/api/getUserData", method = RequestMethod.GET, produces = "application/json")
 	public String getUserData(HttpServletRequest request) {
-//		System.out.println("HERE33");
-//		String user = (String) request.getSession().getAttribute("user");
-		String user = "abc@sbu.edu";
-		UserAccount userAcc = new UserAccount(user, "");
-		
-//		JsonBuilderFactory a = Json.createBuilderFactory(null);
-//		JsonObjectBuilder b = (JsonObjectBuilder) a.createObjectBuilder()
-//				.add("user", "abc@sbu.edu")
-//				.add("savedData", a.createArrayBuilder()
-//						.add(a.createObjectBuilder()
-//								.add("id", "1")
-//								.add("state", "nj")
-//								.add("weights", a.createObjectBuilder()
-//										.add("compactness", 0.3)
-//										.add("population_equality", 0.8)
-//										.add("partisan_fairness", 0.2)))
-//						.add(a.createObjectBuilder()
-//								.add("id", "2")
-//								.add("state", "ct")
-//								.add("weights", a.createObjectBuilder()
-//										.add("compactness", 0.4)
-//										.add("population_equality", 0.5)
-//										.add("partisan_fairness", 0.6)))).build();
-//		return b.toString();
-//		return getUserSims(userAcc);
-		return "a";
+		Object emailObj = request.getSession().getAttribute("user");
+
+		if(emailObj != null) {
+			String email = (String) emailObj;
+			UserAccount user = userAccountRepository.findByEmail(email);
+			if(user != null) {
+				return user.toJSON().toString();
+			}
+		}
+
+		UserAccount userAcc = new UserAccount("TEMP", "");
+		return userAcc.toJSON().toString();
 	}
 	
 //	public String getUserSims(UserAccount user) {

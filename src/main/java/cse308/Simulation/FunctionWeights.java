@@ -1,5 +1,7 @@
 package cse308.Simulation;
 
+import org.json.JSONObject;
+
 public class FunctionWeights {
     final double w_compactness;
     final double w_population_equality;
@@ -21,5 +23,13 @@ public class FunctionWeights {
 		s = s + "\"" + w_partisan_fairness + "\"";
 		s = s + "}";
 		return s;
+    }
+
+    public JSONObject toJSON() {
+        JSONObject json = new JSONObject();
+        json.put("w_compactness", w_compactness);
+        json.put("w_population_equality", w_population_equality);
+        json.put("w_partisan_fairness", w_partisan_fairness);
+        return json;
     }
 }
