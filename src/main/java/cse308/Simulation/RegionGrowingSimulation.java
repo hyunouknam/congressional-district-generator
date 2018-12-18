@@ -160,8 +160,8 @@ public class RegionGrowingSimulation extends Simulation{
 
         
         
-        System.out.println("goodness: " + highestGoodness);
-        System.out.println("number in null district left: " + currentMap.getNullDistrict().getPrecincts().size());
+        //System.out.println("goodness: " + highestGoodness);
+        //System.out.println("number in null district left: " + currentMap.getNullDistrict().getPrecincts().size());
     	//}
     	
     }
