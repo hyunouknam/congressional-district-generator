@@ -66,4 +66,8 @@ public class SimulationManager {
 	public SimulationWorker getSimWorker() {
 		return simWorker;
 	}
+	
+	public void deleleSim(int id) {
+		simRepo.deleteById(id);
+	}
 }

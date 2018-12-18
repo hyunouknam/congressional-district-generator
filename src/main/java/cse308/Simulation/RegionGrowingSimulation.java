@@ -105,7 +105,9 @@ public class RegionGrowingSimulation extends Simulation{
         Chooses the neighboring precinct that results in the best goodness once added, for each district
     */
     @Override
-    public void pickMove(){        
+    public void pickMove(){     
+    	
+    	System.out.println("Picking Move");
     	/*
         Set<MoveTriple> goodnesses=new HashSet<>();
         for(DistrictForMap d: currentMap.getAllDistricts()){

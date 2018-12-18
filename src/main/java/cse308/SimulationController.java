@@ -6,6 +6,7 @@ import java.util.Optional;
 import cse308.Data.UserAccountRepository;
 import cse308.Simulation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -85,5 +86,11 @@ public class SimulationController {
 
 		//SimulationManager.getInstance().getSimWorker().runNextSimulation();
 	}
+	
+	@RequestMapping(value = "/api/deletesim/{id}", method = RequestMethod.GET, consumes = "application/json")
+	public void addNewWorker(@PathVariable int id){
+		simulationManager.deleleSim(id);
+	}
+	
 
 }
