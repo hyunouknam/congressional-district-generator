@@ -68,7 +68,7 @@ public class Map implements Cloneable{
     public Collection<DistrictForMap> getAllDistricts(){ return districts.values(); }
     public Collection<MasterDistrict> getMasterDistricts(){ return districts.keySet(); }
     public HashMap<MasterDistrict, DistrictForMap> getDistricts(){ return districts; }
-    public DistrictForMap getNullDisrict(){ return nullDistrict; }
+    public DistrictForMap getNullDistrict(){ return nullDistrict; }
 
     public HashMap<PrecinctForMap, DistrictForMap> getPrecinctDistrictMapping(){ return precinctDistrictMapping; }
 
@@ -79,12 +79,42 @@ public class Map implements Cloneable{
     // ========== Rest of it
 
     public void apply(Move m){
-        precinctDistrictMapping.put(m.getPrecinct(), m.getNewDistrict()); //modifies precint to district mapping
+    	PrecinctForMap p = getPrecinct(m.getPrecinct());
+    	DistrictForMap newD = getDistrict(m.getNewDistrict());
+//    	if(p.getMap() != this) {throw new RuntimeException("PRECINCT MISMATCH"); }
+//    	if(d.getMap() != this) {throw new RuntimeException("DISTRICT MISMATCH"); }
+    	
+//    	p.hashCode();
+//    	p.getMap().hashCode();
+//    	p.getParentDistrict().hashCode();
+//    	m.getNewDistrict().hashCode();
+//    	
+//    	System.out.println(String.format("doing move for map;%x: P-%s;%x, D-%s;%x -> D-%s;%x", 
+//
+//    	    	p.getMap().hashCode(), 
+//    			p.getMaster().getId(), p.hashCode(),
+//    				p.getParentDistrict().getMaster().getID(), p.getParentDistrict().hashCode(),
+//    				m.getNewDistrict().getMaster().getID(), m.getNewDistrict().hashCode()) );
+        
+    	precinctDistrictMapping.put(p, newD); //modifies precinct to district mapping
+        
+//    	System.out.println(String.format("did move: P-%s, D-%s;%x", m.getPrecinct().getMaster().getId(), 
+//				p.getParentDistrict().getMaster().getID(), p.getParentDistrict().hashCode()) );
+//        
+//
+//        DistrictForMap d_aaa = p.getMap().getPrecinctDistrictMapping().get(p);
+//        System.out.println(String.format("new district direct.get id %s;%x,  through p4m.get id%s;%x ", 
+//        		precinctDistrictMapping.get(m.getPrecinct()).getMaster().getID(),
+//        		precinctDistrictMapping.get(m.getPrecinct()).hashCode(),
+//        		d_aaa.getMaster().getID(), d_aaa.hashCode()));
+        
+
+  
     }
     
     public Map cloneApply(Move m) {
         Map newMap = clone();
-        newMap.getPrecinctDistrictMapping().put(m.getPrecinct(), m.getNewDistrict());
+        newMap.apply(m);
         return newMap;
     }
     
@@ -128,7 +158,7 @@ public class Map implements Cloneable{
     	s =s + precincts.keySet().stream().map(mp -> mp.getId()).collect(Collectors.toList()).toString();   	
     	s = s + precinctDistrictMapping.entrySet().stream()
     			.map(e -> e.getKey().getMaster().getId() + " :  " + e.getValue().getMaster().getID())
-    			.collect(Collectors.joining(", "));
+    			.collect(Collectors.joining(",\n"));
     	return s;
     }
     

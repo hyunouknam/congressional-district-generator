@@ -59,8 +59,8 @@ public class DistrictForMap implements GeoRegion{
     
     public Set<PrecinctForMap> getPrecincts(){
         Set <PrecinctForMap> precincts=new HashSet<>();
-        for(PrecinctForMap p: map.getPrecinctDistrictMapping().keySet()){
-            if (map.getPrecinctDistrictMapping().get(p)==this){
+        for(PrecinctForMap p: map.getAllPrecincts()){
+            if (p.getParentDistrict()==this){
                 precincts.add(p);
             }
         }

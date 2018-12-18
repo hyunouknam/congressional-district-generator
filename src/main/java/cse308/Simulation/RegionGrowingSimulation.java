@@ -2,14 +2,25 @@ package cse308.Simulation;
 
 import cse308.Areas.DistrictForMap;
 import cse308.Areas.Map;
+import cse308.Areas.MasterPrecinct;
 import cse308.Areas.PrecinctForMap;
 import cse308.Users.UserAccount;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.NotImplementedException;
 
 public class RegionGrowingSimulation extends Simulation{
     int numOfPrecincts;
+    private Random rand = new Random();
     
     public RegionGrowingSimulation(UserAccount u, RegionGrowingParams s){
         super(u,s);
@@ -35,15 +46,38 @@ public class RegionGrowingSimulation extends Simulation{
         Picks random precincts to be chosen as the seeds, one for each district.
     */
     private void getSeedPrecinctsOne(){
-        Object[] precincts=startingMap.getAllPrecincts().toArray();
+        /*Object[] precincts=startingMap.getAllPrecincts().toArray();
         Collection <DistrictForMap> districts=startingMap.getAllDistricts();
         for(DistrictForMap d: districts){
             PrecinctForMap p=(PrecinctForMap)precincts[precincts.length*(int)Math.random()];
+            
             p.isAssigned=true;
             Move move=new Move(p, d);
             moves.add(move);
             currentMap.apply(move);
         }
+        System.out.println("");*/
+    	
+    	PrecinctForMap[] pm;
+    	Collection <DistrictForMap> districts = new ArrayList<>();
+    	for(DistrictForMap d : startingMap.getAllDistricts()) {
+    		if(!d.getMaster().getID().equals("CT_NULL") &&
+    				!d.getMaster().getID().equals("NJ_NULL") &&
+    				!d.getMaster().getID().equals("NE_NULL")) {
+    			
+    			districts.add(d);
+    			
+    		}
+    	}
+    	
+    	for(DistrictForMap d : districts) {
+    		pm = startingMap.getNullDistrict().getPrecincts().toArray(new PrecinctForMap[startingMap.getAllPrecincts().size()]);
+			PrecinctForMap p = pm[rand.nextInt(pm.length)];
+			
+			Move move = new Move(p, d);
+			moves.add(move);
+			currentMap.apply(move);
+    	}
     }
     
     private void getSeedPrecinctsTwo(){
@@ -60,7 +94,7 @@ public class RegionGrowingSimulation extends Simulation{
         if(!isDone()){
             pickMove();            
             updateProgress();
-            updateGUI();
+            //updateGUI();
         }
     }
                  
@@ -70,6 +104,7 @@ public class RegionGrowingSimulation extends Simulation{
     */
     @Override
     public void pickMove(){        
+    	/*
         Set<MoveTriple> goodnesses=new HashSet<>();
         for(DistrictForMap d: currentMap.getAllDistricts()){
             for(PrecinctForMap p: d.getBorderPrecincts()){ //updates each time
@@ -91,6 +126,67 @@ public class RegionGrowingSimulation extends Simulation{
         currentMap=bestTriple.map;
         currentGoodness=bestTriple.goodness;
         moves.add(bestTriple.move);
+        */
+    	
+    	//System.out.println(currentMap.toString());
+    	
+    	if(currentMap.getNullDistrict() == null) {
+    		throw new NotImplementedException("");
+    	}
+    	
+    	HashMap<String, Integer> t = new HashMap<>();
+    	for(MasterPrecinct mp : currentMap.getState().getPrecincts()) {
+
+    		t.putIfAbsent(mp.getId(), 0);
+    		t.put(mp.getId(), t.get(mp.getId()) + 1);
+    	}
+    	List<Entry<String, Integer>> bigents= t.entrySet()
+    			.stream()
+    			.filter(entry -> entry.getValue() > 1)
+    			.collect(Collectors.toList());
+    	
+    	Set <PrecinctForMap> nonNullP=new HashSet<>();
+        for(PrecinctForMap p: currentMap.getPrecinctDistrictMapping().keySet()){
+            if (currentMap.getPrecinctDistrictMapping().get(p)!=currentMap.getNullDistrict()){
+                nonNullP.add(p);
+            }
+        }
+
+    	Set <PrecinctForMap> weirdP=new HashSet<>();
+    	Set <PrecinctForMap> borderPrecincts=new HashSet<>();
+    	Set <PrecinctForMap> nullP = currentMap.getNullDistrict().getPrecincts();
+    	for(PrecinctForMap p : currentMap.getNullDistrict().getPrecincts()) {	// returning empty
+    		if(p.isDistrictBorder()) {
+    			borderPrecincts.add(p);
+    		}
+    		if(nonNullP.contains(p)) {
+    			weirdP.add(p);
+    		}
+    	}
+    	
+    	//for(PrecinctForMap p : borderPrecincts) {
+    	
+    	PrecinctForMap[] pm = (PrecinctForMap[]) borderPrecincts.toArray(new PrecinctForMap[borderPrecincts.size()]);
+    	
+    	int testLength = pm.length;
+    	
+    	PrecinctForMap randP = pm[rand.nextInt(pm.length)];
+    	
+    	DistrictForMap[] dm = (DistrictForMap[]) randP.getNeighborDistricts().toArray(new DistrictForMap[randP.getNeighborDistricts().size()]);
+    	
+    	DistrictForMap randD = dm[rand.nextInt(dm.length)];
+    		
+    	Move move=new Move(randP, randD);
+    		
+        Map m=currentMap.cloneApply(move);
+        double goodness = ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights,m);
+        
+        currentMap = m;
+        moves.add(move);
+        System.out.println("goodness: " + goodness);
+        System.out.println("number in null district left: " + currentMap.getNullDistrict().getPrecincts().size());
+    	//}
+    	
     }
     
     /*
@@ -105,6 +201,6 @@ public class RegionGrowingSimulation extends Simulation{
     
     @Override
     public boolean isDone() {
-    	return (currentMap.getNullDisrict().getPrecincts().size() == 0);
+    	return (currentMap.getNullDistrict().getPrecincts().size() == 0);
     }
 }

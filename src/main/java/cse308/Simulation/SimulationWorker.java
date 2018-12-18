@@ -3,7 +3,7 @@ package cse308.Simulation;
 import cse308.Areas.Map;
 import java.util.ArrayList;
 
-public class SimulationWorker extends Thread{
+public class SimulationWorker{
     private ArrayList<Simulation> queue=new ArrayList<>();
     
     public void addToRunQueue(Simulation sim){
@@ -48,11 +48,11 @@ public class SimulationWorker extends Thread{
         queue.get(0).isPaused=true;
         queue.remove(0);        
     }
-    
+    /*
     @Override
     public void run(){
         if(!queue.isEmpty()){
             runNextSimulation();
         }
-    }
+    }*/
 }
