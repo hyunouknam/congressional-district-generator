@@ -148,6 +148,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
         }            
         //number of runs=Temp/alpha*[100-1000]
         //progress will be updated after each temp change: so divided into temp/alpha's
+        this.savedSim.setCurrentMap(currentMap);
     }
     
     public double calcAcceptanceProb(double current, double next, double temp){
