@@ -5,12 +5,17 @@ import cse308.Areas.MapConverter;
 import cse308.Users.UserAccount;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name="sim")
 public class SavedSimulation {
+
+    @Autowired
+    @Transient
+    private SavedSimRepository simRepo;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,10 +44,11 @@ public class SavedSimulation {
 
     public SavedSimulation() {}
 
-    public SavedSimulation(UserAccount user, SimulationParams params, Map startingMap) {
+    public SavedSimulation(UserAccount user, SimulationParams params, Map startingMap, SavedSimRepository simRepo) {
         this.params = params;
         this.user = user.getEmail();
         this.currentMap = startingMap;
+        this.simRepo = simRepo;
     }
 
 
@@ -66,7 +72,10 @@ public class SavedSimulation {
     //public void setPaused(boolean paused) { isPaused = paused; }
 
     public Map getCurrentMap() { return currentMap; }
-    public void setCurrentMap(Map currentMap) { this.currentMap = currentMap; }
+    public void setCurrentMap(Map currentMap) {
+        this.currentMap = currentMap;
+        this.simRepo.save(this);
+    }
 
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();

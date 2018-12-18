@@ -43,12 +43,13 @@ public class SimulationManager {
             newSim=new SimulatedAnnealingSimulation((SimulatedAnnealingParams)params);
         }
 
-        SavedSimulation saveSim = new SavedSimulation(user, params, newSim.currentMap);
+        SavedSimulation saveSim = new SavedSimulation(user, params, newSim.currentMap, simRepo);
+        saveSim = simRepo.save(saveSim);
         newSim.setSavedSim(saveSim);
-        simRepo.save(saveSim);
         user.getMaps().add(saveSim);
 
 
+        System.out.println("Created Sim: " + saveSim.getId() + ". Adding to runque");
         simWorker.addToRunQueue(newSim);
 	    simWorker.runNextSimulation();
         return newSim;

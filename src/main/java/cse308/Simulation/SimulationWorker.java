@@ -17,9 +17,13 @@ public class SimulationWorker{
     }
     
     public void runNextSimulation(){
+        System.out.println("Simworker, getting next simulation");
         if(!queue.isEmpty()){
             Simulation sim=queue.get(0);
             Map result;
+            if(sim.savedSim != null) {
+                System.out.println("got sim: " + sim.savedSim.getId() +", about to dostep");
+            }
             while (!sim.isDone() && !sim.isPaused){
                 sim.doStep();
             }
