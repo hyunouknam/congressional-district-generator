@@ -107,37 +107,7 @@ public class RegionGrowingSimulation extends Simulation{
     */
     @Override
     public void pickMove(){        
-/*
 
-    	Set <PrecinctForMap> borderPrecincts=new HashSet<>();
-    	Set <PrecinctForMap> nullP = currentMap.getNullDistrict().getPrecincts();
-    	for(PrecinctForMap p : currentMap.getNullDistrict().getPrecincts()) {	// returning empty
-    		if(p.isDistrictBorder()) {
-    			borderPrecincts.add(p);
-    		}
-    	}
-    	
-    	
-    	PrecinctForMap[] pm = (PrecinctForMap[]) borderPrecincts.toArray(new PrecinctForMap[borderPrecincts.size()]);
-    	
-    	PrecinctForMap randP = pm[rand.nextInt(pm.length)];
-    	
-    	DistrictForMap[] dm = (DistrictForMap[]) randP.getNeighborDistricts().toArray(new DistrictForMap[randP.getNeighborDistricts().size()]);
-    	
-    	DistrictForMap randD = dm[rand.nextInt(dm.length)];
-    		
-    	Move move=new Move(randP, randD);
-    	
-    	
-        Map m=currentMap.cloneApply(move);
-
-        
-        double goodness = ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights,m);
-        currentMap = m;
-        
-        moves.add(move);
-        */
-    	
     	Set<PrecinctForMap> borderPrecincts = new HashSet<>();
     	Set <PrecinctForMap> nullP = currentMap.getNullDistrict().getPrecincts();
     	for(PrecinctForMap p : currentMap.getNullDistrict().getPrecincts()) {	// returning empty
@@ -190,8 +160,8 @@ public class RegionGrowingSimulation extends Simulation{
 
         
         
-        //System.out.println("goodness: " + highestGoodness);
-        //System.out.println("number in null district left: " + currentMap.getNullDistrict().getPrecincts().size());
+        System.out.println("goodness: " + highestGoodness);
+        System.out.println("number in null district left: " + currentMap.getNullDistrict().getPrecincts().size());
     	//}
     	
     }

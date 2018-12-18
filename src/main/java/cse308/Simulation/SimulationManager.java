@@ -32,6 +32,8 @@ public class SimulationManager {
         creates simulation object, and adds simulation to simulationworker's queue
     */
     public Simulation createSim(UserAccount user, SimulationParams params){
+    	
+    	System.out.println("SimMan: Creating sim");
         Simulation newSim;
 
         if(params.algorithm.contains("REGION_GROWING")){
@@ -65,5 +67,10 @@ public class SimulationManager {
 
 	public SimulationWorker getSimWorker() {
 		return simWorker;
+	}
+	
+	public void deleleSim(int id) {
+		System.out.println("In sim manager");
+		simRepo.deleteById(id);
 	}
 }

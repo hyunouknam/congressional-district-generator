@@ -6,6 +6,7 @@ import java.util.Optional;
 import cse308.Data.UserAccountRepository;
 import cse308.Simulation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +35,8 @@ public class SimulationController {
 
 	@RequestMapping(value = "/api/startSimulation", method = RequestMethod.POST, consumes = "application/json")
 	public void addNewWorker(HttpServletRequest request, @RequestBody Map<String, Object> simParams) throws Exception {
+		
+		System.out.println("Starting ssim controller");
 
 		Map<String, Object> b = (Map<String, Object>) simParams.get("functionWeights");
 
@@ -85,5 +88,12 @@ public class SimulationController {
 
 		//SimulationManager.getInstance().getSimWorker().runNextSimulation();
 	}
+	
+	@RequestMapping(value = "/api/deletesim/{id}", method = RequestMethod.GET)
+	public void addNewWorker(@PathVariable int id){
+		System.out.println("Delete started for id: " + id);
+		simulationManager.deleleSim(id);
+	}
+	
 
 }

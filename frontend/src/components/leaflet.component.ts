@@ -236,7 +236,16 @@ export class LeafletComponent {
     this.displayStateMap(newMap!, 'DISTRICT');
     this.currentFocus = newFocus!;
 
+    this.zoomFitState(newMap!.state);
     
+  }
+
+  private zoomFitState(state: MasterState) {
+      const [ x0, y0, x1, y1 ] = Topo.bbox(state.topo as any);
+      this.map.fitBounds([
+          [y0, x0], //leaflet uses latlngs
+          [y1, x1] 
+      ]);
   }
 
   // =============== PRIMITIVES

@@ -12,7 +12,7 @@ import { resolveAfter } from './utils';
 const api_urls = {
     fetchUserData: '/api/getUserData',
     startSimulation: '/api/startSimulation',
-    deleteSimulation: '/api/startSimulation/<id>',
+    deleteSimulation: '/api/deletesim/<id>',
     reqInitialGeomData: '/api/fetchInitialStates',
     reqPrecinctData: '/api/fetchPrecinctsByDistrict/<id>',
     reqStateTopoJson: '/assets/<id>_topo.json',
@@ -91,7 +91,9 @@ export class ServerCommService {
     //POST /api/deleteSimulation
     //body: sim.getFullId()
     
-    return Promise.reject("REQUEST NOT IMPLEMENTED");
+      console.log(`About to delete simulation ${sim.id}`);
+      return this.http.get<void>(api_urls.deleteSimulation.replace('<id>', sim.id))
+        .toPromise()
   }
 
 
