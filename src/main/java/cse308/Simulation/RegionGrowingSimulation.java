@@ -178,6 +178,8 @@ public class RegionGrowingSimulation extends Simulation{
     @Override
     public void updateProgress(){
         progress=moves.size()/1;
+        System.out.println("UpdatingMap");
+        this.savedSim.setCurrentMap(currentMap);
     }
     
     @Override

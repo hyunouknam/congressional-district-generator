@@ -42,6 +42,7 @@ public class SimulationManager {
         }
 
         SavedSimulation saveSim = new SavedSimulation(user, params, newSim.currentMap);
+        newSim.setSavedSim(saveSim);
         simRepo.save(saveSim);
         user.getMaps().add(saveSim);
 
