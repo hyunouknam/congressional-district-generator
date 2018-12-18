@@ -11,10 +11,19 @@ export class FunctionWeights{
 }
 
 
+type ALGORITHM_TYPE ="REGION_GROWING" | "SIM_ANNEALING"; 
 //type AlgorithmType = "REGION_GROWING" | "SIM_ANNEALING";
+export class SimParamsJson {
+  state: string;
+  algorithm: ALGORITHM_TYPE;
+  annealingTime: number;
+  annealingStartWith: "RANDOM" | "CURRENT";
+  regionGrowingMovesToCheck: number;
+  functionWeights: FunctionWeights;
+}
 
 export class SimParams {
-  algorithm: "REGION_GROWING" | "SIM_ANNEALING";
+  algorithm: ALGORITHM_TYPE;
 
   annealingTime: number | null; //int total number of steps to run for, 100 to 1million?
   annealingStartWith: "RANDOM" | "CURRENT" | null;

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { User, UserSerializedJSON, Simulation, SimulationSerializedJSON} from "./models/user"
+import { User, UserJSON, Simulation, SimulationJSON } from "./models/user"
 import { SimParams } from "./models/params";
 import { MasterStateJson } from "./models/geometry";
 
@@ -57,35 +57,17 @@ let TEST_JSONS = [
   providedIn: 'root',
 })
 export class ServerCommService {
-  // ========== USER DATA
-  // Interface is weird because we want to load it immediately
-  // In some cases we want to wait for it (promise), other times use it immediately
-  //TODO make this clean with observables maybe?
-  currentUser: User|null = null;  
-  userPromise: Promise<User|null>;
-
-  public getCurrentUserPromise() { return this.userPromise;}
-  public getCurrentUser() { return this.currentUser; }
 
 
   constructor(private http: HttpClient) {
-    this.userPromise = this.reqFetchUserData()       // Real query
-    //this.userPromise = resolveAfter(pickRandom(TEST_JSONS), 500)  // TODO DEBUG: stub
-        .then(json => User.createParse(json));
-
-    //Do the catch after we assign.
-    //It's a little funky. Maybe switch to observables might be good?
-    this.userPromise
-      .then(user => this.currentUser = user)
-      .catch(err => {console.error(err); console.log("FAILED TO GET USER"); });
   }
 
 
 
   //TODO: maybe should return a User promise instead?
-  public reqFetchUserData(): Promise<UserSerializedJSON> {
+  public reqFetchUserData(): Promise<UserJSON> {
     //GET /api/getUserData
-    return this.http.get<UserSerializedJSON>(api_urls.fetchUserData).toPromise();
+    return this.http.get<UserJSON>(api_urls.fetchUserData).toPromise();
 
   }
 
@@ -98,7 +80,7 @@ export class ServerCommService {
     console.log("Doing startSimulation:" +  JSON.stringify(params, null, "  "));
     
     //get response
-    let req = this.http.post<SimulationSerializedJSON>(api_urls.startSimulation, params).toPromise();
+    let req = this.http.post<SimulationJSON>(api_urls.startSimulation, params).toPromise();
     
     //parse response
     return req.then(json => Simulation.createParse(json));

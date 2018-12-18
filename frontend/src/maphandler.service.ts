@@ -5,7 +5,8 @@ import { Injectable, EventEmitter } from "@angular/core";
 
 import * as leaflet from 'leaflet'
 import { ServerCommService } from './servercomm.service';
-import { GeoRegion, MasterPrecinct, MasterDistrict, MasterState, MasterStateJson } from './models/geometry';
+import { Repo, GeoRegion, MasterPrecinct, MasterDistrict, MasterState, MasterStateJson } from './models/geometry';
+import * as Geometry from './models/geometry';
 
 
 // ========== Weird-ass types
@@ -30,194 +31,50 @@ export class MapHandlerService {
    */
 
 
+  // leaflet events pipe into here, so that other components can use them
   public currentFeatureIn = new EventEmitter<GeoRegion | null>();
+  //observe this one 
   public currentFeature: Observable<GeoRegion | null>;
+
+  // fulfilled once geom data is loaded
+  public dataLoad: Promise<void>;
+  
 
   constructor(private servercomm: ServerCommService){
     this.currentFeature = this.currentFeatureIn.pipe(rxOp.startWith(null));
 
+
+    //Initiate loading of geometry data
+    this.dataLoad = this.loadDataAlternate()
   }
 
-    /* // ========= Prints current features as you mouse around for debugging
-    // List 
-    this.currentFeature.pipe(
-        map(e => e == null ? 
-            "Nothing selected" : (e as any).feature.properties.precinct_name))
-    .subscribe(e => console.log(e));
-     */
+  private async loadDataAlternate() {
+    console.log("Loading initial data")
+    const statejsons = await this.servercomm.reqInitialGeomData();
+    const state_ids = statejsons.map(sj => sj.id);
+
+    const topojsons:{[s:string]:any} = {};
+    for( const sid of state_ids) {
+      console.log(`Loading topo file for ${sid}`)
+      topojsons[sid] = await this.servercomm.reqStateTopoJson(sid);
+    }
+
+    (window as any).ct_topo = topojsons['CT'] //TODO TEMP DEBUG
+
+    // Set repo only once data is loaded, so anyone who fucks it up is rip
+    Repo.states = new Map<string, MasterState>();
+    Repo.districts = new Map<string, MasterDistrict>();
+    Repo.precincts = new Map<string, MasterPrecinct>();
+    Repo.layers = new Map<L.Layer, GeoRegion>();
 
 
-  //  private highlightFeature(e: leaflet.LeafletEvent) {
-  //      let layer: leaflet.FeatureGroup  = e.target;
-  //
-  //      layer.setStyle({
-  //          weight: 5,
-  //          color: '#666',
-  //          dashArray: '',
-  //          fillOpacity: 0.7
-  //      });
-  //
-  //      if (!leaflet.Browser.ie && !leaflet.Browser.opera12 && !leaflet.Browser.edge) {
-  //          layer.bringToFront();
-  //      }
-  //  }
-  //
-  //  private resetHighlight(e: leaflet.LeafletEvent) {
-  //        this.precintGeoJson.resetStyle(e.target);
-  //  }
-  //
-  //  private zoomToFeature(f: leaflet.FeatureGroup) {
-  //      this.map.fitBounds(f.getBounds());
-  //  }
-  //
-  //  private fetch(x: Promise<any>) {
-  //    x.then( (data: any) => {
-  //
-  //      let features: Array<{properties:PrecinctProperties}> = data.features;
-  //
-  //      let handler = (e:any)=>{};
-  //      let obs = new Observable<any>((observer: Observer<any>) => {
-  //        handler = (e:any) => observer.next(e);
-  //      }).pipe(take(10)).subscribe((e:any) => {
-  //        //console.log(e);
-  //      });
-  //
-  //      this.precintGeoJson = leaflet.geoJSON(data, {
-  //        onEachFeature : (feature, layer) => {
-  //          handler([feature, layer]);
-  //          layer.on({
-  //            mouseover: (e: leaflet.LeafletEvent) => {
-  //              this.highlightFeature(e)
-  //              this.setCurrentFeature(e.target);
-  //            },
-  //            mouseout: (...args) =>  this.resetHighlight(...args),
-  //            click: (e: leaflet.LeafletEvent) => { 
-  //              this.zoomToFeature(e.target);
-  //              this.setCurrentFeature(e.target);
-  //            },
-  //          }); 
-  //        }
-  //      })
-  //
-  //      //this.precintGeoJson.addTo(this.precinct);
-  //      this.precintGeoJson.addTo(this.map);
-  //      
-  //      
-  //
-  //
-  //      //====== DEBUGGING
-  //      /*
-  //      features.slice(0, 10).forEach(feat => {
-  //        console.log(feat.properties.id, feat);
-  //      });
-  //      */
-  //      //(window as any).njdata = data;
-  //
-  //
-  //    });
-  //  }
-  //
-  //
-  //  public initMapOnElement(elem: HTMLElement) {
-  //    //half-assed singleton
-  //    // TODO FIX THIS
-  //    if(this.map != null) { throw new Error("map already defined in maphandler, should be singleton"); }
-  //
-  //    console.log(elem);
-  //    this.map = leaflet.map(elem).setView([40.19, -74.70], 8);
-  //
-  //
-  //
-  //    leaflet.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-  //        id: 'mapbox.light',
-  //        attribution:  'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>' + 
-  //                      'contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,' +
-  //                      'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-  //        maxZoom: 18,
-  //        accessToken: 'pk.eyJ1IjoicGF1bG5hbTEyMyIsImEiOiJjam1ndzE2bzgzNTJkM3FsazdzOTRtMjMwIn0.Bt5nrR5H2-MeoZkVMhMRJg'
-  //    } as any).addTo(this.map);
-  //    
-  //
-  //    
-  //    let x = this.fetch_NJ_JSON();
-  //    this.fetch(x);
-  //
-  //    let y = this.fetch_CT_JSON();
-  //    this.fetch(y);
-  ///*
-  //    this.map.on('zoomend', function() {
-  //      if (this.map.getZoom() > 8) {
-  //        this.map.addLayer(this.precinct);
-  //      }
-  //      else
-  //      {
-  //        this.map.removeLayer(this.precinct);
-  //      }   
-  //    });
-  //
-  //    this.precinct.addTo(this.map);
-  //    */
-  //  }
-  //
-  //
-  //
-  //  // assuming f has to be a precinct featuregroup
-  //  private setCurrentFeature(f: leaflet.FeatureGroup) {
-  //    this.currentFeature.emit(f);
-  //  }
+    // load geoms from fetched jsons
+    for(const statejson of statejsons){
+      const statetopo = topojsons[statejson.id]
+      MasterState.loadFromInitialJson(statejson, statetopo);
+    }
+
+    console.log("Initialized all masterStates");
+  }
 
 }
-
-
-
-
-// === TEMP: INITIALIZE MAP
-
-/*
-function style() {
-    return {
-        weight: 2,
-        opacity: 1,
-        color: 'white',
-        dashArray: '',
-        fillOpacity: 0.7,
-        fillColor: 'gray'
-    };
-}
-
-function highlight(e) {
-    var layer = e.target;
-
-    layer.setStyle({
-        weight: 3,
-        color: '#666',
-        dashArray: '',
-        fillOpacity: 1
-    });
-
-    layer.bringToFront();
-
-}
-
-let geojson: any;
-
-function resetHighlight(e) {
-    geojson.resetStyle(e.target);
-}
-
-
-function onEachFeature(feature: leaflet.FeatureGroup, layer: leaflet.Layer) {
-    layer.on({
-        mouseover: highlight,
-        mouseout: resetHighlight,
-        click: zoom
-    });
-}
-
-geojson = leaflet.geoJSON(statesData, {
-    style: style,
-    onEachFeature: onEachFeature
-}).addTo(map);
-
-
- */

@@ -1,42 +1,41 @@
-import { UIDable, UIDRepository } from '../utils';
-
+import { Repo, StateMapJson, StateMap } from './geometry';
+import { SimParamsJson} from './params';
 
 export type SimulationData = string;
 
 //keep track of all simulataions
 
-export type SimulationSerializedJSON = {
-    name: string;
+export type SimulationJSON = {
     id: string;
-    params: any;
-    data: string | null;
+    params: SimParamsJson;
+    data: StateMapJson[];
 }
 
 
-
-export class Simulation implements UIDable {
-  public data: SimulationData | null;
-  public owner: User|null;
+export class Simulation {
+  public constructor(public id: string, public params: SimParamsJson, public data: StateMap[]) {
+  }
 
   // persistence stuff
-  static repo : UIDRepository<Simulation> = new UIDRepository();
-  static createParse(json: SimulationSerializedJSON): Simulation {
-    return new Simulation(json.id, json.name, json.data);
+  static createParse(json: SimulationJSON): Simulation {
+    
+    const stateId = json.params.state;
+    const state = Repo.states.get(stateId);
+    if(!state) { throw Error("Invalid State " + stateId); }
+
+    const maps: StateMap[] = [];
+    for(const mapjson of json.data) {
+      maps.push(StateMap.loadFromJson(mapjson, state));
+    }
+
+    return new Simulation(json.id, json.params, maps);
   }
 
-  public constructor(public id: string, public name: string, data?: SimulationData|null) {
-      this.data = data || null;
-      Simulation.repo.addItem(id, this);
-  }
-
-
-
-  public getFullId() {
-    return "Simulation#" + this.id;
+  public toString() {
+    return `<Simulation #${this.id}, params: ${JSON.stringify(this.params)}, map for ${this.data[0].state.id}>`;
   }
 
 }
-
 
 
 
@@ -45,19 +44,16 @@ export class Simulation implements UIDable {
 //                  USER STUFF
 
 
-export type UserSerializedJSON = {
+export type UserJSON = {
       id: string;
       user: string;
-      simulations: SimulationSerializedJSON[];
+      simulations: SimulationJSON[];
 }
 
-export class User implements UIDable {
-
-
-  static repo: UIDRepository<User> = new UIDRepository();
+export class User {
 
   //TODO ! BUG WARNING: what happens if we error out in the middle of the thing? transactional?
-  static createParse(data: UserSerializedJSON): User {
+  static createParse(data: UserJSON): User {
     //parse serialized user json into user obj
 
     console.log("==========");
@@ -69,8 +65,8 @@ export class User implements UIDable {
     //assert(testObj.id == "string");
     //assert(testObj.savedData) == "");
 
-    let sims = data.simulations.map(s => Simulation.createParse(s));
-    let user = new User(data.id, data.user, sims);
+    //let sims = data.simulations.map(s => Simulation.createParse(s));
+    let user = new User(data.id, data.user);
 
     return user; 
   }
@@ -78,9 +74,7 @@ export class User implements UIDable {
 
   public readonly simulations: Simulation[];
 
-  public constructor(public readonly id: string, public readonly name: string, sim: Simulation[] = []) {
-    this.simulations = sim;
-    User.repo.addItem(id, this);
+  public constructor(public readonly id: string, public readonly name: string) {
   }
 
 

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { User } from '../models/user';
-import { ServerCommService } from '../servercomm.service';
+import { UsersService } from '../users.service';
 
 @Component({
   selector: 'app-current-user',
@@ -13,8 +13,8 @@ import { ServerCommService } from '../servercomm.service';
 export class CurrentUserComponent {
   text = "X";
 
-  constructor(servercomm: ServerCommService) {
-    let userP: Promise<User|null> = servercomm.getCurrentUserPromise();
+  constructor(users: UsersService) {
+    let userP: Promise<User|null> = users.user_p;
     userP.then(user => {
       this.text = (user == null) ? "UNDEF" : user.name;
     })

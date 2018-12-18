@@ -20,35 +20,9 @@ export function show(s: any){
 }
 
 
-
 export function resolveAfter<T>(val: T, ms: number): Promise<T> {
   return new Promise((resolve,reject) => {
     window.setTimeout(() => resolve(val), ms);
   });
-}
-
-
-export type UID = string;
-export class IDCollisionError extends Error {}
-
-export interface UIDable {
-  readonly id: UID;
-   
-}
-
-export class UIDRepository<T extends UIDable> {
-  // Static portion
-  public dict: { [id: string]: T } = Object.create(null);
-
-  public lookupById(id: UID): T | null {
-    return this.dict[id]
-  }
-
-  public addItem(id: UID, item: T) {
-    if(this.lookupById(id) != null) {
-      throw new IDCollisionError(id);
-    }
-    this.dict[id] = item;
-  }
 }
 

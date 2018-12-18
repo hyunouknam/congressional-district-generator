@@ -3,17 +3,22 @@ import * as Topo from 'topojson-client';
 
 
 // Holds all objects that have unique ids, as well as a few extra mappings
-export class Repo {
-  static states:    Map<string, MasterState>    = new Map();
-  static districts: Map<string, MasterDistrict> = new Map();
-  static precincts: Map<string, MasterPrecinct> = new Map();
+//
+// NOTE: this shouldn't be accessed directly outside of geometry.ts, should be accessed from maphandler instead
+//
+// NOTE: maphandler will initialize this when map data is ready,
+// therefore anyone accessing it before then will get errors
+export let Repo: {
+  states:    Map<string, MasterState>,
+  districts: Map<string, MasterDistrict>,
+  precincts: Map<string, MasterPrecinct>,
 
   //map from layer to the District,precinct, etc, it refers to
-  static layers: Map<L.Layer, GeoRegion> = new Map();
-}
+  layers: Map<L.Layer, GeoRegion>,
+} = {} as any;
 
 //TODO TEMP DEBUG
-(window as any).R = Repo
+(window as any).R = Repo;
 
 
 // =================================================================
@@ -136,7 +141,6 @@ export class MasterDistrict {
     const md =  new MasterDistrict(json.name, json.id, state);
     Repo.districts.set(md.id, md);
 
-    //TODO generate layer?
     return md;
   }
 }
