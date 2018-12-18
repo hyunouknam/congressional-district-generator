@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -105,71 +106,61 @@ public class RegionGrowingSimulation extends Simulation{
         Chooses the neighboring precinct that results in the best goodness once added, for each district
     */
     @Override
-    public void pickMove(){     
-    	
-    	System.out.println("Picking Move");
-    	/*
-        Set<MoveTriple> goodnesses=new HashSet<>();
-        for(DistrictForMap d: currentMap.getAllDistricts()){
-            for(PrecinctForMap p: d.getBorderPrecincts()){ //updates each time
-                for(PrecinctForMap pm: p.getNeighborPrecincts()){ //neighbors of precincts on the border of the district
-                    if(!p.isAssigned){
-                        Move move=new Move(p, d);
-                        Map m=currentMap.cloneApply(move);
-                        double goodness = ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights,m);
-                        goodnesses.add(new MoveTriple(goodness, m, move));
-                    }
-                }
-            }
-        }
-        //sort map by goodnesses and add precinct that results in the best goodness
-        MoveTriple bestTriple=null;
-        for (MoveTriple t: goodnesses){
-            bestTriple= t.compareTo(bestTriple)>0 ? t:bestTriple;
-        }
-        currentMap=bestTriple.map;
-        currentGoodness=bestTriple.goodness;
-        moves.add(bestTriple.move);
-        */
-    	
-    	//System.out.println(currentMap.toString());
-    	
-    	
+    public void pickMove(){        
 
-    	Set <PrecinctForMap> borderPrecincts=new HashSet<>();
+    	Set<PrecinctForMap> borderPrecincts = new HashSet<>();
     	Set <PrecinctForMap> nullP = currentMap.getNullDistrict().getPrecincts();
-    	
-    	System.out.println("Precincts Remaining: " + nullP.size());
     	for(PrecinctForMap p : currentMap.getNullDistrict().getPrecincts()) {	// returning empty
     		if(p.isDistrictBorder()) {
     			borderPrecincts.add(p);
     		}
     	}
- 
-    	//for(PrecinctForMap p : borderPrecincts) {
     	
+    	Collection <DistrictForMap> districts = new ArrayList<>();
+    	for(DistrictForMap d : currentMap.getAllDistricts()) {
+    		if(!d.getMaster().getID().equals("CT_NULL") &&
+    				!d.getMaster().getID().equals("NJ_NULL") &&
+    				!d.getMaster().getID().equals("NE_NULL")) {
+    			
+    			districts.add(d);
+    			
+    		}
+    	}
     	
-    	PrecinctForMap[] pm = (PrecinctForMap[]) borderPrecincts.toArray(new PrecinctForMap[borderPrecincts.size()]);
-    	
-    	PrecinctForMap randP = pm[rand.nextInt(pm.length)];
-    	
-    	DistrictForMap[] dm = (DistrictForMap[]) randP.getNeighborDistricts().toArray(new DistrictForMap[randP.getNeighborDistricts().size()]);
-    	
-    	DistrictForMap randD = dm[rand.nextInt(dm.length)];
+    	List <Map> maps = new ArrayList<>();
+    	List <Double> goodnesses = new ArrayList<>();
+    	List <Move> theMoves = new ArrayList<>();
+    	for(DistrictForMap d : districts) {
+    		PrecinctForMap[] precincts = (PrecinctForMap[])borderPrecincts.toArray(new PrecinctForMap[borderPrecincts.size()]);
+    		PrecinctForMap randomPrecinct=precincts[rand.nextInt(precincts.length)];
     		
-    	Move move=new Move(randP, randD);
+    		System.out.println("population: " + randomPrecinct.getPopulation());
+    		
+    		Move m = new Move(randomPrecinct, d);
+    		theMoves.add(m);
+    		Map newM = currentMap.cloneApply(m);
+    		maps.add(newM);
+    		double good=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights, newM);
+    		goodnesses.add(good);
+    	}
     	
+    	double highestGoodness = Collections.max(goodnesses);
     	
-        Map m=currentMap.cloneApply(move);
+    	int index = 0;
+    	for(int i = 0; i < goodnesses.size(); i++) {
+    		if(goodnesses.get(i) == highestGoodness) {
+    			index = i;
+    			break;
+    		}
+    	}
+    	
+    	Map nm = currentMap.cloneApply(theMoves.get(index));
+    	currentMap = nm;
+    	moves.add(theMoves.get(index));
 
         
-        double goodness = ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights,m);
-        currentMap = m;
         
-        moves.add(move);
-        
-        
-        //System.out.println("goodness: " + goodness);
+        //System.out.println("goodness: " + highestGoodness);
         //System.out.println("number in null district left: " + currentMap.getNullDistrict().getPrecincts().size());
     	//}
     	
@@ -183,9 +174,8 @@ public class RegionGrowingSimulation extends Simulation{
     @Override
     public void updateProgress(){
         progress=moves.size()/1;
-        System.out.println("Updating Map");
+        System.out.println("UpdatingMap");
         this.savedSim.setCurrentMap(currentMap);
-        System.out.println(savedSim.getId() + ":" + savedSim.getCurrentMap().getNullDistrict().getPrecincts().size());
     }
     
     @Override
