@@ -31,7 +31,7 @@ public class RegionGrowingSimulation extends Simulation{
     }
     
     public void getSeedPrecincts(){
-        boolean var=params.algorithm.contains("Random")? false: true;
+        boolean var=params.algorithm.contains("Random");
         if(var){
             getSeedPrecinctsOne();
         }
@@ -181,6 +181,6 @@ public class RegionGrowingSimulation extends Simulation{
     
     @Override
     public boolean isDone() {
-    	return (currentMap.getNullDistrict().getPrecincts().size() == 0);
+    	return (currentMap.getNullDistrict().getPrecincts().isEmpty());
     }
 }
