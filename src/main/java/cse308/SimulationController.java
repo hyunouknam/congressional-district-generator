@@ -87,8 +87,9 @@ public class SimulationController {
 		//SimulationManager.getInstance().getSimWorker().runNextSimulation();
 	}
 	
-	@RequestMapping(value = "/api/deletesim/{id}", method = RequestMethod.GET, consumes = "application/json")
+	@RequestMapping(value = "/api/deletesim/{id}", method = RequestMethod.GET)
 	public void addNewWorker(@PathVariable int id){
+		System.out.println("Delete started for id: " + id);
 		simulationManager.deleleSim(id);
 	}
 	

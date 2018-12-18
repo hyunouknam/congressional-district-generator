@@ -68,6 +68,7 @@ public class SimulationManager {
 	}
 	
 	public void deleleSim(int id) {
+		System.out.println("In sim manager");
 		simRepo.deleteById(id);
 	}
 }

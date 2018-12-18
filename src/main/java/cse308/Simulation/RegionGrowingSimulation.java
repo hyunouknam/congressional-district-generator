@@ -134,9 +134,12 @@ public class RegionGrowingSimulation extends Simulation{
     	
     	//System.out.println(currentMap.toString());
     	
+    	
 
     	Set <PrecinctForMap> borderPrecincts=new HashSet<>();
     	Set <PrecinctForMap> nullP = currentMap.getNullDistrict().getPrecincts();
+    	
+    	System.out.println("Precincts Remaining: " + nullP.size());
     	for(PrecinctForMap p : currentMap.getNullDistrict().getPrecincts()) {	// returning empty
     		if(p.isDistrictBorder()) {
     			borderPrecincts.add(p);
