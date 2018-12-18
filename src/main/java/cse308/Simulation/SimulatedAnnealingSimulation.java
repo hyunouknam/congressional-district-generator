@@ -14,40 +14,39 @@ import javax.json.JsonReader;
 
 public class SimulatedAnnealingSimulation extends Simulation{
     private double temperature;
-    private final double alpha;
-    private final int rounds;
-    protected Map bestMap;
+    private double alpha;
+    private int rounds;
     private boolean repeat=false;
+    private Map bestMap;
     
     public SimulatedAnnealingSimulation(UserAccount u, SimulatedAnnealingParams s){
         super(u,s);
         startingMap=getStartingMap();
         currentMap=startingMap;
         bestMap=currentMap;
-        File properties=new File(".."+File.separator+".."+File.separator+".."+File.separator+"resources"+File.separator+"constants.properties");
+        File properties=new File(".."+File.separator+".."+File.separator+"resources"+File.separator+"constants.properties");
+        System.out.println("Properties file is at "+properties.getAbsolutePath());
         JsonReader reader;
         try{
             reader=Json.createReader(new FileReader(properties));
+            JsonObject json=reader.readObject();
+            temperature=json.getJsonNumber("temperature").doubleValue();
+            alpha=json.getJsonNumber("alpha").doubleValue();
+            rounds=json.getJsonNumber("rounds").intValue();
         }catch (FileNotFoundException error){
             System.err.println("Properties file could not be found, using default values.");
             temperature=1.0;
             alpha=0.9;
-            rounds=100;
-            return;
-        }       
-        JsonObject json=reader.readObject();
-        temperature=json.getJsonNumber("temperature").doubleValue();
-        alpha=json.getJsonNumber("alpha").doubleValue();
-        rounds=json.getJsonNumber("rounds").intValue();
+            rounds=5;
+        }        
     }
     
     /*
     Description:
         Gets the current districting from the database (latest election)
     */
-    private Map getStartingMap(){
-        //start is current districting? From 2016 election?
-        //currentMap=EntityManager.findCurrentMap(State s);      
+    private Map getStartingMap(){     
+        currentMap=params.forState.getCurrentMap();
         currentGoodness=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights, currentMap);
         return this.params.getState().getCurrentMap();
     }
@@ -63,7 +62,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
             //TODO: keep track of total steps taken
         }
         updateProgress();
-        updateGUI();
+        //updateGUI();
         temperature*=alpha;
     }
 
@@ -77,18 +76,15 @@ public class SimulatedAnnealingSimulation extends Simulation{
     public void pickMove() {
         boolean var=params.algorithm.contains("Random")? false: true;
         DistrictForMap district = var ? variantOne():variantTwo();
-     
+        
         Object[] precincts=district.getBorderPrecincts().toArray();
         PrecinctForMap randomPrecinct=(PrecinctForMap)precincts[precincts.length*(int)Math.random()]; //gets random border precinct
         
-        Set<DistrictForMap> neighborDistricts = randomPrecinct.getNeighborDistricts();
-        
-        Object[] newDistricts=neighborDistricts.toArray();
+        Object[] newDistricts = randomPrecinct.getNeighborDistricts().toArray(); 
         DistrictForMap newDistrict=(DistrictForMap)newDistricts[newDistricts.length*(int)Math.random()]; //chooses random border district for move
         
         Move m=new Move(randomPrecinct, newDistrict);
-        Map nextMap=currentMap.cloneApply(m);
-        
+        Map nextMap=currentMap.cloneApply(m);        
         double nextGoodness=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights, nextMap);
         if(nextGoodness>currentGoodness){
             currentMap=nextMap;
@@ -163,6 +159,6 @@ public class SimulatedAnnealingSimulation extends Simulation{
     
     @Override
     public boolean isDone() {
-    	return false;
+    	return progress==1;
     }
 }
