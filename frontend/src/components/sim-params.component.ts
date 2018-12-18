@@ -18,6 +18,31 @@ import { ServerCommService } from '../servercomm.service';
   <form  class="mt-3" [style.display]="collapsed? 'none': 'block'">
 
     <div class="form-group">
+      <h4>State</h4>
+
+      <div class="form-check ml-2">
+        <input class="form-check-input" type="radio" name="state" 
+          value="CT" [(ngModel)]="params.state">
+        <label class="form-check-label">
+            Connecticut</label>
+      </div>
+
+      <div class="form-check ml-2">
+        <input class="form-check-input" type="radio" name="state" 
+          value="NJ" [(ngModel)]="params.state">
+        <label class="form-check-label">
+            New Jersey</label>
+      </div>
+
+      <div class="form-check ml-2">
+        <input class="form-check-input" type="radio" name="state" 
+          value="NE" [(ngModel)]="params.state">
+        <label class="form-check-label">
+            Nebraska</label>
+      </div>
+    </div>
+
+    <div class="form-group">
       <h4>Simulation Type</h4>
 
       <div class="form-check ml-2">
@@ -168,7 +193,7 @@ export class SimParamsComponent {
   
 
   constructor(private servercomm: ServerCommService ) {
-    this.params = new SimParams("CT"); //TODO TEMP DEBUG, need a dropdown for this or something
+    this.params = new SimParams(); 
   }
 
   submit() {

@@ -23,6 +23,8 @@ export class SimParamsJson {
 }
 
 export class SimParams {
+  state: string; 
+
   algorithm: ALGORITHM_TYPE;
 
   annealingTime: number | null; //int total number of steps to run for, 100 to 1million?
@@ -32,7 +34,8 @@ export class SimParams {
 
   functionWeights: FunctionWeights;
 
-  constructor(public readonly state: string){
+  constructor() {
+    this.state="CT";
     this.algorithm = "SIM_ANNEALING";
     this.annealingTime = 10 * 1000;
     this.annealingStartWith = "CURRENT";

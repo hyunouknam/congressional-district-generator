@@ -77,7 +77,6 @@ export class LeafletComponent {
     
 
     // ASSIGN EVENTS
-    this.map.on('zoomend', () => this.onZoom());
 
 
     //Now that map is intialized, show a state on 
@@ -89,14 +88,12 @@ export class LeafletComponent {
     //TODO: display all states att initial things
     this.initDisplay();
 
+    this.map.on('zoomend', (e) => this.onZoom(e));
 
     this.maphandler.mapActionEmitter.subscribe((next:MapAction) => this.handleMapAction(next));
   }
 
 
-  public onZoom() {
-    console.log("Zoom ended")
-  }
 
 
 
@@ -176,11 +173,13 @@ export class LeafletComponent {
 
   private displayedLayers: {[stateId: string] : ViewSetting}
 
+
   //private currentMap: StateMap | null = null;
   //private currentLOD: LEVEL_OF_DETAIL = "DISTRICT";
 
   private initDisplay() {
     this.displayedLayers = {};
+
     for(const [stateId, state] of Repo.states.entries()) {
       this.displayedLayers[stateId] = [null, "STATE"];
     }
@@ -191,21 +190,53 @@ export class LeafletComponent {
   }
   
 
+  public onZoom(e : any) {
+    const target_LOD = (this.map.getZoom() >= 10) ? "PRECINCT": "DISTRICT";
 
+    const [current_map, current_LOD] = this.displayedLayers[this.currentFocus];
+
+    console.log(`onzoom targLod:${target_LOD}, currLOD:${current_LOD}, focus:${this.currentFocus}`);
+    if(current_LOD != target_LOD && current_map != null) {
+      this.displayStateMap(current_map, target_LOD);
+    }
+  }
+
+  private currentFocus:string="CT";
 
   private handleMapAction(action: MapAction) {
+    let newFocus:string;
+    let newMap: StateMap;
+    const oldFocus = this.currentFocus;
+
     console.log("Got map action", action);
     const [ actionType, actionVal ] = action;
     switch (actionType){
       case "STATE":
         const state = Repo.states.get(actionVal as string)!;
-        this.displayStateMap(state.defaultMap, "STATE");
+        newMap = state.defaultMap;
+        newFocus = state.id;
         break;
       case "SIM":
         const sim = actionVal as Simulation;
-        this.displayStateMap(sim.data[0], "DISTRICT");
+        newMap = sim.data[sim.data.length-1];
+        newFocus = sim.params.state;
         break;
     }
+
+    console.log(`Current focus is ${oldFocus} ,new ${newFocus!}`)
+    if(newFocus! != oldFocus) {
+      console.log("clearing old focus");
+      //we have to clear the old focus
+      const oldState = Repo.states.get(oldFocus);
+      this.displayStateMap(oldState!.defaultMap, 'STATE');
+    }
+
+
+    //Now display the new focus
+    this.displayStateMap(newMap!, 'DISTRICT');
+    this.currentFocus = newFocus!;
+
+    
   }
 
   // =============== PRIMITIVES

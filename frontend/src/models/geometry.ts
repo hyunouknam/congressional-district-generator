@@ -206,8 +206,21 @@ export class MasterState implements GeoRegion{
     return this.cache_layer; 
   }
 
-  get population() { return -999; }
-  get average_democrat_votes() { return -999; }
+  get population() {
+    let sum = 0;
+    this.precincts.forEach(prec => {
+      sum += prec.population;
+    });
+    return sum; 
+  }
+  get average_democrat_votes() {
+    let total = 0;
+    let totalDem = 0;
+    this.precincts.forEach(prec => {
+      totalDem += prec.population * prec.average_democrat_votes;
+      total +=   prec.population;
+    });
+    return totalDem / total; }
 }
 
 
@@ -251,8 +264,21 @@ export class DistrictForMap implements GeoRegion{
   }
 
   get name() { return this.master.name}
-  get population() { return -999; }
-  get average_democrat_votes() { return -999; }
+  get population() { 
+    let sum = 0;
+    this.map.d_p_get(this.id)!.forEach(pId => {
+      sum += (Repo.precincts.get(pId)!.population);
+    });
+    return sum; }
+  get average_democrat_votes() { 
+    let total = 0;
+    let totalDem = 0;
+    this.map.d_p_get(this.id)!.forEach(pId => {
+      const prec = Repo.precincts.get(pId)!;
+      totalDem += prec.population * prec.average_democrat_votes;
+      total +=   prec.population;
+    });
+    return totalDem / total; }
 }
 
 //StateMap can only be made
