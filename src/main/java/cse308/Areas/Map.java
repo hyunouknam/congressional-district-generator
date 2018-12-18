@@ -41,10 +41,17 @@ public class Map implements Cloneable{
 
         //prepare districts
         districts = new HashMap<>();
-        nullDistrict=new DistrictForMap(this);
         for(MasterDistrict md: master.getDistricts()){
             DistrictForMap d = new DistrictForMap(md, this);
             districts.put(md, d);    
+            
+            if(d.getMaster().getID().equals("CT_NULL")) {
+            	nullDistrict = d;
+            }else if(d.getMaster().getID().equals("NJ_NULL")){
+            	nullDistrict = d;
+            }else if(d.getMaster().getID().equals("NE_NULL")) {
+            	nullDistrict = d;
+            }
         }
         
         // Initialize, all precincts start in null district

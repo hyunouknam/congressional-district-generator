@@ -11,14 +11,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 public class DistrictForMap implements GeoRegion{
-    private int id;
     private final MasterDistrict master;
     private Map map;
-
-    public DistrictForMap(Map map){
-        master=null; //null district, for unassigned precincts  
-        this.map = map;
-    }
     
     public DistrictForMap(MasterDistrict md, Map map){
         master=md;
@@ -27,7 +21,15 @@ public class DistrictForMap implements GeoRegion{
     
     public Set<PrecinctForMap> getBorderPrecincts(){
         //get the precincts that are on te border of the district
-        throw new NotImplementedException();
+    	
+    	Set <PrecinctForMap> precincts=new HashSet<>();
+    	for(PrecinctForMap p : this.getPrecincts()) {
+    		if(p.isDistrictBorder()) {
+    			precincts.add(p);
+    		}
+    	}
+    	
+    	return precincts;
     }
     
     /*
@@ -49,14 +51,6 @@ public class DistrictForMap implements GeoRegion{
     }
     public void setMap(Map m){
         map=m;
-    }
-    
-    public int getID(){
-        return id;
-    }
-    
-    public void setID(int i){
-        id=i;
     }
     
     public MasterDistrict getMaster(){

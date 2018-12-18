@@ -24,7 +24,7 @@ public class ObjectiveFuncEvaluator {
         	total += polsbyScore;
         }
         
-        double average = total / m.getState().getNumOfDistricts();
+        double average = total / m.getState().getDistricts().size();
         return average;
     }
 

@@ -20,7 +20,6 @@ public class MasterState {
 	private String id;
 	private String name;
 	private String consText;
-	private int numOfDistricts;
 
 	@Transient
     //Current map is the 2010 districting map
@@ -29,6 +28,8 @@ public class MasterState {
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "state_id")
 	private Set<MasterDistrict> districts;
+	
+	
 
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "state_id")
@@ -40,10 +41,9 @@ public class MasterState {
 		currentMap = null;
 	}
 
-	public MasterState(String name, String consText, boolean popIsEst, int numOfDistricts) {
+	public MasterState(String name, String consText, boolean popIsEst) {
 		this.name = name;
 		this.consText = consText;
-		this.numOfDistricts = numOfDistricts;
 		
 
 //        precinctRepository.findByStateId(this.id).forEach(precincts::add);
@@ -115,14 +115,6 @@ public class MasterState {
 		this.id = id;
 	}
 
-	public int getNumOfDistricts() {
-		return numOfDistricts;
-	}
-
-	public void setNumOfDistricts(int numOfDistricts) {
-		this.numOfDistricts = numOfDistricts;
-	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -147,7 +139,6 @@ public class MasterState {
 		c.put("id", id);
 		c.put("name", name);
 		c.put("constitution text", consText);
-		c.put("number of districts", numOfDistricts);
 		c.put("districts", districtArray);
 		c.put("precincts", prs);
 		c.put("Map", currentMap.toString());
@@ -169,7 +160,6 @@ public class MasterState {
 		c.put("id", id);
 		c.put("name", name);
 		c.put("constitution text", consText);
-		c.put("number of districts", numOfDistricts);
 		c.put("districts", districtArray);
 		c.put("default_map", this.currentMap.toJSON());
 		return c.toString();
