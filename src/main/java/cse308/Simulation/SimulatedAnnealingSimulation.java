@@ -4,49 +4,33 @@ import cse308.Areas.DistrictForMap;
 import cse308.Areas.Map;
 import cse308.Areas.PrecinctForMap;
 import cse308.Users.UserAccount;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Set;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 
 public class SimulatedAnnealingSimulation extends Simulation{
-    private double temperature;
+    private float temperature;
     private double alpha;
     private int rounds;
     private boolean repeat=false;
-    private Map bestMap;
+    public Map bestMap;
     
     public SimulatedAnnealingSimulation(UserAccount u, SimulatedAnnealingParams s){
         super(u,s);
         startingMap=getStartingMap();
         currentMap=startingMap;
         bestMap=currentMap;
-        File properties=new File(".."+File.separator+".."+File.separator+"resources"+File.separator+"constants.properties");
-        System.out.println("Properties file is at "+properties.getAbsolutePath());
-        JsonReader reader;
-        try{
-            reader=Json.createReader(new FileReader(properties));
-            JsonObject json=reader.readObject();
-            temperature=json.getJsonNumber("temperature").doubleValue();
-            alpha=json.getJsonNumber("alpha").doubleValue();
-            rounds=json.getJsonNumber("rounds").intValue();
-        }catch (FileNotFoundException error){
-            System.err.println("Properties file could not be found, using default values.");
-            temperature=1.0;
-            alpha=0.9;
-            rounds=5;
-        }        
+        temperature=1.0f;
+        alpha=0.9;
+        rounds=250;      
     }
     
     /*
     Description:
         Gets the current districting from the database (latest election)
     */
-    private Map getStartingMap(){     
-        currentMap=params.forState.getCurrentMap();
+    private Map getStartingMap(){  
+        currentMap=params.getState().getCurrentMap();
+        if(((SimulatedAnnealingParams)params).startingMap!=null){
+            currentMap=((SimulatedAnnealingParams)params).startingMap;
+        }        
         currentGoodness=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights, currentMap);
         return this.params.getState().getCurrentMap();
     }
@@ -62,8 +46,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
             //TODO: keep track of total steps taken
         }
         updateProgress();
-        //updateGUI();
-        temperature*=alpha;
+        //updateGUI();        
     }
 
     /*
@@ -75,20 +58,23 @@ public class SimulatedAnnealingSimulation extends Simulation{
     @Override
     public void pickMove() {
         boolean var=params.algorithm.contains("Random")? false: true;
-        DistrictForMap district = var ? variantOne():variantTwo();
+        DistrictForMap district = var ? variantTwo():variantOne();
         
         Object[] precincts=district.getBorderPrecincts().toArray();
         PrecinctForMap randomPrecinct=(PrecinctForMap)precincts[precincts.length*(int)Math.random()]; //gets random border precinct
         
         Object[] newDistricts = randomPrecinct.getNeighborDistricts().toArray(); 
         DistrictForMap newDistrict=(DistrictForMap)newDistricts[newDistricts.length*(int)Math.random()]; //chooses random border district for move
-        
+        while (newDistrict.getMaster().getID().contains("NULL")){
+            newDistrict=(DistrictForMap)newDistricts[newDistricts.length*(int)Math.random()];
+        }
         Move m=new Move(randomPrecinct, newDistrict);
         Map nextMap=currentMap.cloneApply(m);        
         double nextGoodness=ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights, nextMap);
         if(nextGoodness>currentGoodness){
             currentMap=nextMap;
             currentGoodness=nextGoodness;
+            moves.add(m);
         }
         else{
             if(currentGoodness==nextGoodness){
@@ -98,12 +84,12 @@ public class SimulatedAnnealingSimulation extends Simulation{
             if(calcAcceptanceProb(currentGoodness, nextGoodness, temperature)>Math.random()){
                 currentMap=nextMap;
                 currentGoodness=nextGoodness;
+                moves.add(m);
             }
         }
         if(currentGoodness>ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights,bestMap)){
             bestMap=currentMap;
-        }
-        moves.add(m);
+        }        
     }
     
     /*
@@ -112,7 +98,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
         Chooses a random district (B) that borders the previously chosen district.
     */
     public DistrictForMap variantOne(){
-        Object[] districts=currentMap.getAllDistricts().toArray();
+        Object[] districts=currentMap.getAllDistricts().toArray();       
         DistrictForMap randomDistrict=(DistrictForMap)districts[districts.length*(int)Math.random()]; //gets random district
         return randomDistrict;
     }
@@ -130,6 +116,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
             DistrictForMap d=(DistrictForMap)districts[i];
             if(d.getPopulation()>population){
                 mostPopulated=d;
+                population=d.getPopulation();
             }
         }
         return mostPopulated;
@@ -142,12 +129,12 @@ public class SimulatedAnnealingSimulation extends Simulation{
     */
     @Override
     public void updateProgress(){
-        //progress would be 1 if temp reaches min or goodness has stayed constant
+        temperature*=alpha;
         if(repeat){
-            progress=1;
+            progress=0;
         }
         else{
-            progress+=alpha;
+            progress=temperature;
         }            
         //number of runs=Temp/alpha*[100-1000]
         //progress will be updated after each temp change: so divided into temp/alpha's
@@ -158,7 +145,7 @@ public class SimulatedAnnealingSimulation extends Simulation{
     }
     
     @Override
-    public boolean isDone() {
-    	return progress==1;
+    public boolean isDone() {        
+    	return temperature<0.0001;
     }
 }

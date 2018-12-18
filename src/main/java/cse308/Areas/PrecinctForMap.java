@@ -44,7 +44,7 @@ public class PrecinctForMap implements GeoRegion{
     
     public Set<DistrictForMap> getNeighborDistricts(){
     	Set<DistrictForMap> neighborDistricts=new HashSet<>();
-        for(PrecinctForMap np: this.getNeighborPrecincts()){
+        for(PrecinctForMap np: getNeighborPrecincts()){
         	DistrictForMap d = np.getParentDistrict();
             if(d!=this.getParentDistrict()){
                 neighborDistricts.add(d); //adds each district bordering the previosuly chosen district

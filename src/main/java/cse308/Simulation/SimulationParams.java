@@ -4,7 +4,7 @@ import cse308.Areas.MasterState;
 
 public class SimulationParams {
     final FunctionWeights functionWeights;
-    final MasterState forState;
+    private final MasterState forState;
     final String algorithm;
 //    Set<PrecinctForMap> excludedPrecincts;
     
@@ -12,8 +12,6 @@ public class SimulationParams {
     	assert weights 		!= null: "Sim weights must not be null";
     	assert state 		!= null: "Sim state must not be null";
     	assert algorithm 	!= null: "Sim algorithm must not be null";
-
-    	SimulationManager simManager = SimulationManager.getInstance();
     	
     	functionWeights=weights;
     	forState=state;

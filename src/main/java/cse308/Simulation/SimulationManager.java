@@ -23,7 +23,7 @@ public class SimulationManager {
     */
     public Simulation createSim(UserAccount user, SimulationParams params){
         Simulation newSim;
-        if(params.algorithm.equals("REGION_GROWING")){
+        if(params.algorithm.contains("REGION_GROWING")){
             newSim=new RegionGrowingSimulation(user, (RegionGrowingParams)params);
         }
         else{

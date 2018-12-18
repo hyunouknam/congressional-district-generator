@@ -75,17 +75,4 @@ public class StateController {
 		Set<MasterPrecinct> pc = prec.findByDefaultDistrictId(id);
 		return pc.size();
 	}
-        
-        @RequestMapping(value = "/api/simann", method = RequestMethod.GET, produces = "application/json")
-        public String getSimAnn() {
-            SimulationManager manager=new SimulationManager();
-            FunctionWeights weights=new FunctionWeights(0.3,0.5,0.2);
-            Optional<MasterState> state=staterepository.findById("NJ");
-            MasterState nj=state.get();
-            String algorithm="SIMULATED_ANNEALING";
-            SimulatedAnnealingParams params=new SimulatedAnnealingParams(weights, nj, algorithm, null);
-            System.out.println("Params were made");
-            manager.createSim(null, params);            
-            return "Sim created successfully.";
-        }
 }
