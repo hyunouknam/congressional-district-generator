@@ -15,20 +15,24 @@ public class SimulationWorker{
     }
     
     public void runNextSimulation(){
-        Simulation sim=queue.get(0);
-        Map result;
-        while (!sim.isDone() && !sim.isPaused){
-            sim.doStep();
-        }
-//        if(sim.isDone() && sim.getClass().equals(SimulatedAnnealingSimulation.class)){
-//            Map bestMap=((SimulatedAnnealingSimulation)sim).bestMap;
-//            if(ObjectiveFuncEvaluator.evaluateObjective(sim.get, bestMap)>sim.getGoodness()){
-//                result=bestMap;
-//            }
-//        }
-        result=sim.currentMap;
-        if (sim.isDone()){ 
-            queue.remove(0);
+        if(!queue.isEmpty()){
+            Simulation sim=queue.get(0);
+            Map result;
+            System.out.println("In runNextSim");
+            while (!sim.isDone() && !sim.isPaused){
+                System.out.println("Doing step");
+                sim.doStep();
+            }
+        //        if(sim.isDone() && sim.getClass().equals(SimulatedAnnealingSimulation.class)){
+        //            Map bestMap=((SimulatedAnnealingSimulation)sim).bestMap;
+        //            if(ObjectiveFuncEvaluator.evaluateObjective(sim.get, bestMap)>sim.getGoodness()){
+        //                result=bestMap;
+        //            }
+        //        }
+            result=sim.currentMap;
+            if (sim.isDone()){ 
+                queue.remove(0);
+            }
         }
     }
     

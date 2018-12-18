@@ -15,15 +15,7 @@ public class SimulationManager {
         if (simManager == null) 
             simManager = new SimulationManager(); 
         return simManager; 
-    } 
-    
-//    public static SimulationWorker getSimWorker(){
-//        if(simWorker==null){
-//            simWorker=new SimulationWorker();
-//            simWorker.run();
-//        }
-//        return simWorker;
-//    }
+    }
     
     /*
     Description:
@@ -38,6 +30,7 @@ public class SimulationManager {
             newSim=new SimulatedAnnealingSimulation(user, (SimulatedAnnealingParams)params);
         }
         simWorker.addToRunQueue(newSim);
+	simWorker.runNextSimulation();
         return newSim;
     }
     
