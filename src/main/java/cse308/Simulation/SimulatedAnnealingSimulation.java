@@ -14,18 +14,16 @@ import javax.json.JsonReader;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-@Entity
 public class SimulatedAnnealingSimulation extends Simulation{
     private float temperature;
     private double alpha;
     private int rounds;
-    @Transient
     private boolean repeat=false;
-    @Transient
-    private Map bestMap;
+    public Map bestMap;
 
-    public SimulatedAnnealingSimulation(UserAccount u, SimulatedAnnealingParams s){
-        super(u,s);
+
+    public SimulatedAnnealingSimulation(SimulatedAnnealingParams s){
+        super(s);
         startingMap=getStartingMap();
         currentMap=startingMap;
         bestMap=currentMap;

@@ -12,50 +12,46 @@ import org.json.JSONObject;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name="sims")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Simulation {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	protected int id;
 
-	@ManyToOne
-	protected UserAccount user;
 
-	@Convert(converter = SimParamsConverter.class)
 	protected SimulationParams params;
 
 	protected double currentGoodness; // goodness of the current map
 	protected float progress = 0;
 
-	@Transient
 	boolean isPaused = false;
-	@Transient
     boolean savable=false;
 
-	@Transient
 	protected Stack<Move> moves;
-    @Transient
 	protected Map startingMap;
 
 
-	@Convert(converter = MapConverter.class)
 	protected Map currentMap; // startMap+all moves so far
 
-	public Simulation( UserAccount u,SimulationParams s) {
+	protected SavedSimulation savedSim;
+
+	public Simulation() {
+		moves = new Stack();
+	}
+
+
+
+	public Simulation(SimulationParams s) {
             params = s;
-            user = u;
             moves = new Stack<>();
 	}
-	
-	public void setID(int id) {
-            this.id = id;
-	}
+
+	public void setId () { this.id = id; }
+	public int getId () {return this.id;}
 
 	public float getProgress() {
             return progress;
 	}
+
+	//Set where to push updates to
+	public void setSavedSim(SavedSimulation savedSim){ this.savedSim = savedSim;}
 
 	public abstract void updateProgress();
 
@@ -66,7 +62,7 @@ public abstract class Simulation {
 	public abstract void pickMove();
 
 	public void updateGUI() {
-		throw new NotImplementedException("Not Implemented Update GUI");
+	    if(this.savedSim != null){ this.savedSim.setCurrentMap(this.currentMap); }
 	}
 
 	public void queueForWork() {
@@ -82,24 +78,4 @@ public abstract class Simulation {
             return currentGoodness;
 	}
 
-	public String getJSON() {
-		String s = "{";
-		s = s + "\"id\":";
-		s = s + "\"" + id + "\"";
-		s = s + ", \"params\":";
-		s = s + params.getJSON();
-		s = s + "}";
-		return s;
-	}
-
-	public JSONObject toJSON() {
-		JSONObject json = new JSONObject();
-		json.put("id", id);
-		json.put("params", params.toString()); //TODO TEMP
-
-		JSONArray maps = new JSONArray();
-		maps.put(this.currentMap.toJSON());
-		json.put("data", maps);
-		return json;
-	}
 }

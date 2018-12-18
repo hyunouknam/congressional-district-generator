@@ -1,8 +1,18 @@
 package cse308.Simulation;
 
 import cse308.Users.UserAccount;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+@Service
+@Configurable
 public class SimulationManager {
+
+    @Autowired
+    private SavedSimRepository simRepo;
+
     private static SimulationManager simManager = null;
     private SimulationWorker simWorker = null;
     
@@ -23,14 +33,21 @@ public class SimulationManager {
     */
     public Simulation createSim(UserAccount user, SimulationParams params){
         Simulation newSim;
+
         if(params.algorithm.contains("REGION_GROWING")){
-            newSim=new RegionGrowingSimulation(user, (RegionGrowingParams)params);
+            newSim=new RegionGrowingSimulation((RegionGrowingParams)params);
         }
         else{
-            newSim=new SimulatedAnnealingSimulation(user, (SimulatedAnnealingParams)params);
+            newSim=new SimulatedAnnealingSimulation((SimulatedAnnealingParams)params);
         }
+
+        SavedSimulation saveSim = new SavedSimulation(user, params, newSim.currentMap);
+        simRepo.save(saveSim);
+        user.getMaps().add(saveSim);
+
+
         simWorker.addToRunQueue(newSim);
-	simWorker.runNextSimulation();
+	    simWorker.runNextSimulation();
         return newSim;
     }
     

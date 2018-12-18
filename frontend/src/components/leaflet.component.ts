@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 
 import { Repo, GeoRegion, StateMap, DistrictForMap,
         MasterPrecinct, MasterDistrict, MasterState, MasterStateJson } from '../models/geometry';
+import { Simulation } from '../models/user';
 
 import { MapHandlerService, MapAction } from '../maphandler.service';
 import { ServerCommService } from '../servercomm.service';
@@ -86,7 +87,7 @@ export class LeafletComponent {
   //Called once maphandler is fully loaded
   private onMapLoad() {
     //TODO: display all states att initial things
-    this.displayStateMap(Repo.states.values().next().value.defaultMap, "DISTRICT")
+    this.initDisplay();
 
 
     this.maphandler.mapActionEmitter.subscribe((next:MapAction) => this.handleMapAction(next));
@@ -107,8 +108,13 @@ export class LeafletComponent {
     const backer:GeoRegion|undefined = Repo.layers.get(layer);
     if(backer == undefined) {
       throw Error("Layer has no backer: " +  JSON.stringify(layer));
+
+    } else if (backer instanceof MasterState) {
+      console.log("Moused over state: " + backer.id);
+
     } else if (backer instanceof DistrictForMap) {
       console.log("Moused over dist: " + backer.id);
+
     } else if (backer instanceof MasterPrecinct) {
       console.log("Moused over precinct: " + backer.id);
     } else {
@@ -126,10 +132,16 @@ export class LeafletComponent {
     const backer:GeoRegion|undefined = Repo.layers.get(layer);
     if(backer == undefined) {
       throw Error("Layer has no backer: " +  JSON.stringify(layer));
+
+    } else if (backer instanceof MasterState) {
+      console.log("Moused out state: " + backer.id);
+
     } else if (backer instanceof DistrictForMap) {
       console.log("Moused out dist: " + backer.id);
+
     } else if (backer instanceof MasterPrecinct) {
       console.log("Moused out precinct: " + backer.id);
+
     } else {
       throw Error("Layer has unknown backer: " +  JSON.stringify(backer));
     }
@@ -157,25 +169,68 @@ export class LeafletComponent {
   //   displayStateMap(map, level_of_detail): hides all other maps, shows this one at the desired level
   //    
   
-  private currentMap: StateMap | null = null;
-  private currentLOD: LEVEL_OF_DETAIL = "DISTRICT";
+  // each state has a list of layers it's currently rendering (TODO: make it a layergroup?)
+  // we have one state we're currently focused on
+  // it has a map that we're currently displaying at a certain LOD (precincts or districts) (for now just show dists)
+  
+
+  private displayedLayers: {[stateId: string] : ViewSetting}
+
+  //private currentMap: StateMap | null = null;
+  //private currentLOD: LEVEL_OF_DETAIL = "DISTRICT";
+
+  private initDisplay() {
+    this.displayedLayers = {};
+    for(const [stateId, state] of Repo.states.entries()) {
+      this.displayedLayers[stateId] = [null, "STATE"];
+    }
+
+    for(const [stateId, state] of Repo.states.entries()) {
+      this.displayStateMap(state.defaultMap, "STATE");
+    }
+  }
+  
+
 
 
   private handleMapAction(action: MapAction) {
     console.log("Got map action", action);
+    const [ actionType, actionVal ] = action;
+    switch (actionType){
+      case "STATE":
+        const state = Repo.states.get(actionVal as string)!;
+        this.displayStateMap(state.defaultMap, "STATE");
+        break;
+      case "SIM":
+        const sim = actionVal as Simulation;
+        this.displayStateMap(sim.data[0], "DISTRICT");
+        break;
+    }
   }
 
+  // =============== PRIMITIVES
 
+
+  // Sets the given state to display the provided map at the provided level of detail
+  // doesn't touch other states
   private displayStateMap(map: StateMap, lod: LEVEL_OF_DETAIL) {
+    const stateId = map.state.id; 
+    const [ currentMap, currentLOD ] = this.displayedLayers[stateId]
+    console.log(`Displaying ${stateId} at LOD:${lod}`);
+    console.log(`currentLOD = ${currentLOD}`);
+
     //If nothing needs to change then change nothing
-    if (this.currentMap == map && this.currentLOD == lod) { return; }
+    if (currentMap == map && currentLOD == lod) { return; }
 
 
-    this.clearDisplay();
+    this.clearDisplay(stateId);
 
     const layers: L.Polygon[] = [];
 
     switch (lod) {
+      case "STATE":
+        layers.push(map.state.layer);
+        break;
       case "DISTRICT":
         for(const d4m of map.districts4map.values()) {
           layers.push(d4m.layer);
@@ -197,33 +252,41 @@ export class LeafletComponent {
     });
       
 
-    this.currentMap = map;
-    this.currentLOD = lod;
+    this.displayedLayers[stateId] = [map, lod];
+    console.log(this.displayedLayers);
   }
 
-  // removes whatever is displayed from the map
-  private clearDisplay() {
-    if(this.currentMap == null) { return; }
+  // Clears whatever is displayed for the given state
+  private clearDisplay(stateId: string) {
+    console.log(`Clearing ${stateId}`);
+    const [ currentMap, currentLOD ] = this.displayedLayers[stateId]
 
-    switch (this.currentLOD) {
+    if(currentMap == null) { return; }
+
+    switch (currentLOD) {
+      case "STATE":
+        currentMap.state.layer.removeFrom(this.map);
+        break;
       case "DISTRICT":
-        for(const d4m of this.currentMap.districts4map.values()) {
+        for(const d4m of currentMap.districts4map.values()) {
           d4m.layer.removeFrom(this.map);
         }
-        //TODO
+        //TODO ???
         break;
       case "PRECINCT":
-        this.currentMap.state.precincts.forEach(mp => {
+        currentMap.state.precincts.forEach(mp => {
           mp.layer.removeFrom(this.map);
         });
         break;
     }
 
-    this.currentMap = null;
+    //set displayed map to null
+    this.displayedLayers[stateId][0] = null;
   }
 
 
 }
 
 
-type LEVEL_OF_DETAIL = "DISTRICT" | "PRECINCT"
+type ViewSetting = [ StateMap|null, LEVEL_OF_DETAIL ];
+type LEVEL_OF_DETAIL = "STATE" | "DISTRICT" | "PRECINCT"

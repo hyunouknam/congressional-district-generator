@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import cse308.Simulation.SavedSimulation;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -30,16 +31,18 @@ public class UserAccount {
     
 //    private String preferencesJSON;
 
-    @OneToMany
-    @JoinColumn(name = "fk_user")
-    private List<Simulation> sims;
+    //@OneToMany(mappedBy = "user")
+    @Transient
+    private List<SavedSimulation> sims;
 
     private String email;
     private String password;
 //    private boolean signedIn=false;
-    
+
     public UserAccount(){
         role=UserRole.TEMP;
+        //preferences = new ArrayList<>();
+		sims = new ArrayList<>();
     }
     
     public UserAccount(String user, String pass){
@@ -72,37 +75,14 @@ public class UserAccount {
 //		this.preferences = preferences;
 //	}
 
-	public List<Simulation> getMaps() {
-		return sims;
-	}
+	public List<SavedSimulation> getMaps() { return sims; }
+	public void setMaps(List<SavedSimulation> sims) { this.sims = sims; }
 
-	public void setMaps(List<Simulation> sims) {
-		this.sims = sims;
-	}
+	public String getEmail() { return email; }
+	public void setEmail(String email) { this.email = email; }
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-//	public boolean isSignedIn() {
-//		return signedIn;
-//	}
-//
-//	public void setSignedIn(boolean signedIn) {
-//		this.signedIn = signedIn;
-//	}
+	public String getPassword() { return password; }
+	public void setPassword(String password) { this.password = password; }
 
 	public void register(String user, String pass){
 //        role=UserRole.REGISTERED;
@@ -110,29 +90,19 @@ public class UserAccount {
         password=pass;
 //        EntityManager.addUser(this);
     }
-//    
-//    public boolean login(){
-//        if(UserManager.checkUserPassword(username, password)){
-//            signedIn=true;
-//        }
-//        return signedIn;        
-//    }
-//    
-//    public void logout(){
-//        signedIn=false;
-//    }
-	
+
 	public String toString() {
 		return "username: " + email + " password: " + password;
 	}
 
 	public JSONObject toJSON() {
+    	System.out.println(String.format("Serializing User Account %s, sims has len %d", email, sims.size()));
     	JSONObject json = new JSONObject();;
     	json.put("username", email);
 		json.put("id", String.valueOf(id));
 
 		JSONArray simJsons = new JSONArray();
-		for(Simulation sim: this.sims) {
+		for(SavedSimulation sim: this.sims) {
 			simJsons.put(sim.toJSON());
 		}
 		json.put("simulations", simJsons);

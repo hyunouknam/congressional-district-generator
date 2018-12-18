@@ -21,18 +21,6 @@ public class SimulationParams {
     
     public MasterState getState() {return forState; }
     
-    public String getJSON() {
-    	String s = "{";
-		s = s + "\"functionWeights\":";
-		s = s + functionWeights.getJSON();
-		s = s + ", \"forState\":";
-		s = s + "\"" + "NJ" + "\"";
-		s = s + ", \"algorithm\":";
-		s = s + "\"" + algorithm + "\"";
-		s = s + "}";
-		return s;
-    }
-
 	public JSONObject toJSON() {
         JSONObject json = new JSONObject();
         json.put("state", forState.getID());

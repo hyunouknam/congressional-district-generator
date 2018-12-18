@@ -44,10 +44,13 @@ public class MapConverter implements AttributeConverter<Map, String> {
 
     @Override
     public Map convertToEntityAttribute(String s) {
+
         JSONObject json = new JSONObject(s);
 
         String stateId = json.getString("state");
         MasterState state = stateRepo.findById(stateId).get();
+
+        System.out.println("MapConverter: Loading map for " + stateId);
 
         Map map = new Map(state);
 
@@ -55,7 +58,8 @@ public class MapConverter implements AttributeConverter<Map, String> {
         for(String distId : data.keySet()) {
             MasterDistrict dist = distRepo.findById(distId).get();
 
-            JSONArray precincts = json.getJSONArray(distId);
+
+            JSONArray precincts = data.getJSONArray(distId);
 
             for(int i = 0; i < precincts.length(); i++) {
                 String precId = precincts.getString(i);

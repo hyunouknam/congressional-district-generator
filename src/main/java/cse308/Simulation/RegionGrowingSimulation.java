@@ -20,19 +20,17 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.NotImplementedException;
 
-@Entity
 public class RegionGrowingSimulation extends Simulation{
-    @Transient
     int numOfPrecincts;
     private Random rand = new Random();
-    
-    public RegionGrowingSimulation(UserAccount u, RegionGrowingParams s){
-        super(u,s);
+
+    public RegionGrowingSimulation(RegionGrowingParams s){
+        super(s);
         startingMap=new Map(params.getState()); //create new blank map
         currentMap=startingMap.clone();    //for regiongrowing, blankmap=startingmap=currentmap
         getSeedPrecinctsOne();
     }
-    
+
     public void getSeedPrecincts(){
         boolean var=params.algorithm.contains("Random");
         if(var){

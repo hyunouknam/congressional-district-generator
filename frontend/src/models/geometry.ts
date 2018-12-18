@@ -146,7 +146,7 @@ export class MasterDistrict {
 }
 
 
-export class MasterState {
+export class MasterState implements GeoRegion{
   public districts: MasterDistrict[] = [];
   public precincts: MasterPrecinct[] = [];
   public defaultMap: StateMap;
@@ -184,6 +184,30 @@ export class MasterState {
     ${this.districts.length} of them
 >`
   }
+
+  // ================= GeoRegion implementation
+  
+  private cache_layer: L.Polygon|null = null;
+  private cache_geometry: GeoJson|null = null;
+
+  get geometry() { 
+    if(this.cache_geometry == null) {
+      const prec_geoms = this.precincts.map(mp => mp.topoJsonEntry);
+      this.cache_geometry = Topo.merge(this.topo as any, prec_geoms as any);
+    }
+    return this.cache_geometry;
+  }
+
+  get layer() { 
+    if(this.cache_layer==null) {
+      this.cache_layer = GeoJsonToPolygon(this.geometry); 
+      Repo.layers.set(this.cache_layer, this);
+    }
+    return this.cache_layer; 
+  }
+
+  get population() { return -999; }
+  get average_democrat_votes() { return -999; }
 }
 
 

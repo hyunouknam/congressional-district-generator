@@ -28,6 +28,8 @@ public class SimParamsConverter implements AttributeConverter<SimulationParams, 
 
     @Override
     public SimulationParams convertToEntityAttribute(String s) {
+        System.out.println("Params converter: loading params: \n" + s);
+
         JSONObject json = new JSONObject(s);
         JSONObject b = json.getJSONObject("functionWeights");
 
