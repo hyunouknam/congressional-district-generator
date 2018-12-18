@@ -121,7 +121,7 @@ public class Map implements Cloneable{
     @Override
     public Map clone() {
         Map copy = new Map(master);
-
+        
         //Make sure all precincts are assigned to their corresponding districts
         for(PrecinctForMap p: getAllPrecincts()){
             //get corresponding precinct in copy

@@ -18,9 +18,10 @@ public class SimulationWorker{
         if(!queue.isEmpty()){
             Simulation sim=queue.get(0);
             Map result;
-            System.out.println("In runNextSim");
+            //System.out.println("In runNextSim");
             while (!sim.isDone() && !sim.isPaused){
-                System.out.println("Doing step");
+                
+                //System.out.println("Doing step");
                 sim.doStep();
             }
         //        if(sim.isDone() && sim.getClass().equals(SimulatedAnnealingSimulation.class)){

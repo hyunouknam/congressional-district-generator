@@ -90,7 +90,7 @@ public class ObjectiveFuncEvaluator {
     }
 
     public static double evaluateObjective(FunctionWeights w, Map m){
-       return (  w.w_compactness            * calcCompactness(m)
+       return (  w.w_compactness       * 0     //* calcCompactness(m)
                + w.w_partisan_fairness      * calcPartisanFairness(m)
                + w.w_population_equality    * calcPopulationEquality(m)
        );
