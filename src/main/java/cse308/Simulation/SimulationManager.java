@@ -32,6 +32,8 @@ public class SimulationManager {
         creates simulation object, and adds simulation to simulationworker's queue
     */
     public Simulation createSim(UserAccount user, SimulationParams params){
+    	
+    	System.out.println("SimMan: Creating sim");
         Simulation newSim;
 
         if(params.algorithm.contains("REGION_GROWING")){

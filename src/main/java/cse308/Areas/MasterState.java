@@ -56,7 +56,7 @@ public class MasterState {
 	@PostLoad
 	public void populateCurrentMap() {
 		currentMap = new Map(this);
-		System.out.println("Here");
+		System.out.println("Loading Map for MAster State");
 		for(PrecinctForMap p: currentMap.getAllPrecincts()) {
 			MasterDistrict dist = p.getMaster().getDefaultDistrict();
 			DistrictForMap distForMap = currentMap.getDistrict(dist);

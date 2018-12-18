@@ -35,6 +35,8 @@ public class SimulationController {
 
 	@RequestMapping(value = "/api/startSimulation", method = RequestMethod.POST, consumes = "application/json")
 	public void addNewWorker(HttpServletRequest request, @RequestBody Map<String, Object> simParams) throws Exception {
+		
+		System.out.println("Starting ssim controller");
 
 		Map<String, Object> b = (Map<String, Object>) simParams.get("functionWeights");
 

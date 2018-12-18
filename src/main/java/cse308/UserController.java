@@ -35,10 +35,12 @@ public class UserController {
 		if(user == null){ user = userRepo.findByEmail("TEMP");}
 		if(user == null){ user = new UserAccount();}
 
+		System.out.println("In get user data, loading sims");
 
 		List<SavedSimulation> userSims = new ArrayList<>();
 		for(SavedSimulation sim : simRepo.findAll()) {
 			if(sim.getUser().equals(user.getEmail())) {
+				System.out.println(sim.getId() + ":" + sim.getCurrentMap().getNullDistrict().getPrecincts().size());
 				userSims.add(sim);
 			}
 		}

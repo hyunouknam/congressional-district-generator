@@ -183,8 +183,9 @@ public class RegionGrowingSimulation extends Simulation{
     @Override
     public void updateProgress(){
         progress=moves.size()/1;
-        System.out.println("UpdatingMap");
+        System.out.println("Updating Map");
         this.savedSim.setCurrentMap(currentMap);
+        System.out.println(savedSim.getId() + ":" + savedSim.getCurrentMap().getNullDistrict().getPrecincts().size());
     }
     
     @Override
