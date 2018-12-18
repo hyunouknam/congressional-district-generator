@@ -3,7 +3,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Repo, GeoRegion, StateMap, DistrictForMap,
         MasterPrecinct, MasterDistrict, MasterState, MasterStateJson } from '../models/geometry';
 
-import { MapHandlerService } from '../maphandler.service';
+import { MapHandlerService, MapAction } from '../maphandler.service';
 import { ServerCommService } from '../servercomm.service';
 
 import * as L from 'leaflet'
@@ -80,9 +80,16 @@ export class LeafletComponent {
 
 
     //Now that map is intialized, show a state on 
-    this.maphandler.dataLoad.then(() => {
-      this.displayStateMap(Repo.states.values().next().value.defaultMap, "DISTRICT")
-    })
+    this.maphandler.dataLoad.then(() => this.onMapLoad())
+  }
+
+  //Called once maphandler is fully loaded
+  private onMapLoad() {
+    //TODO: display all states att initial things
+    this.displayStateMap(Repo.states.values().next().value.defaultMap, "DISTRICT")
+
+
+    this.maphandler.mapActionEmitter.subscribe((next:MapAction) => this.handleMapAction(next));
   }
 
 
@@ -152,6 +159,13 @@ export class LeafletComponent {
   
   private currentMap: StateMap | null = null;
   private currentLOD: LEVEL_OF_DETAIL = "DISTRICT";
+
+
+  private handleMapAction(action: MapAction) {
+    console.log("Got map action", action);
+  }
+
+
   private displayStateMap(map: StateMap, lod: LEVEL_OF_DETAIL) {
     //If nothing needs to change then change nothing
     if (this.currentMap == map && this.currentLOD == lod) { return; }

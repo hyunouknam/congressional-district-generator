@@ -6,13 +6,13 @@ import { Injectable, EventEmitter } from "@angular/core";
 import * as leaflet from 'leaflet'
 import { ServerCommService } from './servercomm.service';
 import { Repo, GeoRegion, MasterPrecinct, MasterDistrict, MasterState, MasterStateJson } from './models/geometry';
+import { Simulation } from './models/user';
 import * as Geometry from './models/geometry';
 
 
 // ========== Weird-ass types
 //district, precinct, etc that backs a layer
-export type LOAD_PHASE = "LOADING_INITIAL" | "LOADING_PRECINCTS" | "FULLY_LOADED" | "ERROR";
-
+export type MapAction = ["STATE"|"SIM", string | Simulation];
 
 // ============ end of types
 
@@ -38,6 +38,10 @@ export class MapHandlerService {
 
   // fulfilled once geom data is loaded
   public dataLoad: Promise<void>;
+
+
+  //will emit an action whenever something wants to change what's shown on the map
+  public mapActionEmitter = new EventEmitter<MapAction>();
   
 
   constructor(private servercomm: ServerCommService){
@@ -76,5 +80,10 @@ export class MapHandlerService {
 
     console.log("Initialized all masterStates");
   }
+
+  // ======== PUBLIC API
+
+  public showSimulation(sim: Simulation) { this.mapActionEmitter.emit(["SIM", sim]); }
+  public showState(stateId: string) { this.mapActionEmitter.emit(["STATE", stateId]); }
 
 }

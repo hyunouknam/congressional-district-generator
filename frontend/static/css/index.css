@@ -64,32 +64,9 @@ main.main-document {
     
 }
 
-/* For the main map page, use a specific grid to show all the panes*/
 main.main-app {
-    display: grid;
-    grid-template-columns: 4fr 2fr ;
-    grid-template-rows: 2fr 2fr min-content;
-    grid-template-areas: "map info"
-                         "map simulations"
-                         "params params";
-    grid-gap: 1em;
-}
-
-main.main-app > #map {
-    grid-area: map;
-}
-
-main.main-app > #infobar {
-    grid-area: info;
-    
-}
-
-main.main-app > #js-params {
-    grid-area: params;
-}
-
-main.main-app > #js-simulations {
-    grid-area: simulations;
+  max-width: none;
+  width: 90%; /* use all available space*/
 }
 
 /* ==== Slider memes ===== */

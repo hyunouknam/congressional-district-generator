@@ -10,6 +10,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Ng5SliderModule } from 'ng5-slider';
 
 // Child components
+import { AppMainComponent } from './components/app-main.component';
+
+import { StateSelectorComponent } from './components/state-selector.component';
 import { SimParamsComponent } from './components/sim-params.component';
 import { SimListComponent } from './components/sim-list.component';
 import { SimEntryComponent } from './components/sim-entry.component';
@@ -25,10 +28,10 @@ import { ServerCommService } from './servercomm.service';
     imports: [BrowserModule, NgbModule, Ng5SliderModule, FormsModule, HttpClientModule],
     providers: [ MapHandlerService, ServerCommService ],
     declarations: [
-        SimListComponent, SimEntryComponent, CurrentUserComponent,
-        SimParamsComponent, LeafletComponent, LeafletInfoComponent
+        SimListComponent, SimEntryComponent, CurrentUserComponent, StateSelectorComponent,
+        SimParamsComponent, LeafletComponent, LeafletInfoComponent, AppMainComponent,
     ],
-    bootstrap: [SimParamsComponent, SimListComponent, CurrentUserComponent, LeafletComponent, LeafletInfoComponent]
+    bootstrap: [ AppMainComponent, CurrentUserComponent ]
 })
 
 export class AppModule {
