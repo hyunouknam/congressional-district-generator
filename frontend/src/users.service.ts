@@ -15,8 +15,8 @@ export class UsersService {
   constructor(private servercomm: ServerCommService, private maphandler: MapHandlerService) {
       (window as any).U = this; //TODO TEMP DEBUG
 
-      //const userdata: Promise<UserJSON> = this.servercomm.reqFetchUserData()
-      const userdata: Promise<UserJSON> = Promise.resolve(dummyUser);
+      const userdata: Promise<UserJSON> = this.servercomm.reqFetchUserData()
+      //const userdata: Promise<UserJSON> = Promise.resolve(dummyUser);
 
 
       this.user_p = userdata.then(json => User.createParse(json));

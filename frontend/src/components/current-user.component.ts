@@ -16,7 +16,7 @@ export class CurrentUserComponent {
   constructor(users: UsersService) {
     let userP: Promise<User|null> = users.user_p;
     userP.then(user => {
-      this.text = (user == null) ? "UNDEF" : user.name;
+      this.text = (user == null) ? "UNDEF" : user.username;
     })
   }
 }

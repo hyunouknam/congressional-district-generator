@@ -12,7 +12,7 @@ export const dummyMap = {
 export const dummyUser: UserJSON = {
 
   id: "user1",
-  user: "jan",
+  username: "dummy_jan",
   simulations: [
     {
       id: "sim1",

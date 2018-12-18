@@ -46,7 +46,7 @@ export class Simulation {
 
 export type UserJSON = {
       id: string;
-      user: string;
+      username: string;
       simulations: SimulationJSON[];
 }
 
@@ -66,7 +66,7 @@ export class User {
     //assert(testObj.savedData) == "");
 
     //let sims = data.simulations.map(s => Simulation.createParse(s));
-    let user = new User(data.id, data.user);
+    let user = new User(data.id, data.username);
 
     return user; 
   }
@@ -74,10 +74,10 @@ export class User {
 
   public readonly simulations: Simulation[];
 
-  public constructor(public readonly id: string, public readonly name: string) {
+  public constructor(public readonly id: string, public readonly username: string) {
   }
 
 
 
-  public greet() { return "Hello " + this.name + "!"; }
+  public greet() { return "Hello " + this.username + "!"; }
 }

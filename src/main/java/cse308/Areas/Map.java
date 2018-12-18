@@ -141,13 +141,13 @@ public class Map implements Cloneable{
 	 public JSONObject toJSON() {
         // Outputs { dist_id: [p_id, p_id,...], ...}
     	JSONObject c = new JSONObject();
-    	System.out.println("Here in Map.toJSON()");
+    	//System.out.println("Here in Map.toJSON()");
     	for(DistrictForMap district: getAllDistricts()) {
     		Set<PrecinctForMap> precinctsForDistrict = district.getPrecincts();
     		Set<String> idsOfPrecincts = precinctsForDistrict.stream().map(p -> p.getMaster().getId()).collect(Collectors.toSet());
     		JSONArray arrayOfPrecincts = new JSONArray(idsOfPrecincts);
     		c.put(district.getMaster().getID(), arrayOfPrecincts);
-    		System.out.println(district.getMaster().getID());
+    		//System.out.println(district.getMaster().getID());
     	}
     	return c;
     }
