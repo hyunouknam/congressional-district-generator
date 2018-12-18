@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.NotImplementedException;
 
+
 public class RegionGrowingSimulation extends Simulation{
     int numOfPrecincts;
     private Random rand = new Random();
@@ -96,7 +97,9 @@ public class RegionGrowingSimulation extends Simulation{
         if(!isDone()){
         	
             pickMove();
+            System.out.println("Finished pickMove, updating progress");
             updateProgress();
+            System.out.println("Done");
             //updateGUI();
         }
     }
