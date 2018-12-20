@@ -167,6 +167,7 @@ public class RegionGrowingSimulation extends Simulation{
 
         
         double goodness = ObjectiveFuncEvaluator.evaluateObjective(params.functionWeights,m);
+        ObjectiveFuncEvaluator.showObjective(params.functionWeights,m);
         currentMap = m;
         
         moves.add(move);

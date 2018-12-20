@@ -95,4 +95,12 @@ public class ObjectiveFuncEvaluator {
                + w.w_population_equality    * calcPopulationEquality(m)
        );
     }
+
+    public static void showObjective(FunctionWeights w, Map m){
+        System.out.println(String.format("Compactness: %f\n PartFairn: %f\n popEq: %f",
+            calcCompactness(m),
+            calcPartisanFairness(m),
+            calcPopulationEquality(m)
+        ));
+    }
 }

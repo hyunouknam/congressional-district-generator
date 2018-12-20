@@ -36,8 +36,6 @@ public class MapConverter implements AttributeConverter<Map, String> {
         //TODO: add state column
         JSONObject json = new JSONObject();
         json.put("state", map.getState().getId());
-        
-        System.out.println("converting map");
 
         json.put("data", map.toJSON());
 
